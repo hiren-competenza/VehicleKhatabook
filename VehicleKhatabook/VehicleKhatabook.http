@@ -1,0 +1,6 @@
+@VehicleKhatabook_HostAddress = http://localhost:5032
+
+GET {{VehicleKhatabook_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
