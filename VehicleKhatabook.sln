@@ -3,7 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook", "VehicleKhatabook\VehicleKhatabook.csproj", "{F1C371EB-D3E1-4303-AEE1-9F19CCCF6522}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleKhatabook", "VehicleKhatabook\VehicleKhatabook.csproj", "{F1C371EB-D3E1-4303-AEE1-9F19CCCF6522}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Entities", "VehicleKhatabook.Entities\VehicleKhatabook.Entities.csproj", "{8D2561A4-2D09-4AAF-82A0-7F2E06FB8510}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Helpers", "VehicleKhatabook.Helpers\VehicleKhatabook.Helpers.csproj", "{961EC1C0-38C3-4ED5-B6EF-B29F5094A620}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Models", "VehicleKhatabook.Models\VehicleKhatabook.Models.csproj", "{73D93170-C2A8-4AFE-AAE1-543D1AFDB1CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Repositories", "VehicleKhatabook.Repositories\VehicleKhatabook.Repositories.csproj", "{4A268DFF-F636-4EC8-8990-E6A51F5145C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.SchemaBuilder", "VehicleKhatabook.SchemaBuilder\VehicleKhatabook.SchemaBuilder.csproj", "{5CABF64A-62A0-454A-B0AD-52A61A906A4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Services", "VehicleKhatabook.Services\VehicleKhatabook.Services.csproj", "{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +27,30 @@ Global
 		{F1C371EB-D3E1-4303-AEE1-9F19CCCF6522}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1C371EB-D3E1-4303-AEE1-9F19CCCF6522}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1C371EB-D3E1-4303-AEE1-9F19CCCF6522}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D2561A4-2D09-4AAF-82A0-7F2E06FB8510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D2561A4-2D09-4AAF-82A0-7F2E06FB8510}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D2561A4-2D09-4AAF-82A0-7F2E06FB8510}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D2561A4-2D09-4AAF-82A0-7F2E06FB8510}.Release|Any CPU.Build.0 = Release|Any CPU
+		{961EC1C0-38C3-4ED5-B6EF-B29F5094A620}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{961EC1C0-38C3-4ED5-B6EF-B29F5094A620}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{961EC1C0-38C3-4ED5-B6EF-B29F5094A620}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{961EC1C0-38C3-4ED5-B6EF-B29F5094A620}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73D93170-C2A8-4AFE-AAE1-543D1AFDB1CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73D93170-C2A8-4AFE-AAE1-543D1AFDB1CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73D93170-C2A8-4AFE-AAE1-543D1AFDB1CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73D93170-C2A8-4AFE-AAE1-543D1AFDB1CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A268DFF-F636-4EC8-8990-E6A51F5145C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A268DFF-F636-4EC8-8990-E6A51F5145C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A268DFF-F636-4EC8-8990-E6A51F5145C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A268DFF-F636-4EC8-8990-E6A51F5145C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CABF64A-62A0-454A-B0AD-52A61A906A4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CABF64A-62A0-454A-B0AD-52A61A906A4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CABF64A-62A0-454A-B0AD-52A61A906A4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CABF64A-62A0-454A-B0AD-52A61A906A4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

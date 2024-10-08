@@ -1,9 +1,16 @@
+using VehicleKhatabook.Extensions;
+
+var baseDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+var configuration = new ConfigurationBuilder()
+   .AddJsonFile($"{baseDir}//appsettings.json")
+   .Build();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddAllMinimalApiDefinitions(configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -17,7 +24,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseEndpointDefinitions();
 app.UseAuthorization();
 
 app.MapControllers();
