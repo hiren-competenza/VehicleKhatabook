@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.34" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VehicleKhatabook.Models\VehicleKhatabook.Models.csproj" />
+    <ProjectReference Include="..\VehicleKhatabook.Repositories\VehicleKhatabook.Repositories.csproj" />
+  </ItemGroup>
+
 </Project>

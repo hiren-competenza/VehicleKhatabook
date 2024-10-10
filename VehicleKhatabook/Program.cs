@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using VehicleKhatabook.Entities;
 using VehicleKhatabook.Extensions;
 
 var baseDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
@@ -8,7 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddDbContext<VehicleKhatabookDbContext>(options =>
+options.UseSqlServer(
+                builder.Configuration.GetConnectionString("VehicleKhatabookDb"),
+                b => b.MigrationsAssembly("VehicleKhatabook.SchemaBuilder")
+            )
+        );
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAllMinimalApiDefinitions(configuration);
 builder.Services.AddEndpointsApiExplorer();
