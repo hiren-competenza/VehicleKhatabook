@@ -22,5 +22,4 @@ namespace VehicleKhatabook.Entities.Models
 
         public bool IsActive { get; set; }
     }
-
 }

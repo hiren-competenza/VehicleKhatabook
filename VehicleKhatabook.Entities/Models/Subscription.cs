@@ -14,9 +14,9 @@ namespace VehicleKhatabook.Entities.Models
 
         [Required]
         [MaxLength(20)]
-        public string SubscriptionType { get; set; }
+        public string SubscriptionType { get; set; } = "Free";
 
-        public DateTime SubscriptionStartDate { get; set; }
+        public DateTime SubscriptionStartDate { get; set; } = DateTime.Now;
         public DateTime SubscriptionEndDate { get; set; }
 
         [ForeignKey("UserID")]

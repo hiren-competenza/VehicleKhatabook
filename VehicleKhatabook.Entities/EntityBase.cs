@@ -11,7 +11,7 @@ namespace Bonobo.Entities
         }
 
         [Required]
-        public DateTime CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         [Required]
         public int CreatedBy { get; set; }

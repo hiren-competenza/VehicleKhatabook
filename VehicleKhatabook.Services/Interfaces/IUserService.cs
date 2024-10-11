@@ -1,5 +1,4 @@
-﻿using VehicleKhatabook.Entities.Models;
-using VehicleKhatabook.Models.DTOs;
+﻿using VehicleKhatabook.Models.DTOs;
 
 namespace VehicleKhatabook.Services.Interfaces
 {
