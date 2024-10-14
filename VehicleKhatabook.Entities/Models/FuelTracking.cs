@@ -7,7 +7,7 @@ namespace VehicleKhatabook.Entities.Models
     public class FuelTracking : EntityBase
     {
         [Key]
-        public Guid FuelTrackingID { get; set; }
+        public Guid FuelTrackingID { get; set; } = Guid.NewGuid();
 
         [Required]
         public Guid VehicleID { get; set; }
@@ -31,5 +31,4 @@ namespace VehicleKhatabook.Entities.Models
         [ForeignKey("DriverID")]
         public User Driver { get; set; }
     }
-
 }

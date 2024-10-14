@@ -1,6 +1,6 @@
-﻿using Azure;
-using VehicleKhatabook.Infrastructure;
+﻿using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.DTOs;
+using VehicleKhatabook.Models.Filters;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
@@ -13,11 +13,11 @@ namespace VehicleKhatabook.EndPoints
         public void DefineEndpoints(WebApplication app)
         {
             var vehileRoute = app.MapGroup("/api/vehicle").WithTags("Vehicle Management");
-            vehileRoute.MapPost("/Add", AddVehicle)/*.AddEndpointFilter<ValidationFilter<Vehicle>>()*/;
-            vehileRoute.MapGet("/{id}", GetVehicleDetails);
-            vehileRoute.MapPut("/{id}", UpdateVehicle);
+            vehileRoute.MapPost("/Add", AddVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
+            vehileRoute.MapGet("/{id}", GetVehicleDetails).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
+            vehileRoute.MapPut("/{id}", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
             vehileRoute.MapDelete("/{id}", DeleteVehicle);
-            vehileRoute.MapGet("/all", GetAllVehicles);
+            vehileRoute.MapGet("/all", GetAllVehicles).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {

@@ -21,5 +21,4 @@ namespace VehicleKhatabook.Entities.Models
         [ForeignKey("UserID")]
         public User User { get; set; }
     }
-
 }

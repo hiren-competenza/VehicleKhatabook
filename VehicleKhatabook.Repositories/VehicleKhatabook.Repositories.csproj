@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VehicleKhatabook.Entities\VehicleKhatabook.Entities.csproj" />
+    <ProjectReference Include="..\VehicleKhatabook.Models\VehicleKhatabook.Models.csproj" />
   </ItemGroup>
 
 </Project>
