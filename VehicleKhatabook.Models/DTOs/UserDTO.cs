@@ -1,4 +1,6 @@
-﻿namespace VehicleKhatabook.Models.DTOs
+﻿using FluentValidation;
+
+namespace VehicleKhatabook.Models.DTOs
 {
     public class UserDTO
     {
@@ -14,5 +16,14 @@
         public bool IsActive { get; set; }
         public string? mPIN { get; set; }
         public Guid UserId { get; set; }
+    }
+    public class AddUserValidator : AbstractValidator<UserDTO>
+    {
+        public AddUserValidator()
+        {
+            RuleFor(x => x.FirstName).NotEmpty().WithMessage("First Name is required");
+            RuleFor(x => x.MobileNumber).NotEmpty().WithMessage("Mobile Number is required");
+            RuleFor(x => x.Role).NotEmpty().WithMessage("Role Must Not Empty");
+        }
     }
 }

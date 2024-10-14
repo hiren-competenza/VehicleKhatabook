@@ -112,5 +112,9 @@ namespace VehicleKhatabook.Repositories.Repositories
                 IsActive = user.IsActive
             });
         }
+        public async Task<User> GetUserByMobileNumberAsync(string mobileNumber)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(u => u.MobileNumber == mobileNumber);
+        }
     }
 }

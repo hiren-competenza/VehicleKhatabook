@@ -1,4 +1,5 @@
-﻿using VehicleKhatabook.Infrastructure;
+﻿using FluentValidation;
+using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Models.Filters;
 using VehicleKhatabook.Repositories.Interfaces;
@@ -14,15 +15,16 @@ namespace VehicleKhatabook.EndPoints
         {
             var vehileRoute = app.MapGroup("/api/vehicle").WithTags("Vehicle Management");
             vehileRoute.MapPost("/Add", AddVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
-            vehileRoute.MapGet("/{id}", GetVehicleDetails).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
+            vehileRoute.MapGet("/{id}", GetVehicleDetails);
             vehileRoute.MapPut("/{id}", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
             vehileRoute.MapDelete("/{id}", DeleteVehicle);
-            vehileRoute.MapGet("/all", GetAllVehicles).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
+            vehileRoute.MapGet("/all", GetAllVehicles);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IVehicleService, VehicleService>();
+            services.AddValidatorsFromAssemblyContaining<AddVehicleValidator>();
         }
 
         internal async Task<IResult> AddVehicle(VehicleDTO vehicleDTO, IVehicleService vehicleService)
@@ -74,7 +76,7 @@ namespace VehicleKhatabook.EndPoints
             {
                 return Results.BadRequest("Invalid Id.");
             }
-            var success = await vehicleService.DeleteVehicleAsync(id);
+                var success = await vehicleService.DeleteVehicleAsync(id);
             if (success)
             {
                 return Results.Ok("Vechie deleted successfully.");

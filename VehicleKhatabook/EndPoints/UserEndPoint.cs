@@ -1,5 +1,9 @@
-﻿using VehicleKhatabook.Infrastructure;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using VehicleKhatabook.Entities;
+using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.DTOs;
+using VehicleKhatabook.Models.Filters;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
@@ -12,16 +16,19 @@ namespace VehicleKhatabook.EndPoints
         public void DefineEndpoints(WebApplication app)
         {
             var userRoute = app.MapGroup("api/user").WithTags("User Registration and Authentication");
-            userRoute.MapPost("/v1/register", UserSignup);
+            userRoute.MapPost("/v1/register", UserSignup).AddEndpointFilter<ValidationFilter<UserDTO>>();
             userRoute.MapGet("/{id:guid}", GetUserById);
             userRoute.MapPut("/{id:guid}", UpdateUser);
             userRoute.MapDelete("/{id:guid}", DeleteUser);
             userRoute.MapGet("/", GetAllUsers);
+            userRoute.MapPost("/Login",Login);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddValidatorsFromAssemblyContaining<AddUserValidator>();
         }
 
         internal async Task<IResult> UserSignup(UserDTO userDTO, IUserService userService)
@@ -52,6 +59,22 @@ namespace VehicleKhatabook.EndPoints
         {
             var result = await userService.GetAllUsersAsync();
             return Results.Ok(result);
+        }
+        internal async Task<IResult> Login(UserLoginDTO userLoginDTO, IAuthService authService)
+        {
+            try
+            {
+                var user = await authService.AuthenticateUser(userLoginDTO);
+                return Results.Ok(user);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Results.Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem("An error occurred while authenticating.");
+            }
         }
     }
 }
