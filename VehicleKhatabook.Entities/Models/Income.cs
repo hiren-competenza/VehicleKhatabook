@@ -8,23 +8,16 @@ namespace VehicleKhatabook.Entities.Models
     {
         [Key]
         public int IncomeID { get; set; }
-
-        [Required]
-        public Guid VehicleID { get; set; }
-
         [Required]
         public int IncomeCategoryID { get; set; }
 
-        public string IncomeSource { get; set; }
+        public string IncomeDescription { get; set; }
         public decimal IncomeAmount { get; set; }
-        public DateTime IncomeDate { get; set; }
+        public DateTime IncomeDate { get; set; } = DateTime.Now;
 
         public Guid DriverID { get; set; }
 
         public bool IsActive { get; set; }
-
-        [ForeignKey("VehicleID")]
-        public Vehicle Vehicle { get; set; }
 
         [ForeignKey("IncomeCategoryID")]
         public IncomeCategory IncomeCategory { get; set; }

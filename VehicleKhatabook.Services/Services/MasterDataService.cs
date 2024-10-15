@@ -16,9 +16,9 @@ namespace VehicleKhatabook.Services.Services
         }
 
         // Income Category Service Methods
-        public async Task<ApiResponse<List<IncomeCategory>>> GetIncomeCategoriesAsync()
+        public async Task<ApiResponse<List<IncomeCategory>>> GetIncomeCategoriesAsync(int userTypeId)
         {
-            return await _masterDataRepository.GetIncomeCategoriesAsync();
+            return await _masterDataRepository.GetIncomeCategoriesAsync(userTypeId);
         }
 
         public async Task<ApiResponse<IncomeCategory>> AddIncomeCategoryAsync(IncomeCategoryDTO categoryDTO)
@@ -36,9 +36,9 @@ namespace VehicleKhatabook.Services.Services
             return await _masterDataRepository.DeleteIncomeCategoryAsync(id);
         }
 
-        public async Task<ApiResponse<List<ExpenseCategory>>> GetExpenseCategoriesAsync()
+        public async Task<ApiResponse<List<ExpenseCategory>>> GetExpenseCategoriesAsync(int userTypeId)
         {
-            return await _masterDataRepository.GetExpenseCategoriesAsync();
+            return await _masterDataRepository.GetExpenseCategoriesAsync(userTypeId);
         }
 
         public async Task<ApiResponse<ExpenseCategory>> AddExpenseCategoryAsync(ExpenseCategoryDTO categoryDTO)
@@ -54,6 +54,18 @@ namespace VehicleKhatabook.Services.Services
         public async Task<ApiResponse<bool>> DeleteExpenseCategoryAsync(int id)
         {
             return await _masterDataRepository.DeleteExpenseCategoryAsync(id);
+        }
+        public async Task<List<VechileType>> GetAllVehicleTypesAsync()
+        {
+            var vehicleTypes = await _masterDataRepository.GetAllVehicleTypesAsync();
+
+            var vehicleType = vehicleTypes.Select(vt => new VechileType
+            {
+                VehicleTypeId = vt.VehicleTypeId,
+                TypeName = vt.TypeName
+            }).ToList();
+
+            return vehicleType;
         }
     }
 }

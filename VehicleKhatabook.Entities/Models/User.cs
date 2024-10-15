@@ -5,7 +5,7 @@ namespace VehicleKhatabook.Entities.Models
 {
     public class User : EntityBase
     {
-        [Key, Required]
+        [Key]
         public Guid UserID { get; set; } = Guid.NewGuid();
 
         [Required]
@@ -18,10 +18,11 @@ namespace VehicleKhatabook.Entities.Models
         [Required]
         [MaxLength(15)]
         public string? MobileNumber { get; set; }
-
+        public string? Email { get; set; }
         public string? mPIN { get; set; }
         public string? ReferCode { get; set; }
-
+        [Required]
+        public int UserTypeId { get; set; }
         [Required]
         [MaxLength(10)]
         public string? Role { get; set; }

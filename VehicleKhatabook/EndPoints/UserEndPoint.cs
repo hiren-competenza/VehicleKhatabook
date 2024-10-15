@@ -1,6 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using VehicleKhatabook.Entities;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Models.Filters;
@@ -17,11 +15,14 @@ namespace VehicleKhatabook.EndPoints
         {
             var userRoute = app.MapGroup("api/user").WithTags("User Registration and Authentication");
             userRoute.MapPost("/v1/register", UserSignup).AddEndpointFilter<ValidationFilter<UserDTO>>();
-            userRoute.MapGet("/{id:guid}", GetUserById);
-            userRoute.MapPut("/{id:guid}", UpdateUser);
-            userRoute.MapDelete("/{id:guid}", DeleteUser);
-            userRoute.MapGet("/", GetAllUsers);
+            //userRoute.MapGet("/{id:guid}", GetUserById);
+            //userRoute.MapPut("/{id:guid}", UpdateUser);
+            //userRoute.MapDelete("/{id:guid}", DeleteUser);
+            //userRoute.MapGet("/", GetAllUsers);
             userRoute.MapPost("/Login",Login);
+            userRoute.MapPost("/api/auth/forgot-password", ForgotMpin);
+            userRoute.MapPost("/api/auth/reset-mpin", ResetMpin);
+            userRoute.MapGet("/api/GetExpenseIncomeCategoriesById", GetExpenseIncomeCategoriesAsync);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -29,6 +30,8 @@ namespace VehicleKhatabook.EndPoints
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddValidatorsFromAssemblyContaining<AddUserValidator>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IOTPService, OTPService>();
         }
 
         internal async Task<IResult> UserSignup(UserDTO userDTO, IUserService userService)
@@ -75,6 +78,39 @@ namespace VehicleKhatabook.EndPoints
             {
                 return Results.Problem("An error occurred while authenticating.");
             }
+        }
+        private async Task<IResult> ForgotMpin(ForgotMpinDTO dto, IAuthService authService)
+        {
+            var result = await authService.SendForgotMpinEmailAsync(dto.Email);
+            if (result)
+            {
+                return Results.Ok("OTP sent successfully to reset mPIN.");
+            }
+            return Results.BadRequest("Failed to send OTP. Please try again.");
+        }
+
+        private async Task<IResult> ResetMpin(ResetMpinDTO dto, IAuthService authService)
+        {
+            var result = await authService.ResetMpinAsync(dto);
+            if (result)
+            {
+                return Results.Ok("mPIN reset successfully.");
+            }
+            return Results.BadRequest("Failed to reset mPIN. Please try again.");
+        }
+        private async Task<IResult> GetExpenseIncomeCategoriesAsync(IMasterDataService masterDataService, int userTypeId, bool active = true)
+        {
+            var incomeCategories =  await masterDataService.GetIncomeCategoriesAsync(userTypeId);
+            var expenseCategories = await masterDataService.GetExpenseCategoriesAsync(userTypeId);
+
+            var response = new
+            {
+                IncomeCategory = incomeCategories,
+                ExpenseCategory = expenseCategories 
+            };
+            //var jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
+
+            return Results.Ok(response);
         }
     }
 }

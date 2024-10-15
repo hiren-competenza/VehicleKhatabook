@@ -14,29 +14,23 @@ namespace VehicleKhatabook.EndPoints
             var staticRoute = app.MapGroup("/api/static").WithTags("Master Data Management");
 
             // Income Category Endpoints
-            staticRoute.MapGet("/income-categories", GetIncomeCategories);
             staticRoute.MapPost("/income-category", AddIncomeCategory);
             staticRoute.MapPut("/income-category/{id}", UpdateIncomeCategory);
             staticRoute.MapDelete("/income-category/{id}", DeleteIncomeCategory);
 
             // Expense Category Endpoints
-            staticRoute.MapGet("/expense-categories", GetExpenseCategories);
             staticRoute.MapPost("/expense-category", AddExpenseCategory);
             staticRoute.MapPut("/expense-category/{id}", UpdateExpenseCategory);
             staticRoute.MapDelete("/expense-category/{id}", DeleteExpenseCategory);
+
+            staticRoute.MapGet("/api/vehicletypes", GetVehicleTypesAsync);
+            
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IMasterDataService, MasterDataService>();
             services.AddScoped<IMasterDataRepository, MasterDataRepository>();
-        }
-
-        // Income Category Endpoints Handlers
-        internal async Task<IResult> GetIncomeCategories(IMasterDataService masterDataService)
-        {
-            var result = await masterDataService.GetIncomeCategoriesAsync();
-            return result.Success ? Results.Ok(result.Data) : Results.NoContent();
         }
 
         internal async Task<IResult> AddIncomeCategory(IncomeCategoryDTO categoryDTO, IMasterDataService masterDataService)
@@ -57,13 +51,6 @@ namespace VehicleKhatabook.EndPoints
             return result.Success ? Results.NoContent() : Results.NotFound(result.Message);
         }
 
-        // Expense Category Endpoints Handlers
-        internal async Task<IResult> GetExpenseCategories(IMasterDataService masterDataService)
-        {
-            var result = await masterDataService.GetExpenseCategoriesAsync();
-            return result.Success ? Results.Ok(result.Data) : Results.NoContent();
-        }
-
         internal async Task<IResult> AddExpenseCategory(ExpenseCategoryDTO categoryDTO, IMasterDataService masterDataService)
         {
             var result = await masterDataService.AddExpenseCategoryAsync(categoryDTO);
@@ -80,6 +67,11 @@ namespace VehicleKhatabook.EndPoints
         {
             var result = await masterDataService.DeleteExpenseCategoryAsync(id);
             return result.Success ? Results.NoContent() : Results.NotFound(result.Message);
+        }
+        internal async Task<IResult> GetVehicleTypesAsync(IMasterDataService masterDataService)
+        {
+            var vehicleTypes = await masterDataService.GetAllVehicleTypesAsync();
+            return Results.Ok(vehicleTypes);
         }
     }
 }

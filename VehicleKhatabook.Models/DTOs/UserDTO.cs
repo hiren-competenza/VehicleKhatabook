@@ -16,6 +16,9 @@ namespace VehicleKhatabook.Models.DTOs
         public bool IsActive { get; set; }
         public string? mPIN { get; set; }
         public Guid UserId { get; set; }
+        public int UserTypeId { get; set; }
+        public string? Email {  get; set; }
+
     }
     public class AddUserValidator : AbstractValidator<UserDTO>
     {
