@@ -20,7 +20,6 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             var expense = new Expense
             {
-                VehicleID = expenseDTO.VehicleID,
                 ExpenseCategoryID = expenseDTO.ExpenseCategoryID,
                 ExpenseAmount = expenseDTO.ExpenseAmount,
                 ExpenseDate = expenseDTO.ExpenseDate,

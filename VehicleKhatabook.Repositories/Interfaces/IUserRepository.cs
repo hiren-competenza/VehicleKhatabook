@@ -11,5 +11,7 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<bool> DeleteUserAsync(Guid id);
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
         Task<User> GetUserByMobileNumberAsync(string mobileNumber);
+        Task<User> GetUserByEmailAsync(string email);
+        Task<User> GetUserByIdAsync(int id);
     }
 }

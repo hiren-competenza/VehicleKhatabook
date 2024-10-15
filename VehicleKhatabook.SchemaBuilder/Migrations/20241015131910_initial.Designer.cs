@@ -12,7 +12,7 @@ using VehicleKhatabook.Entities;
 namespace VehicleKhatabook.SchemaBuilder.Migrations
 {
     [DbContext(typeof(VehicleKhatabookDbContext))]
-    [Migration("20241010104146_initial")]
+    [Migration("20241015131910_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -99,16 +99,11 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("VehicleID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("ExpenseID");
 
                     b.HasIndex("DriverID");
 
                     b.HasIndex("ExpenseCategoryID");
-
-                    b.HasIndex("VehicleID");
 
                     b.ToTable("Expenses");
                 });
@@ -144,6 +139,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("ExpenseCategoryID");
 
@@ -236,7 +234,7 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<DateTime>("IncomeDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("IncomeSource")
+                    b.Property<string>("IncomeDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -249,16 +247,11 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("VehicleID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("IncomeID");
 
                     b.HasIndex("DriverID");
 
                     b.HasIndex("IncomeCategoryID");
-
-                    b.HasIndex("VehicleID");
 
                     b.ToTable("Incomes");
                 });
@@ -295,12 +288,37 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.HasKey("IncomeCategoryID");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("IncomeCategories");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.LanguagePreference", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("LanguagePreferences");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Notification", b =>
@@ -444,6 +462,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<string>("District")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -487,12 +508,32 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("mPIN")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserID");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.VechileType", b =>
+                {
+                    b.Property<int>("VehicleTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehicleTypeId"));
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("VehicleTypeId");
+
+                    b.ToTable("VehicleTypes");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Vehicle", b =>
@@ -591,17 +632,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VehicleKhatabook.Entities.Models.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Driver");
 
                     b.Navigation("ExpenseCategory");
-
-                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.FuelTracking", b =>
@@ -637,17 +670,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VehicleKhatabook.Entities.Models.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Driver");
 
                     b.Navigation("IncomeCategory");
-
-                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Notification", b =>

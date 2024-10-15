@@ -10,10 +10,7 @@ namespace Bonobo.Entities
             CreatedBy = 1;
         }
 
-        [Required]
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
-
-        [Required]
         public int CreatedBy { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? LastModifiedOn { get; set;}

@@ -17,6 +17,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
         public async Task AddUserAsync(UserDTO userDTO)
         {
+            var referCode = GenerateReferCode();
             var user = new User
             {
                 UserID = Guid.NewGuid(),
@@ -24,13 +25,15 @@ namespace VehicleKhatabook.Repositories.Repositories
                 LastName = userDTO.LastName,
                 MobileNumber = userDTO.MobileNumber,
                 mPIN = userDTO.mPIN,
-                ReferCode = userDTO.ReferCode,
+                ReferCode = referCode,
                 Role = userDTO.Role,
                 IsPremiumUser = userDTO.IsPremiumUser,
                 State = userDTO.State,
                 District = userDTO.District,
                 Language = userDTO.Language,
                 CreatedOn = DateTime.UtcNow,
+                UserTypeId = userDTO.UserTypeId,
+                Email = userDTO.Email,
                 //CreatedBy = Guid.NewGuid(),
                 IsActive = true
             };
@@ -115,6 +118,19 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task<User> GetUserByMobileNumberAsync(string mobileNumber)
         {
             return await _dbContext.Users.FirstOrDefaultAsync(u => u.MobileNumber == mobileNumber);
+        }
+        public static string GenerateReferCode()
+        {
+            return Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+        }
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task<User> GetUserByIdAsync(int id)
+        {
+            return await _dbContext.Users.FindAsync(id);
         }
     }
 }

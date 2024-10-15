@@ -16,10 +16,19 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context = context;
         }
 
-        public async Task<ApiResponse<List<IncomeCategory>>> GetIncomeCategoriesAsync()
+        public async Task<ApiResponse<List<IncomeCategory>>> GetIncomeCategoriesAsync(int userTypeId)
         {
-            var categories = await _context.IncomeCategories.ToListAsync();
-            return new ApiResponse<List<IncomeCategory>> { Success = true, Data = categories };
+            var incomeCategories = await _context.IncomeCategories
+                .Where(ic => ic.RoleId == userTypeId && ic.IsActive)
+                .Select(ic => new IncomeCategory
+                {
+                    IncomeCategoryID = ic.IncomeCategoryID,
+                    Name = ic.Name,
+                    RoleId = ic.RoleId,
+                    Description = ic.Description,
+                    IsActive = ic.IsActive,
+                }).ToListAsync();
+            return new ApiResponse<List<IncomeCategory>> { Success = true, Data = incomeCategories };
         }
 
         public async Task<ApiResponse<IncomeCategory>> AddIncomeCategoryAsync(IncomeCategoryDTO categoryDTO)
@@ -68,10 +77,19 @@ namespace VehicleKhatabook.Repositories.Repositories
             return new ApiResponse<bool> { Success = true, Data = true };
         }
 
-        public async Task<ApiResponse<List<ExpenseCategory>>> GetExpenseCategoriesAsync()
+        public async Task<ApiResponse<List<ExpenseCategory>>> GetExpenseCategoriesAsync(int userTypeId)
         {
-            var categories = await _context.ExpenseCategories.ToListAsync();
-            return new ApiResponse<List<ExpenseCategory>> { Success = true, Data = categories };
+            var expenseCategories = await _context.ExpenseCategories
+                .Where(ec => ec.RoleId == userTypeId && ec.IsActive)
+                .Select(ec => new ExpenseCategory
+                {
+                    ExpenseCategoryID = ec.ExpenseCategoryID,
+                    Name = ec.Name,
+                    RoleId = ec.RoleId,
+                    Description = ec.Description,
+                    IsActive = ec.IsActive,
+                }).ToListAsync();
+            return new ApiResponse<List<ExpenseCategory>> { Success = true, Data = expenseCategories };
         }
 
         public async Task<ApiResponse<ExpenseCategory>> AddExpenseCategoryAsync(ExpenseCategoryDTO categoryDTO)
@@ -118,6 +136,10 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context.ExpenseCategories.Remove(category);
             await _context.SaveChangesAsync();
             return new ApiResponse<bool> { Success = true, Data = true };
+        }
+        public async Task<List<VechileType>> GetAllVehicleTypesAsync()
+        {
+            return await _context.VehicleTypes.ToListAsync();
         }
     }
 }

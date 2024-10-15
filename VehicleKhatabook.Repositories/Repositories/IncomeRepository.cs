@@ -20,9 +20,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             var income = new Income
             {
-                VehicleID = incomeDTO.VehicleID,
                 IncomeCategoryID = incomeDTO.IncomeCategoryID,
-                IncomeSource = incomeDTO.IncomeSource,
                 IncomeAmount = incomeDTO.IncomeAmount,
                 IncomeDate = incomeDTO.IncomeDate,
                 DriverID = incomeDTO.DriverID,
@@ -49,7 +47,6 @@ namespace VehicleKhatabook.Repositories.Repositories
                 return new ApiResponse<Income> { Success = false, Message = "Income not found" };
             }
 
-            income.IncomeSource = incomeDTO.IncomeSource;
             income.IncomeAmount = incomeDTO.IncomeAmount;
             income.IncomeCategoryID = incomeDTO.IncomeCategoryID;
             income.IncomeDate = incomeDTO.IncomeDate;

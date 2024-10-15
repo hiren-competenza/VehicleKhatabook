@@ -19,6 +19,7 @@ namespace VehicleKhatabook.Entities
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Backup> Backups { get; set; }
         public DbSet<ScreenContent> ScreenContents { get; set; }
+        public DbSet<VechileType> VehicleTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,7 +34,7 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<Notification>().HasKey(n => n.NotificationID);
             modelBuilder.Entity<Backup>().HasKey(b => b.BackupID);
             modelBuilder.Entity<ScreenContent>().HasKey(sc => sc.ScreenContentID);
-
+            modelBuilder.Entity<VechileType>().HasKey(v => v.VehicleTypeId);
             modelBuilder.Entity<Subscription>()
                 .HasOne(s => s.User)
                 .WithMany()
@@ -55,19 +56,9 @@ namespace VehicleKhatabook.Entities
                 .HasForeignKey(b => b.UserID);
 
             modelBuilder.Entity<Income>()
-                .HasOne(i => i.Vehicle)
-                .WithMany()
-                .HasForeignKey(i => i.VehicleID);
-
-            modelBuilder.Entity<Income>()
                 .HasOne(i => i.IncomeCategory)
                 .WithMany()
                 .HasForeignKey(i => i.IncomeCategoryID);
-
-            modelBuilder.Entity<Expense>()
-                .HasOne(e => e.Vehicle)
-                .WithMany()
-                .HasForeignKey(e => e.VehicleID);
 
             modelBuilder.Entity<Expense>()
                 .HasOne(e => e.ExpenseCategory)

@@ -18,6 +18,7 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     ExpenseCategoryID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -37,6 +38,7 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     IncomeCategoryID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -47,6 +49,20 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_IncomeCategories", x => x.IncomeCategoryID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LanguagePreferences",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LanguageCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LanguagePreferences", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -78,8 +94,10 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     MobileNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     mPIN = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReferCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserTypeId = table.Column<int>(type: "int", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     IdentifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsPremiumUser = table.Column<bool>(type: "bit", nullable: false),
@@ -95,6 +113,19 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VehicleTypes",
+                columns: table => new
+                {
+                    VehicleTypeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TypeName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VehicleTypes", x => x.VehicleTypeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -116,6 +147,74 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     table.ForeignKey(
                         name: "FK_Backups_Users_UserID",
                         column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Expenses",
+                columns: table => new
+                {
+                    ExpenseID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ExpenseCategoryID = table.Column<int>(type: "int", nullable: false),
+                    ExpenseAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ExpenseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpenseDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DriverID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Expenses", x => x.ExpenseID);
+                    table.ForeignKey(
+                        name: "FK_Expenses_ExpenseCategories_ExpenseCategoryID",
+                        column: x => x.ExpenseCategoryID,
+                        principalTable: "ExpenseCategories",
+                        principalColumn: "ExpenseCategoryID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Expenses_Users_DriverID",
+                        column: x => x.DriverID,
+                        principalTable: "Users",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Incomes",
+                columns: table => new
+                {
+                    IncomeID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IncomeCategoryID = table.Column<int>(type: "int", nullable: false),
+                    IncomeDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IncomeAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IncomeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DriverID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Incomes", x => x.IncomeID);
+                    table.ForeignKey(
+                        name: "FK_Incomes_IncomeCategories_IncomeCategoryID",
+                        column: x => x.IncomeCategoryID,
+                        principalTable: "IncomeCategories",
+                        principalColumn: "IncomeCategoryID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Incomes_Users_DriverID",
+                        column: x => x.DriverID,
                         principalTable: "Users",
                         principalColumn: "UserID",
                         onDelete: ReferentialAction.Cascade);
@@ -206,47 +305,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Expenses",
-                columns: table => new
-                {
-                    ExpenseID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    VehicleID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ExpenseCategoryID = table.Column<int>(type: "int", nullable: false),
-                    ExpenseAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ExpenseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExpenseDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DriverID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
-                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Expenses", x => x.ExpenseID);
-                    table.ForeignKey(
-                        name: "FK_Expenses_ExpenseCategories_ExpenseCategoryID",
-                        column: x => x.ExpenseCategoryID,
-                        principalTable: "ExpenseCategories",
-                        principalColumn: "ExpenseCategoryID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Expenses_Users_DriverID",
-                        column: x => x.DriverID,
-                        principalTable: "Users",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Expenses_Vehicles_VehicleID",
-                        column: x => x.VehicleID,
-                        principalTable: "Vehicles",
-                        principalColumn: "VehicleID",
-                        onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "FuelTrackings",
                 columns: table => new
                 {
@@ -283,47 +341,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         onDelete: ReferentialAction.NoAction);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Incomes",
-                columns: table => new
-                {
-                    IncomeID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    VehicleID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IncomeCategoryID = table.Column<int>(type: "int", nullable: false),
-                    IncomeSource = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IncomeAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    IncomeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DriverID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    ModifiedBy = table.Column<int>(type: "int", nullable: true),
-                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Incomes", x => x.IncomeID);
-                    table.ForeignKey(
-                        name: "FK_Incomes_IncomeCategories_IncomeCategoryID",
-                        column: x => x.IncomeCategoryID,
-                        principalTable: "IncomeCategories",
-                        principalColumn: "IncomeCategoryID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Incomes_Users_DriverID",
-                        column: x => x.DriverID,
-                        principalTable: "Users",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Incomes_Vehicles_VehicleID",
-                        column: x => x.VehicleID,
-                        principalTable: "Vehicles",
-                        principalColumn: "VehicleID",
-                        onDelete: ReferentialAction.NoAction);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Backups_UserID",
                 table: "Backups",
@@ -344,11 +361,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                 name: "IX_Expenses_ExpenseCategoryID",
                 table: "Expenses",
                 column: "ExpenseCategoryID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Expenses_VehicleID",
-                table: "Expenses",
-                column: "VehicleID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FuelTrackings_DriverID",
@@ -375,11 +387,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                 name: "IX_Incomes_IncomeCategoryID",
                 table: "Incomes",
                 column: "IncomeCategoryID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Incomes_VehicleID",
-                table: "Incomes",
-                column: "VehicleID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserID",
@@ -413,6 +420,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                 name: "Incomes");
 
             migrationBuilder.DropTable(
+                name: "LanguagePreferences");
+
+            migrationBuilder.DropTable(
                 name: "Notifications");
 
             migrationBuilder.DropTable(
@@ -422,13 +432,16 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                 name: "Subscriptions");
 
             migrationBuilder.DropTable(
+                name: "VehicleTypes");
+
+            migrationBuilder.DropTable(
                 name: "ExpenseCategories");
 
             migrationBuilder.DropTable(
-                name: "IncomeCategories");
+                name: "Vehicles");
 
             migrationBuilder.DropTable(
-                name: "Vehicles");
+                name: "IncomeCategories");
 
             migrationBuilder.DropTable(
                 name: "Users");

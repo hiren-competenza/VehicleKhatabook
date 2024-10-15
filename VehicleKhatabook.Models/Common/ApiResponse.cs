@@ -1,4 +1,5 @@
-﻿namespace VehicleKhatabook.Models.Common
+﻿
+namespace VehicleKhatabook.Models.Common
 {
     public class ApiResponse<T>
     {

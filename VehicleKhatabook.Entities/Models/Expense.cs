@@ -10,9 +10,6 @@ namespace VehicleKhatabook.Entities.Models
         public int ExpenseID { get; set; }
 
         [Required]
-        public Guid VehicleID { get; set; }
-
-        [Required]
         public int ExpenseCategoryID { get; set; }
 
         public decimal ExpenseAmount { get; set; }
@@ -22,9 +19,6 @@ namespace VehicleKhatabook.Entities.Models
         public Guid DriverID { get; set; }
 
         public bool IsActive { get; set; }
-
-        [ForeignKey("VehicleID")]
-        public Vehicle Vehicle { get; set; }
 
         [ForeignKey("ExpenseCategoryID")]
         public ExpenseCategory ExpenseCategory { get; set; }
