@@ -67,5 +67,9 @@ namespace VehicleKhatabook.Services.Services
 
             return vehicleType;
         }
+        public async Task<List<Country>> GetCountryAsync()
+        {
+            return await _masterDataRepository.GetCountryAsync();
+        }
     }
 }

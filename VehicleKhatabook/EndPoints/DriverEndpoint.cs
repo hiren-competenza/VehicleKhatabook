@@ -11,13 +11,13 @@ namespace VehicleKhatabook.EndPoints
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var driverRoute = app.MapGroup("/api/driver").WithTags("Driver Management");
+            //var driverRoute = app.MapGroup("/api/driver").WithTags("Driver Management");
 
-            driverRoute.MapPost("/Add", AddDriver);
-            driverRoute.MapGet("/{id}", GetDriverDetails);
-            driverRoute.MapPut("/{id}", UpdateDriver);
-            driverRoute.MapDelete("/{id}", DeleteDriver);
-            driverRoute.MapGet("/all", GetAllDrivers);
+            //driverRoute.MapPost("/Add", AddDriver);
+            //driverRoute.MapGet("/{id}", GetDriverDetails);
+            //driverRoute.MapPut("/{id}", UpdateDriver);
+            //driverRoute.MapDelete("/{id}", DeleteDriver);
+            //driverRoute.MapGet("/all", GetAllDrivers);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)

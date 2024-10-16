@@ -9,7 +9,7 @@ using VehicleKhatabook.Services.Services;
 
 namespace VehicleKhatabook.EndPoints
 {
-    public class AddVehicleEndPoint : IEndpointDefinition
+    public class VehicleEndPoint : IEndpointDefinition
     {
         public void DefineEndpoints(WebApplication app)
         {
@@ -89,5 +89,6 @@ namespace VehicleKhatabook.EndPoints
             var vehicles = await vehicleService.GetAllVehiclesAsync();
             return Results.Ok(vehicles);
         }
+
     }
 }

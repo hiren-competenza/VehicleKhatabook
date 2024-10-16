@@ -8,7 +8,7 @@ try
 {
     var hostConfiguration = HostConfiguration.Build(args);
     ILogger<Program> logger = hostConfiguration.LoggerFactory.CreateLogger<Program>();
-    string? connectionString = hostConfiguration.Configuration!.GetConnectionString("BonoboDb");
+    string? connectionString = hostConfiguration.Configuration!.GetConnectionString("VehicleKhatabookDb");
 
     VehicleKhatabookDbContextFactory factory = new();
     VehicleKhatabookDbContext dbContext = factory.CreateDbContext(args);

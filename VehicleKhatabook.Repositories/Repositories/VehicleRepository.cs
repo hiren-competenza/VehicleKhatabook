@@ -43,10 +43,26 @@ namespace VehicleKhatabook.Repositories.Repositories
             await _dbContext.SaveChangesAsync();
             return vehicle;
         }
-        public async Task<Vehicle> GetVehicleByIdAsync(Guid id)
+        public async Task<ApiResponse<List<Vehicle>>> GetVehicleByUserIdAsync(Guid id)
         {
-            return await _dbContext.Vehicles.FindAsync(id);
+            var result = await _dbContext.Vehicles.Where(i => i.UserID == id).ToListAsync();
+
+            if (result == null || result.Count == 0)
+            {
+                return new ApiResponse<List<Vehicle>>
+                {
+                    Success = false,
+                    Message = $"No records found for user ID {id}."
+                };
+            }
+
+            return new ApiResponse<List<Vehicle>>
+            {
+                Success = true,
+                Data = result
+            };
         }
+
 
         public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync()
         {
@@ -105,12 +121,17 @@ namespace VehicleKhatabook.Repositories.Repositories
 
         public async Task<bool> DeleteVehicleAsync(Guid id)
         {
-            var vehicle = await GetVehicleByIdAsync(id);
-            if (vehicle == null) return false;
+            var vehicle = await _dbContext.Vehicles.FindAsync(id);
 
-            _dbContext.Vehicles.Remove(vehicle);
+            if (vehicle == null || !vehicle.IsActive)
+                return false;
+
+            vehicle.IsActive = false;
+            _dbContext.Vehicles.Update(vehicle);
             await _dbContext.SaveChangesAsync();
+
             return true;
         }
+
     }
 }

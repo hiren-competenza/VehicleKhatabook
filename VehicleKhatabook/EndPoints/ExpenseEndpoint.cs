@@ -14,7 +14,7 @@ namespace VehicleKhatabook.EndPoints
             var expenseRoute = app.MapGroup("/api/expense").WithTags("Expense Management");
             expenseRoute.MapPost("/", AddExpense);
             expenseRoute.MapGet("/GetExpenseDetailsById", GetExpenseDetails);
-            expenseRoute.MapPut("/UpdateExpense", UpdateExpense);
+            //expenseRoute.MapPut("/UpdateExpense", UpdateExpense);
             expenseRoute.MapDelete("/DeleteExpense", DeleteExpense);
             expenseRoute.MapGet("/all", GetAllExpenses);
         }

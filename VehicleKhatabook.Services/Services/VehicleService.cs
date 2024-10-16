@@ -2,6 +2,7 @@
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
+using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 
 namespace VehicleKhatabook.Services.Services
@@ -20,9 +21,9 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _vehicleRepository.AddVehicleAsync(vehicleDTO);
         }
-        public async Task<Vehicle> GetVehicleByIdAsync(Guid id)
+        public async Task<ApiResponse<List<Vehicle>>> GetVehicleByIdAsync(Guid id)
         {
-            return await _vehicleRepository.GetVehicleByIdAsync(id);
+            return await _vehicleRepository.GetVehicleByUserIdAsync(id);
         }
 
         public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync()
@@ -39,5 +40,6 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _vehicleRepository.DeleteVehicleAsync(id);
         }
+
     }
 }

@@ -17,5 +17,6 @@ namespace VehicleKhatabook.Services.Interfaces
         Task<ApiResponse<bool>> DeleteExpenseCategoryAsync(int id);
 
         Task<List<VechileType>> GetAllVehicleTypesAsync();
+        Task<List<Country>> GetCountryAsync();
     }
 }
