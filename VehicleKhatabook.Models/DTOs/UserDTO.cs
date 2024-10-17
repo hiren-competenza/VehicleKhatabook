@@ -8,16 +8,17 @@ namespace VehicleKhatabook.Models.DTOs
         public string LastName { get; set; }
         public string MobileNumber { get; set; }
         public string ReferCode { get; set; }
+        public string UserReferCode { get; set; }
         public string Role { get; set; }
         public bool IsPremiumUser { get; set; }
         public string State { get; set; }
-        public string District { get; set; }
-        public string Language { get; set; }
+        public string District { get; set; } //On UI from API side or else?
+        public string Language { get; set; } //On UI from API side or else?
         public bool IsActive { get; set; }
         public string? mPIN { get; set; }
         public Guid UserId { get; set; }
         public int UserTypeId { get; set; }
-        public string? Email {  get; set; }
+        public string? Email {  get; set; } //NOt in UI
 
     }
     public class AddUserValidator : AbstractValidator<UserDTO>

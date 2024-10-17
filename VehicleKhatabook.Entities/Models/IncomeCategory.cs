@@ -1,5 +1,4 @@
-﻿using Bonobo.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace VehicleKhatabook.Entities.Models
 {

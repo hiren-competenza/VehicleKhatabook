@@ -23,6 +23,12 @@ namespace VehicleKhatabook.EndPoints
             userRoute.MapPost("/api/auth/forgot-password", ForgotMpin);
             userRoute.MapPost("/api/auth/reset-mpin", ResetMpin);
             userRoute.MapGet("/api/GetExpenseIncomeCategoriesById", GetExpenseIncomeCategoriesAsync);
+
+            userRoute.MapPost("/AddDriver", AddDriver);
+            userRoute.MapGet("/GetDriverDetails", GetDriverDetails);
+            userRoute.MapPut("/UpdateDriver", UpdateDriver);
+            userRoute.MapDelete("/DeleteDriver", DeleteDriver);
+            userRoute.MapGet("/GetAllDrivers", GetAllDrivers);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -111,6 +117,68 @@ namespace VehicleKhatabook.EndPoints
             //var jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
 
             return Results.Ok(response);
+        }
+        internal async Task<IResult> AddDriver(UserDTO userDTO, IUserService userService)
+        {
+            if (userDTO == null)
+                return Results.BadRequest("Driver details are invalid");
+
+            var result = await userService.AddDriverAsync(userDTO);
+            if (result != null)
+            {
+                return Results.Created($"/api/driver/{result.Data.UserID}", result);
+            }
+            return Results.Conflict("Unable to create driver");
+        }
+
+        internal async Task<IResult> GetDriverDetails(Guid id, IUserService userService)
+        {
+            if (id == Guid.Empty)
+            {
+                return Results.BadRequest("Invalid Id.");
+            }
+
+            var driver = await userService.GetDriverByIdAsync(id);
+            return driver != null ? Results.Ok(driver) : Results.NotFound("Driver not found.");
+        }
+
+        internal async Task<IResult> UpdateDriver(Guid id, UserDTO userDTO, IUserService userService)
+        {
+            if (id == Guid.Empty)
+            {
+                return Results.BadRequest("Invalid Id.");
+            }
+            if (userDTO == null)
+            {
+                return Results.BadRequest("Invalid request body");
+            }
+
+            var updateDriver = await userService.UpdateDriverAsync(id, userDTO);
+            if (updateDriver.Success)
+            {
+                return Results.Ok(updateDriver.Data);
+            }
+
+            return updateDriver.Data == null
+                ? Results.NotFound(updateDriver.Message)
+                : Results.Conflict(updateDriver.Message);
+        }
+
+        internal async Task<IResult> DeleteDriver(Guid id, IUserService userService)
+        {
+            if (id == Guid.Empty)
+            {
+                return Results.BadRequest("Invalid Id.");
+            }
+
+            var result = await userService.DeleteDriverAsync(id);
+            return result.Success ? Results.NoContent() : Results.NotFound(result.Message);
+        }
+
+        internal async Task<IResult> GetAllDrivers(IUserService userService)
+        {
+            var drivers = await userService.GetAllDriversAsync();
+            return Results.Ok(drivers);
         }
     }
 }

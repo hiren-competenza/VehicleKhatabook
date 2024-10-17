@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 
@@ -17,7 +18,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
         public async Task AddUserAsync(UserDTO userDTO)
         {
-            var referCode = GenerateReferCode();
+            var userReferCode = GenerateReferCode();
             var user = new User
             {
                 UserID = Guid.NewGuid(),
@@ -25,7 +26,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 LastName = userDTO.LastName,
                 MobileNumber = userDTO.MobileNumber,
                 mPIN = userDTO.mPIN,
-                ReferCode = referCode,
+                ReferCode = userDTO.ReferCode,
+                UserReferCode = userReferCode,
                 Role = userDTO.Role,
                 IsPremiumUser = userDTO.IsPremiumUser,
                 State = userDTO.State,
@@ -54,7 +56,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 LastName = user.LastName,
                 MobileNumber = user.MobileNumber,
                 mPIN = user.mPIN,
-                ReferCode = user.ReferCode,
+                UserReferCode = user.UserReferCode,
                 Role = user.Role,
                 IsPremiumUser = user.IsPremiumUser,
                 State = user.State,
@@ -72,10 +74,9 @@ namespace VehicleKhatabook.Repositories.Repositories
             user.FirstName = userDTO.FirstName;
             user.LastName = userDTO.LastName;
             user.MobileNumber = userDTO.MobileNumber;
-            user.mPIN = userDTO.mPIN;
-            user.ReferCode = userDTO.ReferCode;
-            user.Role = userDTO.Role;
-            user.IsPremiumUser = userDTO.IsPremiumUser;
+            //user.mPIN = userDTO.mPIN;
+            //user.Role = userDTO.Role;
+            //user.IsPremiumUser = userDTO.IsPremiumUser;
             user.State = userDTO.State;
             user.District = userDTO.District;
             user.Language = userDTO.Language;
@@ -91,7 +92,9 @@ namespace VehicleKhatabook.Repositories.Repositories
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == id);
             if (user == null) return false;
 
-            _dbContext.Users.Remove(user);
+            user.IsActive = false;
+            _dbContext.Users.Update(user);
+            //_dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
             return true;
         }
@@ -131,6 +134,104 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task<User> GetUserByIdAsync(int id)
         {
             return await _dbContext.Users.FindAsync(id);
+        }
+        public async Task<ApiResponse<User>> AddDriverAsync(UserDTO UserDTO)
+        {
+            var driver = new User
+            {
+                UserID = Guid.NewGuid(),
+                FirstName = UserDTO.FirstName,
+                LastName = UserDTO.LastName,
+                MobileNumber = UserDTO.MobileNumber,
+                mPIN = UserDTO.mPIN,
+                UserReferCode = UserDTO.UserReferCode,
+                ReferCode = UserDTO.ReferCode,
+                Role = UserDTO.Role,
+                IsPremiumUser = UserDTO.IsPremiumUser,
+                State = UserDTO.State,
+                District = UserDTO.District,
+                Language = UserDTO.Language,
+                CreatedOn = DateTime.UtcNow,
+                //CreatedBy = Guid.NewGuid(),
+                IsActive = true
+            };
+
+            await _dbContext.Users.AddAsync(driver);
+            await _dbContext.SaveChangesAsync();
+
+            return new ApiResponse<User>
+            {
+                Success = true,
+                Data = driver
+            };
+        }
+
+        public async Task<User?> GetDriverByIdAsync(Guid id)
+        {
+            return await _dbContext.Users.FindAsync(id);
+        }
+
+        public async Task<ApiResponse<User>> UpdateDriverAsync(Guid id, UserDTO userDTO)
+        {
+            var driver = await GetDriverByIdAsync(id);
+            if (driver == null)
+            {
+                return new ApiResponse<User>
+                {
+                    Success = false,
+                    Message = "Driver not found."
+                };
+            }
+
+            driver.FirstName = userDTO.FirstName;
+            driver.LastName = userDTO.LastName;
+            driver.MobileNumber = userDTO.MobileNumber;
+            driver.mPIN = userDTO.mPIN;
+            driver.ReferCode = userDTO.ReferCode;
+            driver.Role = userDTO.Role;
+            driver.IsPremiumUser = userDTO.IsPremiumUser;
+            driver.State = userDTO.State;
+            driver.District = userDTO.District;
+            driver.Language = userDTO.Language;
+            driver.LastModifiedOn = DateTime.UtcNow;
+            //user.ModifiedBy = Guid.NewGuid(); 
+
+            _dbContext.Users.Update(driver);
+            await _dbContext.SaveChangesAsync();
+
+            return new ApiResponse<User>
+            {
+                Success = true,
+                Data = driver
+            };
+        }
+
+        public async Task<ApiResponse<bool>> DeleteDriverAsync(Guid id)
+        {
+            var driver = await GetDriverByIdAsync(id);
+            if (driver == null)
+            {
+                return new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "Driver not found."
+                };
+            }
+            driver.IsActive = false;
+            _dbContext.Users.Update(driver);
+            //_dbContext.Users.Remove(driver);
+            await _dbContext.SaveChangesAsync();
+
+            return new ApiResponse<bool>
+            {
+                Success = true,
+                Data = true
+            };
+        }
+
+        public async Task<IEnumerable<User>> GetAllDriversAsync()
+        {
+            return await _dbContext.Users.ToListAsync();
         }
     }
 }

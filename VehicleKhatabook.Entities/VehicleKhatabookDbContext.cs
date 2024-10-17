@@ -20,6 +20,7 @@ namespace VehicleKhatabook.Entities
         public DbSet<Backup> Backups { get; set; }
         public DbSet<ScreenContent> ScreenContents { get; set; }
         public DbSet<VechileType> VehicleTypes { get; set; }
+        public DbSet<Country> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

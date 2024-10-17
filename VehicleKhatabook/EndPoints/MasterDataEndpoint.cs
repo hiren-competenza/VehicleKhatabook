@@ -14,16 +14,17 @@ namespace VehicleKhatabook.EndPoints
             var staticRoute = app.MapGroup("/api/static").WithTags("Master Data Management");
 
             // Income Category Endpoints
-            staticRoute.MapPost("/income-category", AddIncomeCategory);
+            //staticRoute.MapPost("/income-category", AddIncomeCategory);
             staticRoute.MapPut("/income-category/{id}", UpdateIncomeCategory);
             staticRoute.MapDelete("/income-category/{id}", DeleteIncomeCategory);
 
             // Expense Category Endpoints
-            staticRoute.MapPost("/expense-category", AddExpenseCategory);
+            //staticRoute.MapPost("/expense-category", AddExpenseCategory);
             staticRoute.MapPut("/expense-category/{id}", UpdateExpenseCategory);
             staticRoute.MapDelete("/expense-category/{id}", DeleteExpenseCategory);
 
             staticRoute.MapGet("/api/vehicletypes", GetVehicleTypesAsync);
+            staticRoute.MapGet("/api/GetAllCountry", GetCountryAsync);
             
         }
 
@@ -72,6 +73,11 @@ namespace VehicleKhatabook.EndPoints
         {
             var vehicleTypes = await masterDataService.GetAllVehicleTypesAsync();
             return Results.Ok(vehicleTypes);
+        }
+        internal async Task<IResult> GetCountryAsync(IMasterDataService masterDataService)
+        {
+            var countries = await masterDataService.GetCountryAsync();
+            return Results.Ok(countries);
         }
     }
 }

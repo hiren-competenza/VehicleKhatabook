@@ -1,5 +1,4 @@
-﻿using Bonobo.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace VehicleKhatabook.Entities.Models
 {
@@ -21,6 +20,7 @@ namespace VehicleKhatabook.Entities.Models
         public string? Email { get; set; }
         public string? mPIN { get; set; }
         public string? ReferCode { get; set; }
+        public string? UserReferCode { get; set; }
         [Required]
         public int UserTypeId { get; set; }
         [Required]

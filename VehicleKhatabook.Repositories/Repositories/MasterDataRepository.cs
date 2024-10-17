@@ -141,5 +141,9 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             return await _context.VehicleTypes.ToListAsync();
         }
+        public async Task<List<Country>> GetCountryAsync()
+        {
+            return await _context.Countries.ToListAsync();
+        }
     }
 }

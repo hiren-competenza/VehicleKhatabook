@@ -2,7 +2,6 @@
 {
     public class ExpenseDTO
     {
-        public Guid VehicleID { get; set; }
         public int ExpenseCategoryID { get; set; }
         public decimal ExpenseAmount { get; set; }
         public DateTime ExpenseDate { get; set; }
