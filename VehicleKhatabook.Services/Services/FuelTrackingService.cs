@@ -30,7 +30,6 @@ namespace VehicleKhatabook.Services.Services
                 TripEndDate = fuelTrackingDTO.TripEndDate
             };
 
-            // Calculate Mileage
             fuelTracking.Mileage = (fuelTracking.EndMeterReading - fuelTracking.StartMeterReading) /
                                    (fuelTracking.EndFuelLevel + fuelTracking.FuelAdded - fuelTracking.StartFuelLevel);
 

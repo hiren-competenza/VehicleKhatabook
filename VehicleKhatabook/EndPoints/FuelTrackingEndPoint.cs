@@ -13,9 +13,9 @@ namespace VehicleKhatabook.EndPoints
         {
             var fuelRoute = app.MapGroup("/api/fuel-tracking").WithTags("Fuel Tracking");
             fuelRoute.MapPost("/", AddFuelTracking);
-            fuelRoute.MapGet("/{id}", GetFuelTracking);
-            fuelRoute.MapPut("/{id}", UpdateFuelTracking);
-            fuelRoute.MapGet("/all", GetAllFuelTrackings);
+            //fuelRoute.MapGet("/{id}", GetFuelTracking);
+            //fuelRoute.MapPut("/{id}", UpdateFuelTracking);
+            //fuelRoute.MapGet("/all", GetAllFuelTrackings);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)

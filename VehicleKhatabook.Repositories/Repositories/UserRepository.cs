@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
@@ -25,7 +26,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 FirstName = userDTO.FirstName,
                 LastName = userDTO.LastName,
                 MobileNumber = userDTO.MobileNumber,
-                mPIN = userDTO.mPIN,
+                mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN),
                 ReferCode = userDTO.ReferCode,
                 UserReferCode = userReferCode,
                 Role = userDTO.Role,
@@ -118,6 +119,34 @@ namespace VehicleKhatabook.Repositories.Repositories
                 IsActive = user.IsActive
             });
         }
+        public async Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLogin)
+        {
+            try
+            {
+                var userDetailsDTO = await _dbContext.Users
+                  .Where(u => u.MobileNumber == userLogin.MobileNumber && u.IsActive).FirstOrDefaultAsync();
+
+                if (userDetailsDTO != null && BCrypt.Net.BCrypt.Verify(userLogin.mPIN, userDetailsDTO.mPIN))
+                {
+                    return new UserDetailsDTO
+                    {
+                        UserId = userDetailsDTO.UserID,
+                        FirstName = userDetailsDTO.FirstName,
+                        LastName = userDetailsDTO.LastName,
+                        MobileNumber = userDetailsDTO.MobileNumber,
+                        Email = userDetailsDTO.Email,
+                        RoleId = userDetailsDTO.UserTypeId,
+                        //SessionId = Guid.NewGuid() // Generating a new session ID
+                    };
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException(ex.Message);
+            }
+        }
+
         public async Task<User> GetUserByMobileNumberAsync(string mobileNumber)
         {
             return await _dbContext.Users.FirstOrDefaultAsync(u => u.MobileNumber == mobileNumber);

@@ -1,4 +1,5 @@
-﻿using VehicleKhatabook.Infrastructure;
+﻿using VehicleKhatabook.Entities.Models;
+using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
@@ -14,16 +15,19 @@ namespace VehicleKhatabook.EndPoints
             var staticRoute = app.MapGroup("/api/static").WithTags("Master Data Management");
 
             // Income Category Endpoints
-            //staticRoute.MapPost("/income-category", AddIncomeCategory);
+            staticRoute.MapPost("/income-category", AddIncomeCategory);
             staticRoute.MapPut("/income-category/{id}", UpdateIncomeCategory);
             staticRoute.MapDelete("/income-category/{id}", DeleteIncomeCategory);
 
             // Expense Category Endpoints
-            //staticRoute.MapPost("/expense-category", AddExpenseCategory);
+            staticRoute.MapPost("/expense-category", AddExpenseCategory);
             staticRoute.MapPut("/expense-category/{id}", UpdateExpenseCategory);
             staticRoute.MapDelete("/expense-category/{id}", DeleteExpenseCategory);
 
+            staticRoute.MapPost("/api/AddVehicleTypes", AddVehicleTypesAsync);
+            staticRoute.MapPost("/api/UpdateVehicleType", UpdateVehicleTypeAsync);
             staticRoute.MapGet("/api/vehicletypes", GetVehicleTypesAsync);
+
             staticRoute.MapGet("/api/GetAllCountry", GetCountryAsync);
             
         }
@@ -68,6 +72,17 @@ namespace VehicleKhatabook.EndPoints
         {
             var result = await masterDataService.DeleteExpenseCategoryAsync(id);
             return result.Success ? Results.NoContent() : Results.NotFound(result.Message);
+        }
+
+        internal async Task<IResult> AddVehicleTypesAsync(VechileType vechileType, IMasterDataService masterDataService)
+        {
+            var vehicleTypes = await masterDataService.AddVehicleTypesAsync(vechileType);
+            return Results.Ok(vehicleTypes);
+        }
+        internal async Task<IResult> UpdateVehicleTypeAsync(int vehicleTypeId, VechileType vehicleTypeDTO, IMasterDataService masterDataService)
+        {
+            var result = await masterDataService.UpdateVehicleTypeAsync(vehicleTypeId, vehicleTypeDTO);
+            return result.Success ? Results.NoContent(): Results.Conflict(result.Message);
         }
         internal async Task<IResult> GetVehicleTypesAsync(IMasterDataService masterDataService)
         {

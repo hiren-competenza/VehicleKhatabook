@@ -11,12 +11,12 @@ namespace VehicleKhatabook.EndPoints
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var expenseRoute = app.MapGroup("/api/expense").WithTags("Expense Management");
-            expenseRoute.MapPost("/", AddExpense);
-            expenseRoute.MapGet("/GetExpenseDetailsById", GetExpenseDetails);
-            //expenseRoute.MapPut("/UpdateExpense", UpdateExpense);
-            expenseRoute.MapDelete("/DeleteExpense", DeleteExpense);
-            expenseRoute.MapGet("/all", GetAllExpenses);
+            //var expenseRoute = app.MapGroup("/api/expense").WithTags("Expense Management");
+            //expenseRoute.MapPost("/", AddExpense);
+            //expenseRoute.MapGet("/GetExpenseDetailsById", GetExpenseDetails);
+            ////expenseRoute.MapPut("/UpdateExpense", UpdateExpense);
+            //expenseRoute.MapDelete("/DeleteExpense", DeleteExpense);
+            //expenseRoute.MapGet("/all", GetAllExpenses);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)

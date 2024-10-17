@@ -1,4 +1,9 @@
-﻿using VehicleKhatabook.Entities.Models;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Services.Interfaces;
@@ -10,23 +15,44 @@ namespace VehicleKhatabook.Services.Services
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
         private readonly IOTPService _otpService;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IUserRepository userRepository, IEmailService emailService, IOTPService otpService)
+        public AuthService(IUserRepository userRepository, IEmailService emailService, IOTPService otpService, IConfiguration configuration)
         {
             _userRepository = userRepository;
             _emailService = emailService;
             _otpService = otpService;
+            _configuration = configuration;
         }
 
-        public async Task<User> AuthenticateUser(UserLoginDTO userLoginDTO)
+        public string GenerateToken(UserDetailsDTO userDetailsDTO)
         {
-            var user = await _userRepository.GetUserByMobileNumberAsync(userLoginDTO.MobileNumber);
+            var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, userDetailsDTO.UserId.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, userDetailsDTO.Email),
+            new Claim("firstname", userDetailsDTO.FirstName),
+            new Claim("lastname", userDetailsDTO.LastName),
+        };
 
-            if (user == null || user.mPIN != userLoginDTO.mPIN)
-            {
-                throw new UnauthorizedAccessException("Invalid mobile number or password.");
-            }
-            return user;
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var tokenExpiryMinutes = int.Parse(_configuration["Jwt:TokenExpiryMinutes"]);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(tokenExpiryMinutes),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLoginDTO)
+        {
+            return await _userRepository.AuthenticateUser(userLoginDTO);
         }
         public async Task<bool> SendForgotMpinEmailAsync(string email)
         {

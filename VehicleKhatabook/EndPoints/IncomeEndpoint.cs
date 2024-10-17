@@ -11,12 +11,12 @@ namespace VehicleKhatabook.EndPoints
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var incomeRoute = app.MapGroup("/api/income").WithTags("Income Management");
-            incomeRoute.MapPost("/", AddIncome);
-            incomeRoute.MapGet("/{id}", GetIncomeDetails);
-            incomeRoute.MapPut("/{id}", UpdateIncome);
-            incomeRoute.MapDelete("/{id}", DeleteIncome);
-            incomeRoute.MapGet("/all", GetAllIncomes);
+            //var incomeRoute = app.MapGroup("/api/income").WithTags("Income Management");
+            //incomeRoute.MapPost("/", AddIncome);
+            //incomeRoute.MapGet("/{id}", GetIncomeDetails);
+            //incomeRoute.MapPut("/{id}", UpdateIncome);
+            //incomeRoute.MapDelete("/{id}", DeleteIncome);
+            //incomeRoute.MapGet("/all", GetAllIncomes);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
