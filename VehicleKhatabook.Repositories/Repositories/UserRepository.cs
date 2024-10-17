@@ -194,6 +194,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             driver.District = userDTO.District;
             driver.Language = userDTO.Language;
             driver.LastModifiedOn = DateTime.UtcNow;
+            driver.IsActive = userDTO.IsActive;
             //user.ModifiedBy = Guid.NewGuid(); 
 
             _dbContext.Users.Update(driver);
