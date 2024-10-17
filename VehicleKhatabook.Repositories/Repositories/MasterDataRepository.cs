@@ -137,6 +137,60 @@ namespace VehicleKhatabook.Repositories.Repositories
             await _context.SaveChangesAsync();
             return new ApiResponse<bool> { Success = true, Data = true };
         }
+        public async Task<ApiResponse<VechileType>> AddVehicleTypeAsync(VechileType vechileType)
+        {
+            var vehicleType = new VechileType
+            {
+                TypeName = vechileType.TypeName,
+                IsActive = true
+            };
+
+            await _context.AddAsync(vehicleType);
+            await _context.SaveChangesAsync();
+
+            return new ApiResponse<VechileType>
+            {
+                Success = true,
+                Message = "Vehicle type added successfully.",
+                Data = new VechileType
+                {
+                    VehicleTypeId = vehicleType.VehicleTypeId,
+                    TypeName = vehicleType.TypeName,
+                    IsActive = vechileType.IsActive
+                }
+            };
+        }
+
+
+        public async Task<ApiResponse<VechileType>> UpdateVehicleTypeAsync(int vehicleTypeId, VechileType vehicleTypeDTO)
+        {
+            var vehicleType = await _context.VehicleTypes.FindAsync(vehicleTypeId);
+
+            if (vehicleType == null)
+            {
+                return new ApiResponse<VechileType>
+                {
+                    Success = false,
+                    Message = "Vehicle type not found."
+                };
+            }
+
+            vehicleType.TypeName = vehicleTypeDTO.TypeName;
+            vehicleType.IsActive = vehicleTypeDTO.IsActive;
+             _context.Update(vehicleType);
+            await _context.SaveChangesAsync();
+
+            return new ApiResponse<VechileType>
+            {
+                Success = true,
+                Message = "Vehicle type updated successfully.",
+                Data = new VechileType
+                {
+                    VehicleTypeId = vehicleType.VehicleTypeId,
+                    TypeName = vehicleType.TypeName
+                }
+            };
+        }
         public async Task<List<VechileType>> GetAllVehicleTypesAsync()
         {
             return await _context.VehicleTypes.ToListAsync();

@@ -5,6 +5,9 @@ using System.Reflection;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Extensions;
 using VehicleKhatabook.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var baseDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 var configuration = new ConfigurationBuilder()
@@ -22,6 +25,22 @@ options.UseSqlServer(
             )
         );
 builder.Services.AddControllers();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
+        };
+    });
+builder.Services.AddAuthorization();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAllMinimalApiDefinitions(configuration);
@@ -51,6 +70,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseEndpointDefinitions();
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseExceptionHandlerMiddleware();
 app.MapControllers();

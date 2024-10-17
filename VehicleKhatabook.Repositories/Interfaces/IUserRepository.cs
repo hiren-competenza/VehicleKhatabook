@@ -19,5 +19,6 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<ApiResponse<User>> UpdateDriverAsync(Guid id, UserDTO userDTO);
         Task<ApiResponse<bool>> DeleteDriverAsync(Guid id);
         Task<IEnumerable<User>> GetAllDriversAsync();
+        Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLoginDTO);
     }
 }

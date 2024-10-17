@@ -71,19 +71,19 @@ namespace VehicleKhatabook.EndPoints
         }
         internal async Task<IResult> Login(UserLoginDTO userLoginDTO, IAuthService authService)
         {
-            try
+            UserDetailsDTO result = await authService.AuthenticateUser(userLoginDTO);
+
+            if (result != null)
             {
-                var user = await authService.AuthenticateUser(userLoginDTO);
-                return Results.Ok(user);
+                string token = authService.GenerateToken(result);
+
+                return Results.Ok(new
+                {
+                    Token = token,
+                    UserDetails = result
+                });
             }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Results.Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return Results.Problem("An error occurred while authenticating.");
-            }
+            return Results.BadRequest("Invalid Login Details");
         }
         private async Task<IResult> ForgotMpin(ForgotMpinDTO dto, IAuthService authService)
         {
