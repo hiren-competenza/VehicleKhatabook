@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Models.Filters;
@@ -15,7 +16,7 @@ namespace VehicleKhatabook.EndPoints
         {
             var vehileRoute = app.MapGroup("/api/vehicle").WithTags("Vehicle Management");
             vehileRoute.MapPost("/Add", AddVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
-            vehileRoute.MapGet("/{id}", GetVehicleDetails);
+            vehileRoute.MapGet("/{id}", GetVehicleByVehicleIdAsync);
             vehileRoute.MapPut("/{id}", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
             vehileRoute.MapDelete("/{id}", DeleteVehicle);
             vehileRoute.MapGet("/all", GetAllVehicles);
@@ -39,7 +40,7 @@ namespace VehicleKhatabook.EndPoints
             }
             return Results.Conflict("Unable to create Vechile");
         }
-        internal async Task<IResult> GetVehicleDetails(Guid id, IVehicleService vehicleService)
+        internal async Task<IResult> GetVehicleByVehicleIdAsync(Guid id, IVehicleService vehicleService)
         {
             if (id == Guid.Empty)
             {
@@ -84,9 +85,9 @@ namespace VehicleKhatabook.EndPoints
             return Results.NotFound();
         }
 
-        internal async Task<IResult> GetAllVehicles(IVehicleService vehicleService)
+        internal async Task<IResult> GetAllVehicles(Guid userId, IVehicleService vehicleService)
         {
-            var vehicles = await vehicleService.GetAllVehiclesAsync();
+            var vehicles = await vehicleService.GetAllVehiclesAsync(userId);
             return Results.Ok(vehicles);
         }
 

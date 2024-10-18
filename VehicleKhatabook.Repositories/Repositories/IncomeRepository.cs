@@ -24,6 +24,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 IncomeAmount = incomeDTO.IncomeAmount,
                 IncomeDate = incomeDTO.IncomeDate,
                 DriverID = incomeDTO.DriverID,
+                IncomeDescription = incomeDTO.IncomeDescription,
                 //CreatedBy = incomeDTO.CreatedBy,
                 CreatedOn = DateTime.UtcNow,
                 IsActive = true
