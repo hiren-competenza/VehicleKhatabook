@@ -34,7 +34,6 @@ namespace VehicleKhatabook.Repositories.Repositories
                 NationalPermitExpiry = vehicleDTO.NationalPermitExpiry,
                 ChassisNumber = vehicleDTO.ChassisNumber,
                 EngineNumber = vehicleDTO.EngineNumber,
-                IsActive = vehicleDTO.IsActive,
             };
             vehicle.CreatedOn = DateTime.UtcNow;
             vehicle.IsActive = true;
@@ -43,16 +42,16 @@ namespace VehicleKhatabook.Repositories.Repositories
             await _dbContext.SaveChangesAsync();
             return vehicle;
         }
-        public async Task<ApiResponse<List<Vehicle>>> GetVehicleByUserIdAsync(Guid id)
+        public async Task<ApiResponse<List<Vehicle>>> GetVehicleByVehicleIdAsync(Guid id)
         {
-            var result = await _dbContext.Vehicles.Where(i => i.UserID == id).ToListAsync();
+            var result = await _dbContext.Vehicles.Where(i => i.VehicleID == id && i.IsActive == true).ToListAsync();
 
             if (result == null || result.Count == 0)
             {
                 return new ApiResponse<List<Vehicle>>
                 {
                     Success = false,
-                    Message = $"No records found for user ID {id}."
+                    Message = $"No records found for vechile ID {id}."
                 };
             }
 
@@ -64,16 +63,18 @@ namespace VehicleKhatabook.Repositories.Repositories
         }
 
 
-        public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync()
+        public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(Guid userId)
         {
-            return await _dbContext.Vehicles.ToListAsync();
+            return await _dbContext.Vehicles
+                           .Where(v => v.UserID == userId)
+                           .ToListAsync();
         }
 
         public async Task<ApiResponse<Vehicle>> UpdateVehicleAsync(Guid id, VehicleDTO vehicleDTO)
         {
             var response = new ApiResponse<Vehicle>();
             try { 
-            var userExists = await _dbContext.Users.AnyAsync(u => u.UserID == vehicleDTO.UserId);
+            var userExists = await _dbContext.Users.AnyAsync(u => u.UserID == vehicleDTO.UserId && u.IsActive == true);
             if (!userExists)
             {
                     response.Success = false;
@@ -81,7 +82,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     return response;
             }
 
-            var vehicleExist = await _dbContext.Vehicles.FirstOrDefaultAsync(u => u.VehicleID == id);
+            var vehicleExist = await _dbContext.Vehicles.FirstOrDefaultAsync(u => u.VehicleID == id && u.IsActive == true);
             if (vehicleExist == null)
             {
                     response.Success = false;

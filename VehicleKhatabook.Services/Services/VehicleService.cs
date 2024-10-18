@@ -23,12 +23,12 @@ namespace VehicleKhatabook.Services.Services
         }
         public async Task<ApiResponse<List<Vehicle>>> GetVehicleByIdAsync(Guid id)
         {
-            return await _vehicleRepository.GetVehicleByUserIdAsync(id);
+            return await _vehicleRepository.GetVehicleByVehicleIdAsync(id);
         }
 
-        public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync()
+        public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(Guid userId)
         {
-            return await _vehicleRepository.GetAllVehiclesAsync();
+            return await _vehicleRepository.GetAllVehiclesAsync(userId);
         }
 
         public async Task<ApiResponse<Vehicle>> UpdateVehicleAsync(Guid id, VehicleDTO vehicleDTO)

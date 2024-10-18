@@ -25,7 +25,7 @@ namespace VehicleKhatabook.EndPoints
             userRoute.MapGet("/api/GetExpenseIncomeCategoriesById", GetExpenseIncomeCategoriesAsync);
 
             userRoute.MapPost("/AddDriver", AddDriver);
-            userRoute.MapGet("/GetDriverDetails", GetDriverDetails);
+            userRoute.MapGet("/GetDriverDetails", GetDriverDetailsByUserId);
             userRoute.MapPut("/UpdateDriver", UpdateDriver);
             userRoute.MapDelete("/DeleteDriver", DeleteDriver);
             userRoute.MapGet("/GetAllDrivers", GetAllDrivers);
@@ -131,7 +131,7 @@ namespace VehicleKhatabook.EndPoints
             return Results.Conflict("Unable to create driver");
         }
 
-        internal async Task<IResult> GetDriverDetails(Guid id, IUserService userService)
+        internal async Task<IResult> GetDriverDetailsByUserId(Guid id, IUserService userService)
         {
             if (id == Guid.Empty)
             {

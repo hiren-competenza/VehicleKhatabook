@@ -8,7 +8,7 @@ namespace VehicleKhatabook.Services.Interfaces
     {
         Task<Vehicle> AddVehicleAsync(VehicleDTO vehicleDTO);
         Task<ApiResponse<List<Vehicle>>> GetVehicleByIdAsync(Guid id);
-        Task<IEnumerable<Vehicle>> GetAllVehiclesAsync();
+        Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(Guid userId);
         Task<ApiResponse<Vehicle>> UpdateVehicleAsync(Guid id, VehicleDTO vehicleDTO);
         Task<bool> DeleteVehicleAsync(Guid id);
     }

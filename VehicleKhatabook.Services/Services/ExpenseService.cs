@@ -2,6 +2,7 @@
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
+using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 
 namespace VehicleKhatabook.Services.Services
@@ -38,6 +39,10 @@ namespace VehicleKhatabook.Services.Services
         public async Task<ApiResponse<List<Expense>>> GetAllExpensesAsync()
         {
             return await _expenseRepository.GetAllExpensesAsync();
+        }
+        public async Task<ApiResponse<List<Expense>>> GetExpenseAsync(Guid userId)
+        {
+            return await _expenseRepository.GetExpenseAsync(userId);
         }
     }
 }

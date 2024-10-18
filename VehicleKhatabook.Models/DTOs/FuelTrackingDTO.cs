@@ -3,7 +3,7 @@
     public class FuelTrackingDTO
     {
         public Guid VehicleID { get; set; }
-        public Guid DriverID { get; set; }
+        public Guid UserId { get; set; }
         public decimal StartMeterReading { get; set; }
         public decimal EndMeterReading { get; set; }
         public decimal StartFuelLevel { get; set; }
