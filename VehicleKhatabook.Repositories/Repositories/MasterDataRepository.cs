@@ -38,7 +38,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Name = categoryDTO.Name,
                 Description = categoryDTO.Description,
                 CreatedBy = categoryDTO.CreatedBy,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow,
+                IsActive = true
             };
 
             _context.IncomeCategories.Add(category);
@@ -58,6 +59,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             category.Description = categoryDTO.Description;
             category.ModifiedBy = categoryDTO.ModifiedBy;
             category.LastModifiedOn = DateTime.UtcNow;
+            category.IsActive = category.IsActive;
 
             _context.IncomeCategories.Update(category);
             await _context.SaveChangesAsync();
@@ -71,8 +73,8 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 return new ApiResponse<bool> { Success = false, Message = "Income category not found" };
             }
-
-            _context.IncomeCategories.Remove(category);
+            category.IsActive = false;
+            _context.IncomeCategories.Update(category);
             await _context.SaveChangesAsync();
             return new ApiResponse<bool> { Success = true, Data = true };
         }
@@ -99,7 +101,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Name = categoryDTO.Name,
                 Description = categoryDTO.Description,
                 CreatedBy = categoryDTO.CreatedBy,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow,
+                IsActive = true
             };
 
             _context.ExpenseCategories.Add(category);
@@ -119,7 +122,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             category.Description = categoryDTO.Description;
             category.ModifiedBy = categoryDTO.ModifiedBy;
             category.LastModifiedOn = DateTime.UtcNow;
-
+            category.IsActive = categoryDTO.IsActive;
             _context.ExpenseCategories.Update(category);
             await _context.SaveChangesAsync();
             return new ApiResponse<ExpenseCategory> { Success = true, Data = category };
@@ -132,8 +135,8 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 return new ApiResponse<bool> { Success = false, Message = "Expense category not found" };
             }
-
-            _context.ExpenseCategories.Remove(category);
+            category.IsActive = false;
+            _context.ExpenseCategories.Update(category);
             await _context.SaveChangesAsync();
             return new ApiResponse<bool> { Success = true, Data = true };
         }

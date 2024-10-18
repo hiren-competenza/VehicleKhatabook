@@ -47,7 +47,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
         public async Task<UserDTO?> GetUserByIdAsync(Guid id)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == id);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == id && u.IsActive == true);
             if (user == null) return null;
 
             return new UserDTO
@@ -223,6 +223,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             driver.District = userDTO.District;
             driver.Language = userDTO.Language;
             driver.LastModifiedOn = DateTime.UtcNow;
+            driver.IsActive = userDTO.IsActive;
             //user.ModifiedBy = Guid.NewGuid(); 
 
             _dbContext.Users.Update(driver);

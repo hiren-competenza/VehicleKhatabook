@@ -12,7 +12,7 @@ namespace VehicleKhatabook.Entities.Models
         public Guid VehicleID { get; set; }
 
         [Required]
-        public Guid DriverID { get; set; }
+        public Guid UserId { get; set; }
 
         public decimal StartMeterReading { get; set; }
         public decimal EndMeterReading { get; set; }
@@ -27,7 +27,7 @@ namespace VehicleKhatabook.Entities.Models
         [ForeignKey("VehicleID")]
         public Vehicle Vehicle { get; set; }
 
-        [ForeignKey("DriverID")]
-        public User Driver { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; }
     }
 }

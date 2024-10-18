@@ -67,9 +67,9 @@ namespace VehicleKhatabook.Entities
                 .HasForeignKey(e => e.ExpenseCategoryID);
 
             modelBuilder.Entity<FuelTracking>()
-                .HasOne(f => f.Driver)
+                .HasOne(f => f.User)
                 .WithMany()
-                .HasForeignKey(f => f.DriverID);
+                .HasForeignKey(f => f.UserId);
 
             modelBuilder.Entity<FuelTracking>()
                 .HasOne(f => f.Vehicle)

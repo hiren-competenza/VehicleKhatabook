@@ -25,7 +25,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 IncomeDate = incomeDTO.IncomeDate,
                 DriverID = incomeDTO.DriverID,
                 //CreatedBy = incomeDTO.CreatedBy,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow,
+                IsActive = true
             };
 
             _context.Incomes.Add(income);
@@ -75,6 +76,27 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             var incomes = await _context.Incomes.ToListAsync();
             return new ApiResponse<List<Income>> { Success = true, Data = incomes };
+        }
+        public async Task<ApiResponse<List<Income>>> GetIncomeAsync(Guid userId)
+        {
+            var result = await _context.Incomes
+                .Where(i => i.DriverID == userId)
+                .ToListAsync();
+
+            if (result == null || result.Count == 0)
+            {
+                return new ApiResponse<List<Income>>
+                {
+                    Success = false,
+                    Message = $"No income records found for user ID {userId}."
+                };
+            }
+
+            return new ApiResponse<List<Income>>
+            {
+                Success = true,
+                Data = result
+            };
         }
     }
 }

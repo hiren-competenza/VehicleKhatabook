@@ -19,10 +19,12 @@ namespace VehicleKhatabook.EndPoints
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<ICreditDebitService, CreditDebitService>();
-            services.AddScoped<ICreditDebitRepositories, CreditDebitRepositories>();
+            services.AddScoped<IIncomeRepository, IncomeRepository>();
+            services.AddScoped<IExpenseRepository, ExpenseRepository>();
+            services.AddScoped<IIncomeService, IncomeService>();
+            services.AddScoped<IExpenseService, ExpenseService>();
         }
-        internal async Task<IResult> AddIncomeExpenseAsync(IncomeExpenseDTO IncomeExpenseDTO, ICreditDebitService creditDebitService)
+        internal async Task<IResult> AddIncomeExpenseAsync(IncomeExpenseDTO IncomeExpenseDTO, IIncomeService incomeService, IExpenseService expenseService)
         {
             if (IncomeExpenseDTO.TransactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
@@ -38,7 +40,7 @@ namespace VehicleKhatabook.EndPoints
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
 
-                var result = await creditDebitService.AddIncomeAsync(incomeDTO);
+                var result = await incomeService.AddIncomeAsync(incomeDTO);
                 return result.Success ? Results.Created($"/api/income/{result.Data.IncomeID}", result.Data) : Results.Conflict(result.Message);
             }
             else
@@ -55,20 +57,20 @@ namespace VehicleKhatabook.EndPoints
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
 
-                var result = await creditDebitService.AddExpenseAsync(expenseDTO);
+                var result = await expenseService.AddExpenseAsync(expenseDTO);
                 return result.Success ? Results.Created($"/api/expense/{result.Data.ExpenseID}", result.Data) : Results.Conflict(result.Message);
             }
         }
-        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType, Guid userId, ICreditDebitService creditDebitService)
+        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType, Guid userId, IIncomeService incomeService, IExpenseService expenseService)
         {
             if (transactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
-                var result = await creditDebitService.GetIncomeAsync(userId);
+                var result = await incomeService.GetIncomeAsync(userId);
                 return result.Success ? Results.Ok(result.Data) : Results.Conflict(result.Message);
             }
             else
             {
-                var result = await creditDebitService.GetExpenseAsync(userId);
+                var result = await expenseService.GetExpenseAsync(userId);
                 return result.Success ? Results.Ok(result.Data) : Results.Conflict(result.Message);
             }
         }

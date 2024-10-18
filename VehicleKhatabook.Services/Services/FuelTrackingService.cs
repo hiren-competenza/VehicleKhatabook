@@ -20,7 +20,7 @@ namespace VehicleKhatabook.Services.Services
             var fuelTracking = new FuelTracking
             {
                 VehicleID = fuelTrackingDTO.VehicleID,
-                DriverID = fuelTrackingDTO.DriverID,
+                UserId = fuelTrackingDTO.UserId,
                 StartMeterReading = fuelTrackingDTO.StartMeterReading,
                 EndMeterReading = fuelTrackingDTO.EndMeterReading,
                 StartFuelLevel = fuelTrackingDTO.StartFuelLevel,
@@ -46,7 +46,7 @@ namespace VehicleKhatabook.Services.Services
             var updatedFuelTracking = new FuelTracking
             {
                 VehicleID = fuelTrackingDTO.VehicleID,
-                DriverID = fuelTrackingDTO.DriverID,
+                UserId = fuelTrackingDTO.UserId,
                 StartMeterReading = fuelTrackingDTO.StartMeterReading,
                 EndMeterReading = fuelTrackingDTO.EndMeterReading,
                 StartFuelLevel = fuelTrackingDTO.StartFuelLevel,

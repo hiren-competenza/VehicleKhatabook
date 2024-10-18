@@ -78,5 +78,26 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expenses = await _context.Expenses.ToListAsync();
             return new ApiResponse<List<Expense>> { Success = true, Data = expenses };
         }
+        public async Task<ApiResponse<List<Expense>>> GetExpenseAsync(Guid userId)
+        {
+            var result = await _context.Expenses
+                .Where(e => e.DriverID == userId)
+                .ToListAsync();
+
+            if (result == null || result.Count == 0)
+            {
+                return new ApiResponse<List<Expense>>
+                {
+                    Success = false,
+                    Message = $"No expense records found for user ID {userId}."
+                };
+            }
+
+            return new ApiResponse<List<Expense>>
+            {
+                Success = true,
+                Data = result
+            };
+        }
     }
 }
