@@ -1,6 +1,6 @@
 ﻿namespace VehicleKhatabook.Models.DTOs
 {
-    public class ForgotMpinDTO
+    public class SendOtpRequestDTO
     {
         public string MobileNumber { get; set; }
     }

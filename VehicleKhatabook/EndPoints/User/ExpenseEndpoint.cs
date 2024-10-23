@@ -5,7 +5,7 @@ using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 using VehicleKhatabook.Services.Services;
 
-namespace VehicleKhatabook.EndPoints
+namespace VehicleKhatabook.EndPoints.User
 {
     public class ExpenseEndpoint : IEndpointDefinition
     {
@@ -28,31 +28,31 @@ namespace VehicleKhatabook.EndPoints
         internal async Task<IResult> AddExpense(ExpenseDTO expenseDTO, IExpenseService expenseService)
         {
             var result = await expenseService.AddExpenseAsync(expenseDTO);
-            return result.Success ? Results.Created($"/api/expense/{result.Data.ExpenseID}", result.Data) : Results.Conflict(result.Message);
+            return Results.Ok(result);
         }
 
         internal async Task<IResult> GetExpenseDetails(int id, IExpenseService expenseService)
         {
             var result = await expenseService.GetExpenseDetailsAsync(id);
-            return result.Success ? Results.Ok(result.Data) : Results.NotFound(result.Message);
+            return Results.Ok(result);
         }
 
         internal async Task<IResult> UpdateExpense(int id, ExpenseDTO expenseDTO, IExpenseService expenseService)
         {
             var result = await expenseService.UpdateExpenseAsync(id, expenseDTO);
-            return result.Success ? Results.Ok(result.Data) : Results.Conflict(result.Message);
+            return Results.Ok(result);
         }
 
         internal async Task<IResult> DeleteExpense(int id, IExpenseService expenseService)
         {
             var result = await expenseService.DeleteExpenseAsync(id);
-            return result.Success ? Results.NoContent() : Results.NotFound(result.Message);
+            return Results.Ok(result);
         }
 
         internal async Task<IResult> GetAllExpenses(IExpenseService expenseService)
         {
             var result = await expenseService.GetAllExpensesAsync();
-            return result.Success ? Results.Ok(result.Data) : Results.NoContent();
+            return Results.Ok(result);
         }
     }
 }

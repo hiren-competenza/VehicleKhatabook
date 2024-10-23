@@ -17,7 +17,7 @@ namespace VehicleKhatabook.Services.Services
 
         }
 
-        public async Task<Vehicle> AddVehicleAsync(VehicleDTO vehicleDTO)
+        public async Task<ApiResponse<Vehicle>> AddVehicleAsync(VehicleDTO vehicleDTO)
         {
             return await _vehicleRepository.AddVehicleAsync(vehicleDTO);
         }
@@ -26,7 +26,7 @@ namespace VehicleKhatabook.Services.Services
             return await _vehicleRepository.GetVehicleByVehicleIdAsync(id);
         }
 
-        public async Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(Guid userId)
+        public async Task<ApiResponse<List<Vehicle>>> GetAllVehiclesAsync(Guid userId)
         {
             return await _vehicleRepository.GetAllVehiclesAsync(userId);
         }
@@ -36,9 +36,14 @@ namespace VehicleKhatabook.Services.Services
             return await _vehicleRepository.UpdateVehicleAsync(id,vehicleDTO);
         }
 
-        public async Task<bool> DeleteVehicleAsync(Guid id)
+        public async Task<ApiResponse<bool>> DeleteVehicleAsync(Guid id)
         {
-            return await _vehicleRepository.DeleteVehicleAsync(id);
+            var result = await _vehicleRepository.DeleteVehicleAsync(id);
+            if (result)
+            {
+                return ApiResponse<bool>.SuccessResponse(true);
+            }
+            return ApiResponse<bool>.FailureResponse("Failed to Delete");
         }
 
     }

@@ -31,13 +31,15 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
-            return new ApiResponse<Expense> { Success = true, Data = expense };
+
+            return ApiResponse<Expense>.SuccessResponse(expense, "Vehicle added successfully.");
+            //return new ApiResponse<Expense> { Success = true, Data = expense };
         }
 
         public async Task<ApiResponse<Expense>> GetExpenseDetailsAsync(int id)
         {
             var expense = await _context.Expenses.FindAsync(id);
-            return expense != null ? new ApiResponse<Expense> { Success = true, Data = expense } : new ApiResponse<Expense> { Success = false, Message = "Expense not found" };
+            return expense != null ? ApiResponse<Expense>.SuccessResponse(expense, "Expense details retrieved successfully.")  : ApiResponse<Expense>.FailureResponse("Expense not found");
         }
 
         public async Task<ApiResponse<Expense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO)
@@ -45,7 +47,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expense = await _context.Expenses.FindAsync(id);
             if (expense == null)
             {
-                return new ApiResponse<Expense> { Success = false, Message = "Expense not found" };
+                return ApiResponse<Expense>.FailureResponse($"Unable to update/expense for for id{id} Not Found");
             }
 
             expense.ExpenseAmount = expenseDTO.ExpenseAmount;
@@ -57,7 +59,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.Expenses.Update(expense);
             await _context.SaveChangesAsync();
-            return new ApiResponse<Expense> { Success = true, Data = expense };
+            return ApiResponse<Expense>.SuccessResponse(expense, "Update Successfull");
         }
 
         public async Task<ApiResponse<bool>> DeleteExpenseAsync(int id)
@@ -65,18 +67,18 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expense = await _context.Expenses.FindAsync(id);
             if (expense == null)
             {
-                return new ApiResponse<bool> { Success = false, Message = "Expense not found" };
+                return ApiResponse<bool>.FailureResponse("Expense not found");
             }
 
             _context.Expenses.Remove(expense);
             await _context.SaveChangesAsync();
-            return new ApiResponse<bool> { Success = true, Data = true };
+            return ApiResponse<bool>.SuccessResponse(true, "Delete successfully");
         }
 
         public async Task<ApiResponse<List<Expense>>> GetAllExpensesAsync()
         {
             var expenses = await _context.Expenses.ToListAsync();
-            return new ApiResponse<List<Expense>> { Success = true, Data = expenses };
+            return expenses != null ? ApiResponse<List<Expense>>.SuccessResponse(expenses) : ApiResponse<List<Expense>>.FailureResponse("Failes to get List");
         }
         public async Task<ApiResponse<List<Expense>>> GetExpenseAsync(Guid userId)
         {
@@ -86,18 +88,10 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             if (result == null || result.Count == 0)
             {
-                return new ApiResponse<List<Expense>>
-                {
-                    Success = false,
-                    Message = $"No expense records found for user ID {userId}."
-                };
+                return ApiResponse<List<Expense>>.FailureResponse("User Not Found/Failed to load data");
             }
 
-            return new ApiResponse<List<Expense>>
-            {
-                Success = true,
-                Data = result
-            };
+            return ApiResponse<List<Expense>>.SuccessResponse(result);
         }
     }
 }

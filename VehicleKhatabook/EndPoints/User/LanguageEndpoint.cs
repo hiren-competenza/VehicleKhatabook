@@ -5,13 +5,13 @@ using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 using VehicleKhatabook.Services.Services;
 
-namespace VehicleKhatabook.EndPoints
+namespace VehicleKhatabook.EndPoints.User
 {
     public class LanguageEndpoint : IEndpointDefinition
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var languageRoute = app.MapGroup("/api/language").WithTags("Multi-language Support");
+            var languageRoute = app.MapGroup("/api/language").WithTags("Multi-language Support").RequireAuthorization("OwnerOrDriverPolicy");
 
             languageRoute.MapGet("/{userId}", GetUserLanguage);
             languageRoute.MapPut("/{userId}", UpdateUserLanguage);

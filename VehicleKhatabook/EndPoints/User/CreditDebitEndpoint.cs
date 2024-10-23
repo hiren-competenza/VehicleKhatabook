@@ -1,4 +1,5 @@
-﻿using VehicleKhatabook.Infrastructure;
+﻿using VehicleKhatabook.Entities.Models;
+using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
@@ -6,13 +7,13 @@ using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 using VehicleKhatabook.Services.Services;
 
-namespace VehicleKhatabook.EndPoints
+namespace VehicleKhatabook.EndPoints.User
 {
     public class CreditDebitEndpoint : IEndpointDefinition
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var expenseRoute = app.MapGroup("/api/incomeExpense").WithTags("IncomeExpense Management");
+            var expenseRoute = app.MapGroup("/api/incomeExpense").WithTags("IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy");
             expenseRoute.MapPost("/", AddIncomeExpenseAsync);
             expenseRoute.MapGet("/GetIncomeExpenseAsyncByUserId", GetIncomeExpenseAsyncByUserId);
         }
@@ -28,7 +29,6 @@ namespace VehicleKhatabook.EndPoints
         {
             if (IncomeExpenseDTO.TransactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
-                //Need to verify IncomeCategoryID
                 var incomeDTO = new IncomeDTO
                 {
                     IncomeCategoryID = IncomeExpenseDTO.CategoryID,
@@ -40,12 +40,15 @@ namespace VehicleKhatabook.EndPoints
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
 
-                var result = await incomeService.AddIncomeAsync(incomeDTO);
-                return result.Success ? Results.Created($"/api/income/{result.Data.IncomeID}", result.Data) : Results.Conflict(result.Message);
+                ApiResponse<Income> result = await incomeService.AddIncomeAsync(incomeDTO);
+                if(result.status != 200)
+                {
+                    return Results.BadRequest(result);
+                }
+                return Results.Ok(result);
             }
             else
             {
-                //Need to verify expenseCategoryID
                 var expenseDTO = new ExpenseDTO
                 {
                     ExpenseCategoryID = IncomeExpenseDTO.CategoryID,
@@ -57,8 +60,8 @@ namespace VehicleKhatabook.EndPoints
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
 
-                var result = await expenseService.AddExpenseAsync(expenseDTO);
-                return result.Success ? Results.Created($"/api/expense/{result.Data.ExpenseID}", result.Data) : Results.Conflict(result.Message);
+                ApiResponse<Expense> result = await expenseService.AddExpenseAsync(expenseDTO);
+                return Results.Ok(result);
             }
         }
         internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType, Guid userId, IIncomeService incomeService, IExpenseService expenseService)
@@ -66,12 +69,12 @@ namespace VehicleKhatabook.EndPoints
             if (transactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
                 var result = await incomeService.GetIncomeAsync(userId);
-                return result.Success ? Results.Ok(result.Data) : Results.Conflict(result.Message);
+                return Results.Ok(result);
             }
             else
             {
                 var result = await expenseService.GetExpenseAsync(userId);
-                return result.Success ? Results.Ok(result.Data) : Results.Conflict(result.Message);
+                return Results.Ok(result);
             }
         }
     }

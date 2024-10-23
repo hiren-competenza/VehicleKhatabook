@@ -7,7 +7,7 @@ namespace VehicleKhatabook.Services.Interfaces
     public interface IFuelTrackingService
     {
         Task<ApiResponse<FuelTracking>> AddFuelTrackingAsync(FuelTrackingDTO fuelTrackingDTO);
-        Task<FuelTracking?> GetFuelTrackingByIdAsync(Guid id);
+        Task<ApiResponse<FuelTracking?>> GetFuelTrackingByIdAsync(Guid id);
         Task<ApiResponse<FuelTracking>> UpdateFuelTrackingAsync(Guid id, FuelTrackingDTO fuelTrackingDTO);
         Task<IEnumerable<FuelTracking>> GetAllFuelTrackingsAsync();
     }

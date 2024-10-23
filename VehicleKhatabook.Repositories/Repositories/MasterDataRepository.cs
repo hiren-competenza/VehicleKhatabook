@@ -28,7 +28,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     Description = ic.Description,
                     IsActive = ic.IsActive,
                 }).ToListAsync();
-            return new ApiResponse<List<IncomeCategory>> { Success = true, Data = incomeCategories };
+            return ApiResponse<List<IncomeCategory>>.SuccessResponse(incomeCategories, "Get Income category successful.");
         }
 
         public async Task<ApiResponse<IncomeCategory>> AddIncomeCategoryAsync(IncomeCategoryDTO categoryDTO)
@@ -44,7 +44,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.IncomeCategories.Add(category);
             await _context.SaveChangesAsync();
-            return new ApiResponse<IncomeCategory> { Success = true, Data = category };
+            return ApiResponse<IncomeCategory>.SuccessResponse(category , "Income category added successful.");
         }
 
         public async Task<ApiResponse<IncomeCategory>> UpdateIncomeCategoryAsync(int id, IncomeCategoryDTO categoryDTO)
@@ -52,7 +52,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             var category = await _context.IncomeCategories.FindAsync(id);
             if (category == null)
             {
-                return new ApiResponse<IncomeCategory> { Success = false, Message = "Income category not found" };
+                return ApiResponse<IncomeCategory>.FailureResponse("Income category not found.");
             }
 
             category.Name = categoryDTO.Name;
@@ -63,7 +63,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.IncomeCategories.Update(category);
             await _context.SaveChangesAsync();
-            return new ApiResponse<IncomeCategory> { Success = true, Data = category };
+            return ApiResponse<IncomeCategory>.SuccessResponse(category, "Income category update successfull.");
         }
 
         public async Task<ApiResponse<bool>> DeleteIncomeCategoryAsync(int id)
@@ -71,12 +71,12 @@ namespace VehicleKhatabook.Repositories.Repositories
             var category = await _context.IncomeCategories.FindAsync(id);
             if (category == null)
             {
-                return new ApiResponse<bool> { Success = false, Message = "Income category not found" };
+                return ApiResponse<bool>.FailureResponse("Income category not found.");
             }
             category.IsActive = false;
             _context.IncomeCategories.Update(category);
             await _context.SaveChangesAsync();
-            return new ApiResponse<bool> { Success = true, Data = true };
+            return ApiResponse<bool>.SuccessResponse(true, "Income category inactive successfull.");
         }
 
         public async Task<ApiResponse<List<ExpenseCategory>>> GetExpenseCategoriesAsync(int userTypeId)
@@ -91,7 +91,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     Description = ec.Description,
                     IsActive = ec.IsActive,
                 }).ToListAsync();
-            return new ApiResponse<List<ExpenseCategory>> { Success = true, Data = expenseCategories };
+            return ApiResponse<List<ExpenseCategory>>.SuccessResponse(expenseCategories, "Get Expense category successful.");
         }
 
         public async Task<ApiResponse<ExpenseCategory>> AddExpenseCategoryAsync(ExpenseCategoryDTO categoryDTO)
@@ -107,7 +107,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.ExpenseCategories.Add(category);
             await _context.SaveChangesAsync();
-            return new ApiResponse<ExpenseCategory> { Success = true, Data = category };
+            return ApiResponse<ExpenseCategory>.SuccessResponse(category , "New Expense category added successfull.");
         }
 
         public async Task<ApiResponse<ExpenseCategory>> UpdateExpenseCategoryAsync(int id, ExpenseCategoryDTO categoryDTO)
@@ -115,7 +115,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             var category = await _context.ExpenseCategories.FindAsync(id);
             if (category == null)
             {
-                return new ApiResponse<ExpenseCategory> { Success = false, Message = "Expense category not found" };
+                return ApiResponse<ExpenseCategory>.FailureResponse("Expense category not found");
             }
 
             category.Name = categoryDTO.Name;
@@ -125,7 +125,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             category.IsActive = categoryDTO.IsActive;
             _context.ExpenseCategories.Update(category);
             await _context.SaveChangesAsync();
-            return new ApiResponse<ExpenseCategory> { Success = true, Data = category };
+            return ApiResponse<ExpenseCategory>.SuccessResponse(category, "Expense category update successfull.");
         }
 
         public async Task<ApiResponse<bool>> DeleteExpenseCategoryAsync(int id)
@@ -133,35 +133,35 @@ namespace VehicleKhatabook.Repositories.Repositories
             var category = await _context.ExpenseCategories.FindAsync(id);
             if (category == null)
             {
-                return new ApiResponse<bool> { Success = false, Message = "Expense category not found" };
+                return ApiResponse<bool>.FailureResponse("Expense category not found");
             }
             category.IsActive = false;
             _context.ExpenseCategories.Update(category);
             await _context.SaveChangesAsync();
-            return new ApiResponse<bool> { Success = true, Data = true };
+            return ApiResponse<bool>.SuccessResponse(true, "Expense category inactive successfull.");
         }
         public async Task<ApiResponse<VechileType>> AddVehicleTypeAsync(VechileType vechileType)
         {
             var vehicleType = new VechileType
             {
                 TypeName = vechileType.TypeName,
-                IsActive = true
+                IsActive = true,
             };
 
             await _context.AddAsync(vehicleType);
             await _context.SaveChangesAsync();
 
-            return new ApiResponse<VechileType>
-            {
-                Success = true,
-                Message = "Vehicle type added successfully.",
-                Data = new VechileType
-                {
-                    VehicleTypeId = vehicleType.VehicleTypeId,
-                    TypeName = vehicleType.TypeName,
-                    IsActive = vechileType.IsActive
-                }
-            };
+            return ApiResponse<VechileType>.SuccessResponse(vehicleType, "Vehicle type added successfully.");
+            //{
+            //    Success = true,
+            //    Message = "Vehicle type added successfully.",
+            //    Data = new VechileType
+            //    {
+            //        VehicleTypeId = vehicleType.VehicleTypeId,
+            //        TypeName = vehicleType.TypeName,
+            //        IsActive = vechileType.IsActive
+            //    }
+            //};
         }
 
 
@@ -171,11 +171,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             if (vehicleType == null)
             {
-                return new ApiResponse<VechileType>
-                {
-                    Success = false,
-                    Message = "Vehicle type not found."
-                };
+                return ApiResponse<VechileType>.FailureResponse("Vehicle type not found.");
             }
 
             vehicleType.TypeName = vehicleTypeDTO.TypeName;
@@ -183,24 +179,27 @@ namespace VehicleKhatabook.Repositories.Repositories
              _context.Update(vehicleType);
             await _context.SaveChangesAsync();
 
-            return new ApiResponse<VechileType>
-            {
-                Success = true,
-                Message = "Vehicle type updated successfully.",
-                Data = new VechileType
-                {
-                    VehicleTypeId = vehicleType.VehicleTypeId,
-                    TypeName = vehicleType.TypeName
-                }
-            };
+
+            return ApiResponse<VechileType>.SuccessResponse(vehicleType, "Vehicle type updated successfully.");
+            //{
+            //    Success = true,
+            //    Message = "Vehicle type updated successfully.",
+            //    Data = new VechileType
+            //    {
+            //        VehicleTypeId = vehicleType.VehicleTypeId,
+            //        TypeName = vehicleType.TypeName
+            //    }
+            //};
         }
-        public async Task<List<VechileType>> GetAllVehicleTypesAsync()
+        public async Task<ApiResponse<List<VechileType>>> GetAllVehicleTypesAsync()
         {
-            return await _context.VehicleTypes.ToListAsync();
+            var result = await _context.VehicleTypes.ToListAsync();
+            return ApiResponse<List<VechileType>>.SuccessResponse(result);
         }
-        public async Task<List<Country>> GetCountryAsync()
+        public async Task<ApiResponse<List<Country>>> GetCountryAsync()
         {
-            return await _context.Countries.ToListAsync();
+            var result = await _context.Countries.ToListAsync();
+            return ApiResponse<List<Country>>.SuccessResponse(result);
         }
     }
 }

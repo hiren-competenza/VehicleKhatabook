@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using VehicleKhatabook.Infrastructure;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Models.Filters;
 using VehicleKhatabook.Repositories.Interfaces;
@@ -7,7 +8,7 @@ using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 using VehicleKhatabook.Services.Services;
 
-namespace VehicleKhatabook.EndPoints
+namespace VehicleKhatabook.EndPoints.User
 {
     public class UserEndPoint : IEndpointDefinition
     {
@@ -19,7 +20,7 @@ namespace VehicleKhatabook.EndPoints
             //userRoute.MapPut("/{id:guid}", UpdateUser);
             //userRoute.MapDelete("/{id:guid}", DeleteUser);
             //userRoute.MapGet("/", GetAllUsers);
-            userRoute.MapPost("/Login",Login);
+            userRoute.MapPost("/Login", Login);
             userRoute.MapPost("/api/auth/forgot-password", ForgotMpin);
             userRoute.MapPost("/api/auth/reset-mpin", ResetMpin);
             userRoute.MapGet("/api/GetExpenseIncomeCategoriesById", GetExpenseIncomeCategoriesAsync);
@@ -36,8 +37,7 @@ namespace VehicleKhatabook.EndPoints
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddValidatorsFromAssemblyContaining<AddUserValidator>();
-            services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IOTPService, OTPService>();
+            services.AddScoped<IOtpRepository, OtpRepository>();
         }
 
         internal async Task<IResult> UserSignup(UserDTO userDTO, IUserService userService)
@@ -71,11 +71,10 @@ namespace VehicleKhatabook.EndPoints
         }
         internal async Task<IResult> Login(UserLoginDTO userLoginDTO, IAuthService authService)
         {
-            UserDetailsDTO result = await authService.AuthenticateUser(userLoginDTO);
-
-            if (result != null)
+            ApiResponse<UserDetailsDTO> result = await authService.AuthenticateUser(userLoginDTO);
+            if (result.Data != null && result.status == 200)
             {
-                string token = authService.GenerateToken(result);
+                string token = authService.GenerateToken(result.Data);
 
                 return Results.Ok(new
                 {
@@ -87,7 +86,7 @@ namespace VehicleKhatabook.EndPoints
         }
         private async Task<IResult> ForgotMpin(ForgotMpinDTO dto, IAuthService authService)
         {
-            var result = await authService.SendForgotMpinEmailAsync(dto.Email);
+            var result = await authService.SendForgotMpinAsync(dto.MobileNumber);
             if (result)
             {
                 return Results.Ok("OTP sent successfully to reset mPIN.");
@@ -106,13 +105,13 @@ namespace VehicleKhatabook.EndPoints
         }
         private async Task<IResult> GetExpenseIncomeCategoriesAsync(IMasterDataService masterDataService, int userTypeId, bool active = true)
         {
-            var incomeCategories =  await masterDataService.GetIncomeCategoriesAsync(userTypeId);
+            var incomeCategories = await masterDataService.GetIncomeCategoriesAsync(userTypeId);
             var expenseCategories = await masterDataService.GetExpenseCategoriesAsync(userTypeId);
 
             var response = new
             {
                 IncomeCategory = incomeCategories,
-                ExpenseCategory = expenseCategories 
+                ExpenseCategory = expenseCategories
             };
             //var jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
 
@@ -124,11 +123,7 @@ namespace VehicleKhatabook.EndPoints
                 return Results.BadRequest("Driver details are invalid");
 
             var result = await userService.AddDriverAsync(userDTO);
-            if (result != null)
-            {
-                return Results.Created($"/api/driver/{result.Data.UserID}", result);
-            }
-            return Results.Conflict("Unable to create driver");
+            return Results.Ok(result);
         }
 
         internal async Task<IResult> GetDriverDetailsByUserId(Guid id, IUserService userService)
@@ -139,7 +134,7 @@ namespace VehicleKhatabook.EndPoints
             }
 
             var driver = await userService.GetDriverByIdAsync(id);
-            return driver != null ? Results.Ok(driver) : Results.NotFound("Driver not found.");
+            return Results.Ok(driver);
         }
 
         internal async Task<IResult> UpdateDriver(Guid id, UserDTO userDTO, IUserService userService)
@@ -154,14 +149,7 @@ namespace VehicleKhatabook.EndPoints
             }
 
             var updateDriver = await userService.UpdateDriverAsync(id, userDTO);
-            if (updateDriver.Success)
-            {
-                return Results.Ok(updateDriver.Data);
-            }
-
-            return updateDriver.Data == null
-                ? Results.NotFound(updateDriver.Message)
-                : Results.Conflict(updateDriver.Message);
+            return Results.Ok(updateDriver);
         }
 
         internal async Task<IResult> DeleteDriver(Guid id, IUserService userService)
@@ -172,7 +160,7 @@ namespace VehicleKhatabook.EndPoints
             }
 
             var result = await userService.DeleteDriverAsync(id);
-            return result.Success ? Results.NoContent() : Results.NotFound(result.Message);
+            return Results.Ok(result);
         }
 
         internal async Task<IResult> GetAllDrivers(IUserService userService)

@@ -4,13 +4,13 @@ using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 using VehicleKhatabook.Services.Services;
 
-namespace VehicleKhatabook.EndPoints
+namespace VehicleKhatabook.EndPoints.User
 {
     public class BackupEndpoint : IEndpointDefinition
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var backups = app.MapGroup("/api/backup").WithTags("Backup & Restore");
+            var backups = app.MapGroup("/api/backup").WithTags("Backup & Restore").RequireAuthorization("OwnerOrDriverPolicy");
 
             backups.MapPost("/", BackupData);
             backups.MapPost("/restore", RestoreData);

@@ -36,7 +36,7 @@ namespace VehicleKhatabook.Services.Services
             return await _fuelTrackingRepository.AddFuelTrackingAsync(fuelTracking);
         }
 
-        public async Task<FuelTracking?> GetFuelTrackingByIdAsync(Guid id)
+        public async Task<ApiResponse<FuelTracking?>> GetFuelTrackingByIdAsync(Guid id)
         {
             return await _fuelTrackingRepository.GetFuelTrackingByIdAsync(id);
         }
