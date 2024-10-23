@@ -25,13 +25,9 @@ namespace VehicleKhatabook.Services.Services
             return await _userRepository.GetUserByIdAsync(id);
         }
 
-        public async Task<UserDTO?> UpdateUserAsync(Guid id, UserDTO userDTO)
+        public async Task<ApiResponse<User>> UpdateUserAsync(Guid id, UserDTO userDTO)
         {
-            var user = await _userRepository.GetUserByIdAsync(id);
-            if (user == null) return null;
-
-            await _userRepository.UpdateUserAsync(id, userDTO);
-            return userDTO;
+            return await _userRepository.UpdateUserAsync(id, userDTO);
         }
 
         public async Task<bool> DeleteUserAsync(Guid id)

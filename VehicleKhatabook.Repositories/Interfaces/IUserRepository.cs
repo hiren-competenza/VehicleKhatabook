@@ -8,7 +8,7 @@ namespace VehicleKhatabook.Repositories.Interfaces
     {
         Task<ApiResponse<User>> AddUserAsync(UserDTO userDTO);
         Task<UserDTO?> GetUserByIdAsync(Guid id);
-        Task UpdateUserAsync(Guid id, UserDTO userDTO);
+        Task<ApiResponse<User>> UpdateUserAsync(Guid id, UserDTO userDTO);
         Task<bool> DeleteUserAsync(Guid id);
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
         Task<User> GetUserByMobileNumberAsync(string mobileNumber);
