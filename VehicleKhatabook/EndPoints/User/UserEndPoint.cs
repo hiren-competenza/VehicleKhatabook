@@ -31,6 +31,8 @@ namespace VehicleKhatabook.EndPoints.User
             userRoute.MapDelete("/DeleteDriver", DeleteDriver);
             userRoute.MapGet("/GetAllDrivers", GetAllDrivers);
             userRoute.MapGet("/api/GetAllCountry", GetCountryAsync);
+
+            userRoute.MapGet("/GetAllSMSProvider", GetAllSMSProviders);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -175,6 +177,18 @@ namespace VehicleKhatabook.EndPoints.User
         {
             var countries = await masterDataService.GetCountryAsync();
             return Results.Ok(countries);
+        }
+        internal async Task<IResult> GetAllSMSProviders(ISMSProviderService sMSProviderService)
+        {
+            var allProviders = await sMSProviderService.GetAllSMSProvidersAsync();
+
+            var activeProvider = allProviders.Data?.FirstOrDefault(provider => provider.IsActive);
+
+            var result = ApiResponse<List<SMSProviderDTO>>.SuccessResponse(activeProvider != null
+                ? new List<SMSProviderDTO> { activeProvider }
+                : new List<SMSProviderDTO>());
+
+            return Results.Ok(result);
         }
     }
 }
