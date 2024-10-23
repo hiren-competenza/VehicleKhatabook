@@ -48,6 +48,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("OwnerPolicy", policy => policy.RequireRole("owner"));
     options.AddPolicy("DriverPolicy", policy => policy.RequireRole("driver"));
     options.AddPolicy("OwnerOrDriverPolicy", policy => policy.RequireRole("owner", "driver"));
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("admin"));
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

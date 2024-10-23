@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VehicleKhatabook.Entities.Models
 {
@@ -31,8 +32,15 @@ namespace VehicleKhatabook.Entities.Models
         public bool IsPremiumUser { get; set; }
         public string? State { get; set; }
         public string? District { get; set; }
-        public string? Language { get; set; }
+
+        //public int LanguageTypeId { get; set; } 
+
+        [ForeignKey("LanguageTypeId")] 
+        public LanguageType? LanguageType { get; set; }
+        public int? LanguageTypeId { get; set; }
 
         public bool IsActive { get; set; }
+        public virtual ICollection<SMSProviderConfig> CreatedSMSProviderConfigs { get; set; }
+        public virtual ICollection<SMSProviderConfig> ModifiedSMSProviderConfigs { get; set; }
     }
 }

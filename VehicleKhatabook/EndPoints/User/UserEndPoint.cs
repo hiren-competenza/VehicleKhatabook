@@ -17,7 +17,7 @@ namespace VehicleKhatabook.EndPoints.User
             var userRoute = app.MapGroup("api/user").WithTags("User Registration and Authentication");
             userRoute.MapPost("/v1/register", UserSignup).AddEndpointFilter<ValidationFilter<UserDTO>>();
             //userRoute.MapGet("/{id:guid}", GetUserById);
-            //userRoute.MapPut("/{id:guid}", UpdateUser);
+            userRoute.MapPut("/UpdateUser", UpdateUser);
             //userRoute.MapDelete("/{id:guid}", DeleteUser);
             //userRoute.MapGet("/", GetAllUsers);
             userRoute.MapPost("/Login", Login);
@@ -30,6 +30,7 @@ namespace VehicleKhatabook.EndPoints.User
             userRoute.MapPut("/UpdateDriver", UpdateDriver);
             userRoute.MapDelete("/DeleteDriver", DeleteDriver);
             userRoute.MapGet("/GetAllDrivers", GetAllDrivers);
+            userRoute.MapGet("/api/GetAllCountry", GetCountryAsync);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -38,6 +39,8 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddScoped<IAuthService, AuthService>();
             services.AddValidatorsFromAssemblyContaining<AddUserValidator>();
             services.AddScoped<IOtpRepository, OtpRepository>();
+            services.AddScoped<IMasterDataService, MasterDataService>();
+            services.AddScoped<IMasterDataRepository, MasterDataRepository>();
         }
 
         internal async Task<IResult> UserSignup(UserDTO userDTO, IUserService userService)
@@ -55,7 +58,7 @@ namespace VehicleKhatabook.EndPoints.User
         internal async Task<IResult> UpdateUser(Guid id, UserDTO userDTO, IUserService userService)
         {
             var result = await userService.UpdateUserAsync(id, userDTO);
-            return result != null ? Results.Ok(result) : Results.NotFound();
+            return Results.Ok(result);
         }
 
         internal async Task<IResult> DeleteUser(Guid id, IUserService userService)
@@ -167,6 +170,11 @@ namespace VehicleKhatabook.EndPoints.User
         {
             var drivers = await userService.GetAllDriversAsync();
             return Results.Ok(drivers);
+        }
+        internal async Task<IResult> GetCountryAsync(IMasterDataService masterDataService)
+        {
+            var countries = await masterDataService.GetCountryAsync();
+            return Results.Ok(countries);
         }
     }
 }

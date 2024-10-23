@@ -12,8 +12,8 @@ namespace VehicleKhatabook.Models.DTOs
         public string Role { get; set; }
         public bool IsPremiumUser { get; set; }
         public string State { get; set; }
-        public string District { get; set; } //On UI from API side or else?
-        public string Language { get; set; } //On UI from API side or else?
+        public string District { get; set; }
+        public int? languageTypeId { get; set; }
         public bool IsActive { get; set; }
         public string? mPIN { get; set; }
         public Guid UserId { get; set; }

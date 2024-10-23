@@ -22,6 +22,9 @@ namespace VehicleKhatabook.Entities
         public DbSet<ScreenContent> ScreenContents { get; set; }
         public DbSet<VechileType> VehicleTypes { get; set; }
         public DbSet<Country> Countries { get; set; }
+        public DbSet<LanguageType> LanguageTypes {  get; set; }
+        public DbSet<AdminUser> AdminUsers { get; set; }
+        public DbSet<SMSProviderConfig> SMSProviderConfigs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +41,31 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<ScreenContent>().HasKey(sc => sc.ScreenContentID);
             modelBuilder.Entity<VechileType>().HasKey(v => v.VehicleTypeId);
             modelBuilder.Entity<OtpRequest>().HasKey(o => o.OtpRequestId);
+            modelBuilder.Entity<LanguageType>().HasKey(v => v.LanguageTypeId);
+            modelBuilder.Entity<AdminUser>().HasKey(v => v.AdminID);
+            modelBuilder.Entity<SMSProviderConfig>().HasKey(s => s.ProviderID);
+
+            //modelBuilder.Entity<SMSProviderConfig>()
+            //    .HasOne(s => s.CreatedByUser)
+            //    .WithMany()
+            //    .HasForeignKey(s => s.CreatedBy);
+
+            //modelBuilder.Entity<SMSProviderConfig>()
+            //    .HasOne(s => s.ModifiedByUser)
+            //    .WithMany()
+            //    .HasForeignKey(s => s.ModifiedBy);
+
+            modelBuilder.Entity<AdminUser>()
+                .HasOne(s => s.CreatedByAdmin)
+                .WithMany()
+                .HasForeignKey(s => s.CreatedBy)
+                .HasForeignKey(s => s.ModifiedBy);
+
+            modelBuilder.Entity<User>()
+                .HasOne(s => s.LanguageType)
+                .WithMany()
+                .HasForeignKey(s => s.LanguageTypeId);
+
             modelBuilder.Entity<Subscription>()
                 .HasOne(s => s.User)
                 .WithMany()

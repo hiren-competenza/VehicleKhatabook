@@ -75,6 +75,5 @@ namespace VehicleKhatabook.EndPoints.User
             var vehicles = await vehicleService.GetAllVehiclesAsync(userId);
             return Results.Ok(vehicles);
         }
-
     }
 }
