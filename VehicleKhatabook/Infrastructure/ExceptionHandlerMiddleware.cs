@@ -1,5 +1,7 @@
 ﻿using log4net;
 using System.Net;
+using VehicleKhatabook.Entities.Models;
+using VehicleKhatabook.Models.Common;
 
 namespace VehicleKhatabook.Infrastructure
 {
@@ -34,7 +36,10 @@ namespace VehicleKhatabook.Infrastructure
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            return context.Response.WriteAsync("Something went worng.");
+            context.Response.ContentType = "application/json";
+            var errorResponse = ApiResponse<object>.FailureResponse500($"An error occurred: {exception.Message}");
+            var errorJson = System.Text.Json.JsonSerializer.Serialize(errorResponse);
+            return context.Response.WriteAsync(errorJson);
         }
     }
 }

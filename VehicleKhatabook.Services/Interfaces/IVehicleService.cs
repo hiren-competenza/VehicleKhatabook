@@ -6,10 +6,10 @@ namespace VehicleKhatabook.Services.Interfaces
 {
     public interface IVehicleService
     {
-        Task<Vehicle> AddVehicleAsync(VehicleDTO vehicleDTO);
+        Task<ApiResponse<Vehicle>> AddVehicleAsync(VehicleDTO vehicleDTO);
         Task<ApiResponse<List<Vehicle>>> GetVehicleByIdAsync(Guid id);
-        Task<IEnumerable<Vehicle>> GetAllVehiclesAsync(Guid userId);
+        Task<ApiResponse<List<Vehicle>>> GetAllVehiclesAsync(Guid userId);
         Task<ApiResponse<Vehicle>> UpdateVehicleAsync(Guid id, VehicleDTO vehicleDTO);
-        Task<bool> DeleteVehicleAsync(Guid id);
+        Task<ApiResponse<bool>> DeleteVehicleAsync(Guid id);
     }
 }

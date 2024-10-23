@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using VehicleKhatabook.Entities.Models;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Services.Interfaces;
@@ -13,16 +14,14 @@ namespace VehicleKhatabook.Services.Services
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IEmailService _emailService;
-        private readonly IOTPService _otpService;
         private readonly IConfiguration _configuration;
+        private readonly IOtpRepository _otpRepository;
 
-        public AuthService(IUserRepository userRepository, IEmailService emailService, IOTPService otpService, IConfiguration configuration)
+        public AuthService(IUserRepository userRepository, IConfiguration configuration, IOtpRepository otpRepository)
         {
             _userRepository = userRepository;
-            _emailService = emailService;
-            _otpService = otpService;
             _configuration = configuration;
+            _otpRepository = otpRepository;
         }
 
         public string GenerateToken(UserDetailsDTO userDetailsDTO)
@@ -31,6 +30,7 @@ namespace VehicleKhatabook.Services.Services
         {
             new Claim(JwtRegisteredClaimNames.Sub, userDetailsDTO.UserId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, userDetailsDTO.Email),
+            new Claim("role", userDetailsDTO.RoleName.ToLower().ToString()),
             new Claim("firstname", userDetailsDTO.FirstName),
             new Claim("lastname", userDetailsDTO.LastName),
         };
@@ -50,27 +50,35 @@ namespace VehicleKhatabook.Services.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLoginDTO)
+        public async Task<ApiResponse<UserDetailsDTO>> AuthenticateUser(UserLoginDTO userLoginDTO)
         {
             return await _userRepository.AuthenticateUser(userLoginDTO);
         }
-        public async Task<bool> SendForgotMpinEmailAsync(string email)
+        public async Task<bool> SendForgotMpinAsync(string mobileNumber)
         {
-            var user = await _userRepository.GetUserByEmailAsync(email);
+            var user = await _userRepository.GetUserByMobileNumberAsync(mobileNumber);
             if (user != null)
             {
-                var otp = _otpService.GenerateOTP();
-                await _otpService.SaveOTPForUser(user.UserID, otp);
-                await _emailService.SendOtpEmailAsync(email, otp);
+                var otp = GenerateOTP();
+                OtpRequest otpRequest = new OtpRequest
+                {
+                    UserID = user.UserID,
+                    OtpCode = otp,
+                    MobileNumber = mobileNumber,
+                    ExpirationTime = DateTime.UtcNow.AddMinutes(10)
+                };
+                await _otpRepository.SaveOtpAsync(otpRequest);
+                await _otpRepository.SendOtpAsync(mobileNumber, otp);
                 return true;
             }
             return false;
         }
-            
+
         public async Task<bool> ResetMpinAsync(ResetMpinDTO resetMpinDTO)
         {
             var user = await _userRepository.GetUserByIdAsync(resetMpinDTO.UserId);
-            if (user != null && _otpService.ValidateOTP(resetMpinDTO.UserId, resetMpinDTO.OTP))
+            bool isValid = await VerifyOtp(resetMpinDTO.UserId, resetMpinDTO.OTP);
+            if (user != null && isValid)
             {   
                 user.mPIN = resetMpinDTO.NewMpin;
                 await _userRepository.UpdateUserAsync(resetMpinDTO.UserId, user);
@@ -78,10 +86,24 @@ namespace VehicleKhatabook.Services.Services
             }
             return false;
         }
-
-        private string HashMpin(string mpin)
+        
+        public async Task<bool> VerifyOtp(Guid userId, string otpCode)
         {
-            return BCrypt.Net.BCrypt.HashPassword(mpin);
+            var otpRequest = await _otpRepository.GetOtpByUserIdAndCodeAsync(userId, otpCode);
+            if (otpRequest == null || otpRequest.ExpirationTime < DateTime.UtcNow || otpRequest.IsVerified)
+            {
+                return false;
+            }
+
+            otpRequest.IsVerified = true;
+            await _otpRepository.UpdateOtpAsync(otpRequest);
+            return true;
+        }
+
+        public string GenerateOTP()
+        {
+            var random = new Random();
+            return random.Next(100000, 999999).ToString();
         }
     }
 }

@@ -19,24 +19,23 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             _context.FuelTrackings.Add(fuelTracking);
             await _context.SaveChangesAsync();
-            return new ApiResponse<FuelTracking> { Success = true, Data = fuelTracking };
+            return ApiResponse<FuelTracking>.SuccessResponse(fuelTracking, "Added Successfull");
         }
 
-        public async Task<FuelTracking?> GetFuelTrackingByIdAsync(Guid id)
+        public async Task<ApiResponse<FuelTracking?>> GetFuelTrackingByIdAsync(Guid id)
         {
-            return await _context.FuelTrackings.FindAsync(id);
+            var result = await _context.FuelTrackings.FindAsync(id);
+            return ApiResponse<FuelTracking?>.SuccessResponse(result);
         }
 
         public async Task<ApiResponse<FuelTracking>> UpdateFuelTrackingAsync(Guid id, FuelTracking fuelTracking)
         {
             var existingLog = await _context.FuelTrackings.FindAsync(id);
             if (existingLog == null)
-                return new ApiResponse<FuelTracking> { Success = false, Message = "Fuel log not found" };
-
-            // Update properties here and recalculate mileage
+                return ApiResponse<FuelTracking>.FailureResponse("Fuel log not found/Not Updated");
 
             await _context.SaveChangesAsync();
-            return new ApiResponse<FuelTracking> { Success = true, Data = existingLog };
+            return ApiResponse<FuelTracking>.SuccessResponse(existingLog);
         }
 
         public async Task<IEnumerable<FuelTracking>> GetAllFuelTrackingsAsync()

@@ -17,7 +17,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task AddUserAsync(UserDTO userDTO)
+        public async Task<ApiResponse<User>> AddUserAsync(UserDTO userDTO)
         {
             var userReferCode = GenerateReferCode();
             var user = new User
@@ -43,6 +43,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
+            return ApiResponse<User>.SuccessResponse(user, "User Added successfull");
         }
 
         public async Task<UserDTO?> GetUserByIdAsync(Guid id)
@@ -75,7 +76,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             user.FirstName = userDTO.FirstName;
             user.LastName = userDTO.LastName;
             user.MobileNumber = userDTO.MobileNumber;
-            //user.mPIN = userDTO.mPIN;
+            user.mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN);
             //user.Role = userDTO.Role;
             //user.IsPremiumUser = userDTO.IsPremiumUser;
             user.State = userDTO.State;
@@ -119,32 +120,27 @@ namespace VehicleKhatabook.Repositories.Repositories
                 IsActive = user.IsActive
             });
         }
-        public async Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLogin)
+        public async Task<ApiResponse<UserDetailsDTO>> AuthenticateUser(UserLoginDTO userLogin)
         {
-            try
-            {
-                var userDetailsDTO = await _dbContext.Users
-                  .Where(u => u.MobileNumber == userLogin.MobileNumber && u.IsActive).FirstOrDefaultAsync();
+            var user = await _dbContext.Users
+              .Where(u => u.MobileNumber == userLogin.MobileNumber && u.IsActive).FirstOrDefaultAsync();
 
-                if (userDetailsDTO != null && BCrypt.Net.BCrypt.Verify(userLogin.mPIN, userDetailsDTO.mPIN))
-                {
-                    return new UserDetailsDTO
-                    {
-                        UserId = userDetailsDTO.UserID,
-                        FirstName = userDetailsDTO.FirstName,
-                        LastName = userDetailsDTO.LastName,
-                        MobileNumber = userDetailsDTO.MobileNumber,
-                        Email = userDetailsDTO.Email,
-                        RoleId = userDetailsDTO.UserTypeId,
-                        //SessionId = Guid.NewGuid() // Generating a new session ID
-                    };
-                }
-                return null;
-            }
-            catch (Exception ex)
+            if (user != null && BCrypt.Net.BCrypt.Verify(userLogin.mPIN, user.mPIN))
             {
-                throw new NotImplementedException(ex.Message);
+                var userDetailsDTO = new UserDetailsDTO
+                {
+                    UserId = user.UserID,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    MobileNumber = user.MobileNumber,
+                    Email = user.Email,
+                    RoleId = user.UserTypeId,
+                    RoleName = user.Role
+                };
+
+                return ApiResponse<UserDetailsDTO>.SuccessResponse(userDetailsDTO, "User authenticated successfully.");
             }
+            return ApiResponse<UserDetailsDTO>.FailureResponse("Invalid mobile number or mPIN.");
         }
 
         public async Task<User> GetUserByMobileNumberAsync(string mobileNumber)
@@ -154,10 +150,6 @@ namespace VehicleKhatabook.Repositories.Repositories
         public static string GenerateReferCode()
         {
             return Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
-        }
-        public async Task<User> GetUserByEmailAsync(string email)
-        {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<User> GetUserByIdAsync(int id)
@@ -188,28 +180,29 @@ namespace VehicleKhatabook.Repositories.Repositories
             await _dbContext.Users.AddAsync(driver);
             await _dbContext.SaveChangesAsync();
 
-            return new ApiResponse<User>
-            {
-                Success = true,
-                Data = driver
-            };
+            return ApiResponse<User>.SuccessResponse(driver, "New Driver added successfully.");
+            //{
+            //    Success = true,
+            //    Data = driver
+            //};
         }
 
-        public async Task<User?> GetDriverByIdAsync(Guid id)
+        public async Task<ApiResponse<User?>> GetDriverByIdAsync(Guid id)
         {
-            return await _dbContext.Users.FindAsync(id);
+            var user = await _dbContext.Users.FindAsync(id);
+            return user != null ? ApiResponse<User?>.SuccessResponse(user, "User found successfully") : ApiResponse<User?>.FailureResponse("Failed to load.") ;
         }
 
         public async Task<ApiResponse<User>> UpdateDriverAsync(Guid id, UserDTO userDTO)
         {
-            var driver = await GetDriverByIdAsync(id);
+            var driver = await _dbContext.Users.FindAsync(id);
             if (driver == null)
             {
-                return new ApiResponse<User>
-                {
-                    Success = false,
-                    Message = "Driver not found."
-                };
+                return ApiResponse<User>.FailureResponse("Driver not found.");
+                //{
+                //    Success = false,
+                //    Message = "Driver not found."
+                //};
             }
 
             driver.FirstName = userDTO.FirstName;
@@ -229,39 +222,43 @@ namespace VehicleKhatabook.Repositories.Repositories
             _dbContext.Users.Update(driver);
             await _dbContext.SaveChangesAsync();
 
-            return new ApiResponse<User>
-            {
-                Success = true,
-                Data = driver
-            };
+            return ApiResponse<User>.SuccessResponse(driver, "driver details update successfull");
+            //{
+            //    Success = true,
+            //    Data = driver
+            //};
         }
 
         public async Task<ApiResponse<bool>> DeleteDriverAsync(Guid id)
         {
-            var driver = await GetDriverByIdAsync(id);
+            var driver = await _dbContext.Users.FindAsync(id); ;
             if (driver == null)
             {
-                return new ApiResponse<bool>
-                {
-                    Success = false,
-                    Message = "Driver not found."
-                };
-            }
+                return ApiResponse<bool>.FailureResponse("Driver not found.");
+            };
             driver.IsActive = false;
             _dbContext.Users.Update(driver);
-            //_dbContext.Users.Remove(driver);
             await _dbContext.SaveChangesAsync();
 
-            return new ApiResponse<bool>
-            {
-                Success = true,
-                Data = true
-            };
+            return ApiResponse<bool>.SuccessResponse(true, "Drver Deactive successful");
         }
 
-        public async Task<IEnumerable<User>> GetAllDriversAsync()
+        public async Task<ApiResponse<List<User>>> GetAllDriversAsync()
         {
-            return await _dbContext.Users.ToListAsync();
+            //var userExists = await _dbContext.Users.AnyAsync(u => u.UserID == userId && u.IsActive == true);
+            //if (!userExists)
+            //{
+            //    return ApiResponse<List<User>>.FailureResponse($"User with ID {userId} does not exist or is inactive.");
+            //}
+            var drivers = await _dbContext.Users
+                                  .Where(u => u.IsActive == true && u.Role.ToLower() == "driver")
+                                  .ToListAsync();
+
+            if (drivers == null || drivers.Count == 0)
+            {
+                return ApiResponse<List<User>>.FailureResponse($"No drivers found for user with ID.");
+            }
+            return ApiResponse<List<User>>.SuccessResponse(drivers, "Drivers retrieved successfully.");
         }
     }
 }

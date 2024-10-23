@@ -4,13 +4,13 @@ using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 using VehicleKhatabook.Services.Services;
 
-namespace VehicleKhatabook.EndPoints
+namespace VehicleKhatabook.EndPoints.User
 {
     public class SubscriptionEndpoint : IEndpointDefinition
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var subscriptionRoute = app.MapGroup("/api/subscription").WithTags("Subscription and Premium Features");
+            var subscriptionRoute = app.MapGroup("/api/subscription").WithTags("Subscription and Premium Features").RequireAuthorization("OwnerOrDriverPolicy");
 
             subscriptionRoute.MapGet("/details", GetSubscriptionDetails);
             subscriptionRoute.MapPost("/upgrade", UpgradeToPremium);

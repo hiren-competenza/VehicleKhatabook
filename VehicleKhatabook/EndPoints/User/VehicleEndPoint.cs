@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Models.Filters;
 using VehicleKhatabook.Repositories.Interfaces;
@@ -8,13 +8,13 @@ using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 using VehicleKhatabook.Services.Services;
 
-namespace VehicleKhatabook.EndPoints
+namespace VehicleKhatabook.EndPoints.User
 {
     public class VehicleEndPoint : IEndpointDefinition
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var vehileRoute = app.MapGroup("/api/vehicle").WithTags("Vehicle Management");
+            var vehileRoute = app.MapGroup("/api/vehicle").WithTags("Vehicle Management").RequireAuthorization("OwnerOrDriverPolicy");
             vehileRoute.MapPost("/Add", AddVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
             vehileRoute.MapGet("/{id}", GetVehicleByVehicleIdAsync);
             vehileRoute.MapPut("/{id}", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
@@ -34,11 +34,7 @@ namespace VehicleKhatabook.EndPoints
                 return Results.BadRequest("Vehicle details are invalid");
 
             var result = await vehicleService.AddVehicleAsync(vehicleDTO);
-            if (result != null)
-            {
-                return Results.Created($"/api/vehicle/{result.VehicleID}", result);
-            }
-            return Results.Conflict("Unable to create Vechile");
+           return Results.Ok(result);
         }
         internal async Task<IResult> GetVehicleByVehicleIdAsync(Guid id, IVehicleService vehicleService)
         {
@@ -47,7 +43,7 @@ namespace VehicleKhatabook.EndPoints
                 return Results.BadRequest("The provided vehicle ID is invalid. Please provide a valid ID.");
             }
             var vehicle = await vehicleService.GetVehicleByIdAsync(id);
-            return vehicle != null ? Results.Ok(vehicle) : Results.NotFound("No vehicle found with the provided ID.");
+            return Results.Ok(vehicle);
         }
 
         internal async Task<IResult> UpdateVehicle(Guid id, VehicleDTO vehicleDTO, IVehicleService vehicleService)
@@ -61,14 +57,7 @@ namespace VehicleKhatabook.EndPoints
                 return Results.BadRequest("Invalid request Body");
             }
             var updateVehicle = await vehicleService.UpdateVehicleAsync(id, vehicleDTO);
-
-            if (updateVehicle.Success)
-            {
-                return Results.Ok(updateVehicle.Data);
-            }
-            return updateVehicle.Data == null
-            ? Results.NotFound(updateVehicle.Message)
-            : Results.Conflict(updateVehicle.Message);
+            return Results.Ok(updateVehicle);
         }
 
         internal async Task<IResult> DeleteVehicle(Guid id, IVehicleService vehicleService)
@@ -77,12 +66,8 @@ namespace VehicleKhatabook.EndPoints
             {
                 return Results.BadRequest("Invalid Id.");
             }
-                var success = await vehicleService.DeleteVehicleAsync(id);
-            if (success)
-            {
-                return Results.Ok("Vechie deleted successfully.");
-            }
-            return Results.NotFound();
+            var success = await vehicleService.DeleteVehicleAsync(id);
+            return Results.Ok(success);
         }
 
         internal async Task<IResult> GetAllVehicles(Guid userId, IVehicleService vehicleService)

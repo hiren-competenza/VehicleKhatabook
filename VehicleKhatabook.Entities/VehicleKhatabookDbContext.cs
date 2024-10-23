@@ -7,12 +7,13 @@ namespace VehicleKhatabook.Entities
     {
         public VehicleKhatabookDbContext(DbContextOptions<VehicleKhatabookDbContext> options) : base(options) { }
 
+        public DbSet<OtpRequest> OtpRequests { get; set; }
         public DbSet<LanguagePreference> LanguagePreferences { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<IncomeCategory> IncomeCategories { get; set; }
-        public DbSet<ExpenseCategory> ExpenseCategories { get; set; }   
+        public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
         public DbSet<Income> Incomes { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<FuelTracking> FuelTrackings { get; set; }
@@ -36,6 +37,7 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<Backup>().HasKey(b => b.BackupID);
             modelBuilder.Entity<ScreenContent>().HasKey(sc => sc.ScreenContentID);
             modelBuilder.Entity<VechileType>().HasKey(v => v.VehicleTypeId);
+            modelBuilder.Entity<OtpRequest>().HasKey(o => o.OtpRequestId);
             modelBuilder.Entity<Subscription>()
                 .HasOne(s => s.User)
                 .WithMany()
@@ -84,6 +86,11 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<ExpenseCategory>()
                 .HasIndex(e => e.Name)
                 .IsUnique();
+
+            modelBuilder.Entity<OtpRequest>()
+                .HasOne(o => o.User)
+                .WithMany()  
+                .HasForeignKey(o => o.UserID);
 
             base.OnModelCreating(modelBuilder);
         }

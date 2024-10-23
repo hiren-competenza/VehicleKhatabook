@@ -2,7 +2,6 @@
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
-using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 
 namespace VehicleKhatabook.Services.Services
@@ -16,10 +15,9 @@ namespace VehicleKhatabook.Services.Services
             _userRepository = userRepository;
         }
 
-        public async Task<UserDTO> CreateUserAsync(UserDTO userDTO)
+        public async Task<ApiResponse<User>> CreateUserAsync(UserDTO userDTO)
         {
-            await _userRepository.AddUserAsync(userDTO);
-            return userDTO;
+            return await _userRepository.AddUserAsync(userDTO);
         }
 
         public async Task<UserDTO?> GetUserByIdAsync(Guid id)
@@ -50,7 +48,7 @@ namespace VehicleKhatabook.Services.Services
             return await _userRepository.AddDriverAsync(driverDTO);
         }
 
-        public async Task<User?> GetDriverByIdAsync(Guid id)
+        public async Task<ApiResponse<User?>> GetDriverByIdAsync(Guid id)
         {
             return await _userRepository.GetDriverByIdAsync(id);
         }
@@ -65,7 +63,7 @@ namespace VehicleKhatabook.Services.Services
             return await _userRepository.DeleteDriverAsync(id);
         }
 
-        public async Task<IEnumerable<User>> GetAllDriversAsync()
+        public async Task<ApiResponse<List<User>>> GetAllDriversAsync()
         {
             return await _userRepository.GetAllDriversAsync();
         }

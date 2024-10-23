@@ -5,13 +5,13 @@ using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 using VehicleKhatabook.Services.Services;
 
-namespace VehicleKhatabook.EndPoints
+namespace VehicleKhatabook.EndPoints.User
 {
     public class NotificationEndpoint : IEndpointDefinition
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var notifications = app.MapGroup("/api/notifications").WithTags("Notifications & Alerts");
+            var notifications = app.MapGroup("/api/notifications").WithTags("Notifications & Alerts").RequireAuthorization("OwnerOrDriverPolicy");
 
             notifications.MapGet("/", GetAllNotifications);
             notifications.MapPost("/mark-read/{id}", MarkNotificationAsRead);
