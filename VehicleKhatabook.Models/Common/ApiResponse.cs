@@ -21,7 +21,7 @@ namespace VehicleKhatabook.Models.Common
 
         public static ApiResponse<T> FailureResponse(string message)
         {
-            return new ApiResponse<T>(200, message, default);
+            return new ApiResponse<T>(400, message, default);
         }
         public static ApiResponse<T> FailureResponse500(string message)
         {

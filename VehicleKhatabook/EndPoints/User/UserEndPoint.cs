@@ -87,7 +87,7 @@ namespace VehicleKhatabook.EndPoints.User
                     UserDetails = result
                 });
             }
-            return Results.BadRequest("Invalid Login Details");
+            return Results.BadRequest(ApiResponse<UserDetailsDTO>.FailureResponse("Invalid mobile number or mPIN."));
         }
         private async Task<IResult> ForgotMpin(ForgotMpinDTO dto, IAuthService authService)
         {
