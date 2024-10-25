@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using VehicleKhatabook.Models.Common;
 
 namespace VehicleKhatabook.Models.Filters
 {
@@ -23,8 +24,9 @@ namespace VehicleKhatabook.Models.Filters
             var validationResult = await _validator.ValidateAsync(body);
             if (!validationResult.IsValid)
             {
-                var errors = validationResult.Errors.Select(error => error.ErrorMessage).ToArray();
-                return Results.BadRequest(errors);
+                //var errors = validationResult.Errors.Select(error => error.ErrorMessage).ToArray();
+                var errorMessage = string.Join("; ", validationResult.Errors.Select(error => error.ErrorMessage));
+                return Results.BadRequest(ApiResponse<string>.FailureResponse($"Validation failed: {errorMessage}"));
             }
 
             return await next(context);

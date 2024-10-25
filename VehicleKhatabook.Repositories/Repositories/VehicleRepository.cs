@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
-using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 
@@ -11,14 +9,12 @@ namespace VehicleKhatabook.Repositories.Repositories
     public class VehicleRepository : IVehicleRepository
     {
         private readonly VehicleKhatabookDbContext _dbContext;
-        private readonly IConfiguration _configuration;
 
-        public VehicleRepository(VehicleKhatabookDbContext dbContext, IConfiguration configuration)
+        public VehicleRepository(VehicleKhatabookDbContext dbContext)
         {
             _dbContext = dbContext;
-            _configuration = configuration;
         }
-        public async Task<ApiResponse<Vehicle>> AddVehicleAsync(VehicleDTO vehicleDTO)
+        public async Task<Vehicle> AddVehicleAsync(VehicleDTO vehicleDTO)
         {
             var vehicle = new Vehicle
             {
@@ -40,54 +36,47 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _dbContext.Vehicles.Add(vehicle);
             await _dbContext.SaveChangesAsync();
-            return ApiResponse<Vehicle>.SuccessResponse(vehicle, "Vehicle added successful");
+            return vehicle;
         }
-        public async Task<ApiResponse<List<Vehicle>>> GetVehicleByVehicleIdAsync(Guid id)
+        public async Task<List<Vehicle>> GetVehicleByVehicleIdAsync(Guid id)
         {
-            var result = await _dbContext.Vehicles.Where(i => i.VehicleID == id && i.IsActive == true).ToListAsync();
-
-            if (result == null || result.Count == 0)
-            {
-                return ApiResponse<List<Vehicle>>.FailureResponse($"No records found for vechile ID {id}.");
-            }
-
-            return ApiResponse<List<Vehicle>>.SuccessResponse(result, "Vehicle List Get successfull");
+            return await _dbContext.Vehicles.Where(i => i.VehicleID == id && i.IsActive == true).ToListAsync();
         }
 
 
-        public async Task<ApiResponse<List<Vehicle>>> GetAllVehiclesAsync(Guid userId)
+        public async Task<(bool IsUserActive, bool HasVehicles, List<Vehicle>? Vehicles)> GetAllVehiclesAsync(Guid userId)
         {
-            var userExists = await _dbContext.Users.AnyAsync(u => u.UserID == userId && u.IsActive == true);
+            var userExists = await _dbContext.Users.AnyAsync(u => u.UserID == userId && u.IsActive);
 
             if (!userExists)
             {
-                return ApiResponse<List<Vehicle>>.FailureResponse($"User with ID {userId} does not exist or is inactive.");
+                return (false, false, null);
             }
 
             var vehicles = await _dbContext.Vehicles
-                                           .Where(v => v.UserID == userId)
-                                           .ToListAsync();
+                                            .Where(v => v.UserID == userId)
+                                            .ToListAsync();
 
             if (vehicles == null || vehicles.Count == 0)
             {
-                return ApiResponse<List<Vehicle>>.FailureResponse($"No vehicles found for user with ID {userId}.");
+                return (true, false, null);
             }
 
-            return ApiResponse<List<Vehicle>>.SuccessResponse(vehicles, "Vehicles retrieved successfully.");
+            return (true, true, vehicles);
         }
 
-        public async Task<ApiResponse<Vehicle>> UpdateVehicleAsync(Guid id, VehicleDTO vehicleDTO)
+        public async Task<Vehicle> UpdateVehicleAsync(Guid id, VehicleDTO vehicleDTO)
         {
             var userExists = await _dbContext.Users.AnyAsync(u => u.UserID == vehicleDTO.UserId && u.IsActive == true);
             if (!userExists)
             {
-                    return ApiResponse<Vehicle>.FailureResponse($"User with ID {vehicleDTO.UserId} does not exist.");
+                    return null;
             }
 
             var vehicleExist = await _dbContext.Vehicles.FirstOrDefaultAsync(u => u.VehicleID == id && u.IsActive == true);
             if (vehicleExist == null)
             {
-                    return ApiResponse<Vehicle>.FailureResponse($"Vehicle with ID {id} does not exist.");
+                    return null;
             }
 
             vehicleExist.UserID = vehicleDTO.UserId;
@@ -104,8 +93,9 @@ namespace VehicleKhatabook.Repositories.Repositories
             vehicleExist.EngineNumber = vehicleDTO.EngineNumber;
             vehicleExist.IsActive = vehicleDTO.IsActive;
 
+            _dbContext.Vehicles.Update(vehicleExist);
             await _dbContext.SaveChangesAsync();
-            return ApiResponse<Vehicle>.SuccessResponse(vehicleExist, "Vehicle updated successfully.");
+            return vehicleExist;
         }
 
         public async Task<bool> DeleteVehicleAsync(Guid id)
@@ -121,6 +111,5 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             return true;
         }
-
     }
 }

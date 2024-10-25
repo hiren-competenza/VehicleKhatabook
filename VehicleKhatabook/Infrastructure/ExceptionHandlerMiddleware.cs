@@ -37,7 +37,7 @@ namespace VehicleKhatabook.Infrastructure
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
-            var errorResponse = ApiResponse<object>.FailureResponse500($"An error occurred: {exception.Message}");
+            var errorResponse = ApiResponse<object>.FailureResponse500($"Internal Server Error");
             var errorJson = System.Text.Json.JsonSerializer.Serialize(errorResponse);
             return context.Response.WriteAsync(errorJson);
         }

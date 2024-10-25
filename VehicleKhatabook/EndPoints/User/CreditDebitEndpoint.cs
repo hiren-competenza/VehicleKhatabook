@@ -40,12 +40,12 @@ namespace VehicleKhatabook.EndPoints.User
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
 
-                ApiResponse<Income> result = await incomeService.AddIncomeAsync(incomeDTO);
-                if(result.status != 200)
+                Income result = await incomeService.AddIncomeAsync(incomeDTO);
+                if(result == null)
                 {
-                    return Results.BadRequest(result);
+                    return Results.BadRequest(ApiResponse<object>.FailureResponse("failed to add income"));
                 }
-                return Results.Ok(result);
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result,"Income added successful."));
             }
             else
             {
@@ -60,8 +60,11 @@ namespace VehicleKhatabook.EndPoints.User
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
 
-                ApiResponse<Expense> result = await expenseService.AddExpenseAsync(expenseDTO);
-                return Results.Ok(result);
+                Expense result = await expenseService.AddExpenseAsync(expenseDTO);
+                if (result == null)
+                    return Results.BadRequest(ApiResponse<object>.FailureResponse("failed to add expense."));
+
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
             }
         }
         internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType, Guid userId, IIncomeService incomeService, IExpenseService expenseService)
@@ -69,12 +72,18 @@ namespace VehicleKhatabook.EndPoints.User
             if (transactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
                 var result = await incomeService.GetIncomeAsync(userId);
-                return Results.Ok(result);
+                if (result == null)
+                    return Results.BadRequest(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
+
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result));
             }
             else
             {
                 var result = await expenseService.GetExpenseAsync(userId);
-                return Results.Ok(result);
+                if (result == null)
+                    return Results.BadRequest(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
+
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result));
             }
         }
     }

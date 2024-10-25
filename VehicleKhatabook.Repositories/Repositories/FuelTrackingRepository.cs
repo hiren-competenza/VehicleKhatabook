@@ -15,11 +15,11 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context = context;
         }
 
-        public async Task<ApiResponse<FuelTracking>> AddFuelTrackingAsync(FuelTracking fuelTracking)
+        public async Task<FuelTracking> AddFuelTrackingAsync(FuelTracking fuelTracking)
         {
             _context.FuelTrackings.Add(fuelTracking);
             await _context.SaveChangesAsync();
-            return ApiResponse<FuelTracking>.SuccessResponse(fuelTracking, "Added Successfull");
+            return fuelTracking;
         }
 
         public async Task<ApiResponse<FuelTracking?>> GetFuelTrackingByIdAsync(Guid id)

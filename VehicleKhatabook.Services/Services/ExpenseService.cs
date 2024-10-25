@@ -15,7 +15,7 @@ namespace VehicleKhatabook.Services.Services
             _expenseRepository = expenseRepository;
         }
 
-        public async Task<ApiResponse<Expense>> AddExpenseAsync(ExpenseDTO expenseDTO)
+        public async Task<Expense> AddExpenseAsync(ExpenseDTO expenseDTO)
         {
             return await _expenseRepository.AddExpenseAsync(expenseDTO);
         }
@@ -39,7 +39,7 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _expenseRepository.GetAllExpensesAsync();
         }
-        public async Task<ApiResponse<List<Expense>>> GetExpenseAsync(Guid userId)
+        public async Task<List<Expense>> GetExpenseAsync(Guid userId)
         {
             return await _expenseRepository.GetExpenseAsync(userId);
         }

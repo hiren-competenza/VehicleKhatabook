@@ -15,7 +15,7 @@ namespace VehicleKhatabook.Services.Services
             _adminUserRepository = adminUserRepository;
         }
 
-        public async Task<ApiResponse<AdminUser>> RegisterAdminAsync(AdminUserDTO adminUserDTO)
+        public async Task<AdminUser> RegisterAdminAsync(AdminUserDTO adminUserDTO)
         {
             var adminUser = new AdminUser
             {
@@ -34,7 +34,7 @@ namespace VehicleKhatabook.Services.Services
             return await _adminUserRepository.RegisterAdminAsync(adminUser);
         }
 
-        public async Task<ApiResponse<AdminUser>> UpdateAdminAsync(AdminUserDTO adminUserDTO)
+        public async Task<AdminUser> UpdateAdminAsync(AdminUserDTO adminUserDTO)
         {
             var adminUser = new AdminUser
             {
@@ -50,12 +50,12 @@ namespace VehicleKhatabook.Services.Services
             return await _adminUserRepository.UpdateAdminAsync(adminUser);
         }
 
-        public async Task<ApiResponse<IEnumerable<AdminUser>>> GetAllAdminsAsync()
+        public async Task<IEnumerable<AdminUser>> GetAllAdminsAsync()
         {
             return await _adminUserRepository.GetAllAdminsAsync();
         }
 
-        public async Task<ApiResponse<AdminUser>> GetAdminByIdAsync(int adminId)
+        public async Task<AdminUser> GetAdminByIdAsync(int adminId)
         {
             return await _adminUserRepository.GetAdminByIdAsync(adminId);
         }

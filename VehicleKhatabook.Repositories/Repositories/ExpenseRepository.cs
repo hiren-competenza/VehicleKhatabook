@@ -16,7 +16,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context = context;
         }
 
-        public async Task<ApiResponse<Expense>> AddExpenseAsync(ExpenseDTO expenseDTO)
+        public async Task<Expense> AddExpenseAsync(ExpenseDTO expenseDTO)
         {
             var expense = new Expense
             {
@@ -31,9 +31,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
-
-            return ApiResponse<Expense>.SuccessResponse(expense, "Vehicle added successfully.");
-            //return new ApiResponse<Expense> { Success = true, Data = expense };
+            return expense;
         }
 
         public async Task<ApiResponse<Expense>> GetExpenseDetailsAsync(int id)
@@ -80,18 +78,18 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expenses = await _context.Expenses.ToListAsync();
             return expenses != null ? ApiResponse<List<Expense>>.SuccessResponse(expenses) : ApiResponse<List<Expense>>.FailureResponse("Failes to get List");
         }
-        public async Task<ApiResponse<List<Expense>>> GetExpenseAsync(Guid userId)
+        public async Task<List<Expense>> GetExpenseAsync(Guid userId)
         {
             var result = await _context.Expenses
                 .Where(e => e.DriverID == userId)
                 .ToListAsync();
+            return result;
+            //if (result == null || result.Count == 0)
+            //{
+            //    return ApiResponse<List<Expense>>.FailureResponse("User Not Found/Failed to load data");
+            //}
 
-            if (result == null || result.Count == 0)
-            {
-                return ApiResponse<List<Expense>>.FailureResponse("User Not Found/Failed to load data");
-            }
-
-            return ApiResponse<List<Expense>>.SuccessResponse(result);
+            //return ApiResponse<List<Expense>>.SuccessResponse(result);
         }
     }
 }

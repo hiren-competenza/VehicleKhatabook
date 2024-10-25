@@ -50,7 +50,7 @@ namespace VehicleKhatabook.Services.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<ApiResponse<UserDetailsDTO>> AuthenticateUser(UserLoginDTO userLoginDTO)
+        public async Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLoginDTO)
         {
             return await _userRepository.AuthenticateUser(userLoginDTO);
         }

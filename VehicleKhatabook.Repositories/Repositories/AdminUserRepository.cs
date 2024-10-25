@@ -15,19 +15,19 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context = context;
         }
 
-        public async Task<ApiResponse<AdminUser>> RegisterAdminAsync(AdminUser adminUser)
+        public async Task<AdminUser> RegisterAdminAsync(AdminUser adminUser)
         {
             _context.AdminUsers.Add(adminUser);
             await _context.SaveChangesAsync();
-            return ApiResponse<AdminUser>.SuccessResponse(adminUser);
+            return adminUser;
         }
 
-        public async Task<ApiResponse<AdminUser>> UpdateAdminAsync(AdminUser adminUser)
+        public async Task<AdminUser> UpdateAdminAsync(AdminUser adminUser)
         {
             var existingAdmin = await _context.AdminUsers.FindAsync(adminUser.AdminID);
             if (existingAdmin == null)
             {
-                return ApiResponse<AdminUser>.FailureResponse("Admin not found.");
+                return null;
             }
 
             // Update fields as needed
@@ -40,23 +40,17 @@ namespace VehicleKhatabook.Repositories.Repositories
             existingAdmin.LastModifiedOn = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            return ApiResponse<AdminUser>.SuccessResponse(existingAdmin);
+            return existingAdmin;
         }
 
-        public async Task<ApiResponse<IEnumerable<AdminUser>>> GetAllAdminsAsync()
+        public async Task<IEnumerable<AdminUser>> GetAllAdminsAsync()
         {
-            var adminUsers = await _context.AdminUsers.ToListAsync();
-            return ApiResponse<IEnumerable<AdminUser>>.SuccessResponse(adminUsers);
+            return await _context.AdminUsers.ToListAsync();
         }
 
-        public async Task<ApiResponse<AdminUser>> GetAdminByIdAsync(int adminId)
+        public async Task<AdminUser> GetAdminByIdAsync(int adminId)
         {
-            var adminUser = await _context.AdminUsers.FindAsync(adminId);
-            if (adminUser == null)
-            {
-                return ApiResponse<AdminUser>.FailureResponse("Admin not found.");
-            }
-            return ApiResponse<AdminUser>.SuccessResponse(adminUser);
+            return await _context.AdminUsers.FindAsync(adminId);
         }
     }
 

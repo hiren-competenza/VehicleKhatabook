@@ -48,7 +48,11 @@ namespace VehicleKhatabook.EndPoints.User
         internal async Task<IResult> UserSignup(UserDTO userDTO, IUserService userService)
         {
             var result = await userService.CreateUserAsync(userDTO);
-            return Results.Ok(result);
+            if (result == null)
+            {
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Failed to register"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result,"New user register successful."));
         }
 
         internal async Task<IResult> GetUserById(Guid id, IUserService userService)
@@ -60,7 +64,11 @@ namespace VehicleKhatabook.EndPoints.User
         internal async Task<IResult> UpdateUser(Guid id, UserDTO userDTO, IUserService userService)
         {
             var result = await userService.UpdateUserAsync(id, userDTO);
-            return Results.Ok(result);
+            if (result == null)
+            {
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("User Not Found"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Update successful."));
         }
 
         internal async Task<IResult> DeleteUser(Guid id, IUserService userService)
@@ -76,16 +84,18 @@ namespace VehicleKhatabook.EndPoints.User
         }
         internal async Task<IResult> Login(UserLoginDTO userLoginDTO, IAuthService authService)
         {
-            ApiResponse<UserDetailsDTO> result = await authService.AuthenticateUser(userLoginDTO);
-            if (result.Data != null && result.status == 200)
+            UserDetailsDTO result = await authService.AuthenticateUser(userLoginDTO);
+            if (result != null)
             {
-                string token = authService.GenerateToken(result.Data);
+                string token = authService.GenerateToken(result);
 
-                return Results.Ok(new
+                var responseData = new
                 {
                     Token = token,
                     UserDetails = result
-                });
+                };
+
+                return Results.Ok(ApiResponse<object>.SuccessResponse(responseData, "Login successful."));
             }
             return Results.BadRequest(ApiResponse<UserDetailsDTO>.FailureResponse("Invalid mobile number or mPIN."));
         }
@@ -94,9 +104,9 @@ namespace VehicleKhatabook.EndPoints.User
             var result = await authService.SendForgotMpinAsync(dto.MobileNumber);
             if (result)
             {
-                return Results.Ok("OTP sent successfully to reset mPIN.");
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result,"OTP sent successfully to reset mPIN."));
             }
-            return Results.BadRequest("Failed to send OTP. Please try again.");
+            return Results.BadRequest(ApiResponse<object>.FailureResponse("Failed to send OTP. Please try again."));
         }
 
         private async Task<IResult> ResetMpin(ResetMpinDTO dto, IAuthService authService)
@@ -104,9 +114,9 @@ namespace VehicleKhatabook.EndPoints.User
             var result = await authService.ResetMpinAsync(dto);
             if (result)
             {
-                return Results.Ok("mPIN reset successfully.");
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result,"mPIN reset successfully."));
             }
-            return Results.BadRequest("Failed to reset mPIN. Please try again.");
+            return Results.BadRequest(ApiResponse<object>.FailureResponse("Failed to reset mPIN. Please try again."));
         }
         private async Task<IResult> GetExpenseIncomeCategoriesAsync(IMasterDataService masterDataService, int userTypeId, bool active = true)
         {
@@ -119,76 +129,101 @@ namespace VehicleKhatabook.EndPoints.User
                 ExpenseCategory = expenseCategories
             };
             //var jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
-
-            return Results.Ok(response);
+            return Results.Ok(ApiResponse<object>.SuccessResponse(response));
         }
         internal async Task<IResult> AddDriver(UserDTO userDTO, IUserService userService)
         {
             if (userDTO == null)
-                return Results.BadRequest("Driver details are invalid");
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Driver details are invalid"));
 
             var result = await userService.AddDriverAsync(userDTO);
-            return Results.Ok(result);
+            if (result == null)
+            {
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Failed to register new driver"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result,"New driver added successful."));
         }
 
         internal async Task<IResult> GetDriverDetailsByUserId(Guid id, IUserService userService)
         {
             if (id == Guid.Empty)
             {
-                return Results.BadRequest("Invalid Id.");
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Invalid Id."));
             }
 
             var driver = await userService.GetDriverByIdAsync(id);
-            return Results.Ok(driver);
+            if (driver == null)
+                Results.BadRequest(ApiResponse<object>.FailureResponse("Driver not found"));
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(driver, "Driver details found"));
         }
 
         internal async Task<IResult> UpdateDriver(Guid id, UserDTO userDTO, IUserService userService)
         {
             if (id == Guid.Empty)
             {
-                return Results.BadRequest("Invalid Id.");
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Invalid Id."));
             }
             if (userDTO == null)
             {
-                return Results.BadRequest("Invalid request body");
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Invalid request body"));
             }
 
             var updateDriver = await userService.UpdateDriverAsync(id, userDTO);
-            return Results.Ok(updateDriver);
+            if (updateDriver == null)
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Failed to update"));
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(updateDriver, "driver update successful."));
         }
 
         internal async Task<IResult> DeleteDriver(Guid id, IUserService userService)
         {
             if (id == Guid.Empty)
             {
-                return Results.BadRequest("Invalid Id.");
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Invalid Id."));
             }
 
             var result = await userService.DeleteDriverAsync(id);
-            return Results.Ok(result);
+            if (!result)
+            {
+                return Results.BadRequest("driver not found/failed to delete");
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result));
         }
 
         internal async Task<IResult> GetAllDrivers(IUserService userService)
         {
             var drivers = await userService.GetAllDriversAsync();
-            return Results.Ok(drivers);
+            if (drivers == null)
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("List of Driver not found."));
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(drivers, "Drivers retrieved successfully."));
         }
         internal async Task<IResult> GetCountryAsync(IMasterDataService masterDataService)
         {
             var countries = await masterDataService.GetCountryAsync();
-            return Results.Ok(countries);
+            if (countries.Count == 0)
+            {
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("not found country list"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(countries));
         }
         internal async Task<IResult> GetAllSMSProviders(ISMSProviderService sMSProviderService)
         {
             var allProviders = await sMSProviderService.GetAllSMSProvidersAsync();
 
-            var activeProvider = allProviders.Data?.FirstOrDefault(provider => provider.IsActive);
+            var activeProvider = allProviders.FirstOrDefault(provider => provider.IsActive);
 
             var result = ApiResponse<List<SMSProviderDTO>>.SuccessResponse(activeProvider != null
                 ? new List<SMSProviderDTO> { activeProvider }
                 : new List<SMSProviderDTO>());
 
-            return Results.Ok(result);
+            if (result == null)
+            {
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Not found active provider"));
+            }
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result));
         }
     }
 }

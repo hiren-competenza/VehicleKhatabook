@@ -15,7 +15,7 @@ namespace VehicleKhatabook.Services.Services
             _userRepository = userRepository;
         }
 
-        public async Task<ApiResponse<User>> CreateUserAsync(UserDTO userDTO)
+        public async Task<User> CreateUserAsync(UserDTO userDTO)
         {
             return await _userRepository.AddUserAsync(userDTO);
         }
@@ -25,7 +25,7 @@ namespace VehicleKhatabook.Services.Services
             return await _userRepository.GetUserByIdAsync(id);
         }
 
-        public async Task<ApiResponse<User>> UpdateUserAsync(Guid id, UserDTO userDTO)
+        public async Task<User> UpdateUserAsync(Guid id, UserDTO userDTO)
         {
             return await _userRepository.UpdateUserAsync(id, userDTO);
         }
@@ -39,27 +39,27 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _userRepository.GetAllUsersAsync();
         }
-        public async Task<ApiResponse<User>> AddDriverAsync(UserDTO driverDTO)
+        public async Task<User> AddDriverAsync(UserDTO driverDTO)
         {
             return await _userRepository.AddDriverAsync(driverDTO);
         }
 
-        public async Task<ApiResponse<User?>> GetDriverByIdAsync(Guid id)
+        public async Task<User> GetDriverByIdAsync(Guid id)
         {
             return await _userRepository.GetDriverByIdAsync(id);
         }
 
-        public async Task<ApiResponse<User>> UpdateDriverAsync(Guid id, UserDTO driverDTO)
+        public async Task<User> UpdateDriverAsync(Guid id, UserDTO driverDTO)
         {
             return await _userRepository.UpdateDriverAsync(id, driverDTO);
         }
 
-        public async Task<ApiResponse<bool>> DeleteDriverAsync(Guid id)
+        public async Task<bool> DeleteDriverAsync(Guid id)
         {
             return await _userRepository.DeleteDriverAsync(id);
         }
 
-        public async Task<ApiResponse<List<User>>> GetAllDriversAsync()
+        public async Task<List<User>> GetAllDriversAsync()
         {
             return await _userRepository.GetAllDriversAsync();
         }
