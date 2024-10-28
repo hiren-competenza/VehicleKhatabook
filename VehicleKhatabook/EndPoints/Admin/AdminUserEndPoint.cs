@@ -1,4 +1,5 @@
 ﻿using VehicleKhatabook.Infrastructure;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
@@ -26,22 +27,32 @@ namespace VehicleKhatabook.EndPoints.Admin
         internal async Task<IResult> register(IAdminUserService adminUserService, AdminUserDTO adminDTO)
         {
             var result = await adminUserService.RegisterAdminAsync(adminDTO);
-            return result.status == 200 ? Results.Ok(result) : Results.BadRequest(result);
+            return result != null ? Results.Ok(ApiResponse<object>.SuccessResponse(result, "Register successful.")) : 
+                Results.BadRequest(ApiResponse<object>.FailureResponse("failed to register"));
         }
         internal async Task<IResult> UpdateAdmin(IAdminUserService adminUserService, AdminUserDTO adminDTO)
         {
             var result = await adminUserService.UpdateAdminAsync(adminDTO);
-            return Results.Ok(result);
+            if (result == null)
+            {
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("Failed to update admin"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result, "update successful."));
         }
         internal async Task<IResult> GetAdminById(IAdminUserService adminUserService, int adminId)
         {
             var result = await adminUserService.GetAdminByIdAsync(adminId);
-            return result.status == 200 ? Results.Ok(result) : Results.NotFound(result);
+            return result != null ? Results.Ok(ApiResponse<object>.SuccessResponse(result)) :
+                Results.NotFound(ApiResponse<object>.FailureResponse("Failed to get admin"));
         }
         internal async Task<IResult> GetAllAdmins(IAdminUserService adminUserService)
         {
             var result = await adminUserService.GetAllAdminsAsync();
-            return Results.Ok(result);
+            if (result == null)
+            {
+                return Results.BadRequest(ApiResponse<object>.FailureResponse("failed to load admin"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result));
         }
     }
 }

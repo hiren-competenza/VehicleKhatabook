@@ -5,17 +5,37 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleKhatabook", "VehicleKhatabook\VehicleKhatabook.csproj", "{F1C371EB-D3E1-4303-AEE1-9F19CCCF6522}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Entities", "VehicleKhatabook.Entities\VehicleKhatabook.Entities.csproj", "{8D2561A4-2D09-4AAF-82A0-7F2E06FB8510}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleKhatabook.Entities", "VehicleKhatabook.Entities\VehicleKhatabook.Entities.csproj", "{8D2561A4-2D09-4AAF-82A0-7F2E06FB8510}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Helpers", "VehicleKhatabook.Helpers\VehicleKhatabook.Helpers.csproj", "{961EC1C0-38C3-4ED5-B6EF-B29F5094A620}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleKhatabook.Helpers", "VehicleKhatabook.Helpers\VehicleKhatabook.Helpers.csproj", "{961EC1C0-38C3-4ED5-B6EF-B29F5094A620}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Models", "VehicleKhatabook.Models\VehicleKhatabook.Models.csproj", "{73D93170-C2A8-4AFE-AAE1-543D1AFDB1CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleKhatabook.Models", "VehicleKhatabook.Models\VehicleKhatabook.Models.csproj", "{73D93170-C2A8-4AFE-AAE1-543D1AFDB1CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Repositories", "VehicleKhatabook.Repositories\VehicleKhatabook.Repositories.csproj", "{4A268DFF-F636-4EC8-8990-E6A51F5145C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleKhatabook.Repositories", "VehicleKhatabook.Repositories\VehicleKhatabook.Repositories.csproj", "{4A268DFF-F636-4EC8-8990-E6A51F5145C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.SchemaBuilder", "VehicleKhatabook.SchemaBuilder\VehicleKhatabook.SchemaBuilder.csproj", "{5CABF64A-62A0-454A-B0AD-52A61A906A4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleKhatabook.SchemaBuilder", "VehicleKhatabook.SchemaBuilder\VehicleKhatabook.SchemaBuilder.csproj", "{5CABF64A-62A0-454A-B0AD-52A61A906A4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleKhatabook.Services", "VehicleKhatabook.Services\VehicleKhatabook.Services.csproj", "{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleKhatabook.Services", "VehicleKhatabook.Services\VehicleKhatabook.Services.csproj", "{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "vehiclekhatabook.web", "vehiclekhatabook.web\", "{1508F63F-7745-4792-AF6F-19DEE2422FB6}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_53088"
+		Debug.AspNetCompiler.PhysicalPath = "vehiclekhatabook.web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53088\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_53088"
+		Release.AspNetCompiler.PhysicalPath = "vehiclekhatabook.web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53088\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "53088"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +71,10 @@ Global
 		{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70DEACA9-A2C0-4C00-BE76-0059CDDD6A8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1508F63F-7745-4792-AF6F-19DEE2422FB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1508F63F-7745-4792-AF6F-19DEE2422FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1508F63F-7745-4792-AF6F-19DEE2422FB6}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{1508F63F-7745-4792-AF6F-19DEE2422FB6}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

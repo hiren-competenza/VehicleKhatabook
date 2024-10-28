@@ -4,7 +4,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using VehicleKhatabook.Entities.Models;
-using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Services.Interfaces;
@@ -29,7 +28,7 @@ namespace VehicleKhatabook.Services.Services
             var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, userDetailsDTO.UserId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, userDetailsDTO.Email),
+            //new Claim(JwtRegisteredClaimNames.Email, userDetailsDTO.Email),
             new Claim("role", userDetailsDTO.RoleName.ToLower().ToString()),
             new Claim("firstname", userDetailsDTO.FirstName),
             new Claim("lastname", userDetailsDTO.LastName),
@@ -50,11 +49,11 @@ namespace VehicleKhatabook.Services.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<ApiResponse<UserDetailsDTO>> AuthenticateUser(UserLoginDTO userLoginDTO)
+        public async Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLoginDTO)
         {
             return await _userRepository.AuthenticateUser(userLoginDTO);
         }
-        public async Task<bool> SendForgotMpinAsync(string mobileNumber)
+        public async Task<(bool Success, string Otp)> SendForgotMpinAsync(string mobileNumber)
         {
             var user = await _userRepository.GetUserByMobileNumberAsync(mobileNumber);
             if (user != null)
@@ -67,17 +66,21 @@ namespace VehicleKhatabook.Services.Services
                     MobileNumber = mobileNumber,
                     ExpirationTime = DateTime.UtcNow.AddMinutes(10)
                 };
+
                 await _otpRepository.SaveOtpAsync(otpRequest);
                 await _otpRepository.SendOtpAsync(mobileNumber, otp);
-                return true;
+
+                return (true, otp);
             }
-            return false;
+
+            return (false, string.Empty);
         }
+
 
         public async Task<bool> ResetMpinAsync(ResetMpinDTO resetMpinDTO)
         {
             var user = await _userRepository.GetUserByIdAsync(resetMpinDTO.UserId);
-            bool isValid = await VerifyOtp(resetMpinDTO.UserId, resetMpinDTO.OTP);
+            bool isValid = await VerifyOtpAsync(resetMpinDTO.UserId, resetMpinDTO.OTP);
             if (user != null && isValid)
             {   
                 user.mPIN = resetMpinDTO.NewMpin;
@@ -87,7 +90,7 @@ namespace VehicleKhatabook.Services.Services
             return false;
         }
         
-        public async Task<bool> VerifyOtp(Guid userId, string otpCode)
+        public async Task<bool> VerifyOtpAsync(Guid userId, string otpCode)
         {
             var otpRequest = await _otpRepository.GetOtpByUserIdAndCodeAsync(userId, otpCode);
             if (otpRequest == null || otpRequest.ExpirationTime < DateTime.UtcNow || otpRequest.IsVerified)

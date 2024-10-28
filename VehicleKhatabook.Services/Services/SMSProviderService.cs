@@ -14,10 +14,9 @@ namespace VehicleKhatabook.Services.Services
             _smsProviderRepository = smsProviderRepository;
         }
 
-        public async Task<ApiResponse<List<SMSProviderDTO>>> GetAllSMSProvidersAsync()
+        public async Task<List<SMSProviderDTO>> GetAllSMSProvidersAsync()
         {
-            var providers = await _smsProviderRepository.GetAllSMSProvidersAsync();
-            return ApiResponse<List<SMSProviderDTO>>.SuccessResponse(providers);
+            return await _smsProviderRepository.GetAllSMSProvidersAsync();
         }
 
         public async Task<ApiResponse<SMSProviderDTO>> AddSMSProviderAsync(SMSProviderDTO smsProviderDTO)

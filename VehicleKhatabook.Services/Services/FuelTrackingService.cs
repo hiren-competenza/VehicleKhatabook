@@ -15,7 +15,7 @@ namespace VehicleKhatabook.Services.Services
             _fuelTrackingRepository = fuelTrackingRepository;
         }
 
-        public async Task<ApiResponse<FuelTracking>> AddFuelTrackingAsync(FuelTrackingDTO fuelTrackingDTO)
+        public async Task<FuelTracking> AddFuelTrackingAsync(FuelTrackingDTO fuelTrackingDTO)
         {
             var fuelTracking = new FuelTracking
             {

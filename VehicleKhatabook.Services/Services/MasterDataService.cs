@@ -16,7 +16,7 @@ namespace VehicleKhatabook.Services.Services
         }
 
         // Income Category Service Methods
-        public async Task<ApiResponse<List<IncomeCategory>>> GetIncomeCategoriesAsync(int userTypeId)
+        public async Task<List<IncomeCategory>> GetIncomeCategoriesAsync(int userTypeId)
         {
             return await _masterDataRepository.GetIncomeCategoriesAsync(userTypeId);
         }
@@ -36,7 +36,7 @@ namespace VehicleKhatabook.Services.Services
             return await _masterDataRepository.DeleteIncomeCategoryAsync(id);
         }
 
-        public async Task<ApiResponse<List<ExpenseCategory>>> GetExpenseCategoriesAsync(int userTypeId)
+        public async Task<List<ExpenseCategory>> GetExpenseCategoriesAsync(int userTypeId)
         {
             return await _masterDataRepository.GetExpenseCategoriesAsync(userTypeId);
         }
@@ -75,7 +75,7 @@ namespace VehicleKhatabook.Services.Services
 
             return ApiResponse<List<VechileType>>.SuccessResponse(vehicleType);
         }
-        public async Task<ApiResponse<List<Country>>> GetCountryAsync()
+        public async Task<List<Country>> GetCountryAsync()
         {
             return await _masterDataRepository.GetCountryAsync();
         }

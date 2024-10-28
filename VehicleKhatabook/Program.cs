@@ -51,6 +51,16 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminPolicy", policy => policy.RequireRole("admin"));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAllMinimalApiDefinitions(configuration);
 builder.Services.AddEndpointsApiExplorer();
@@ -102,6 +112,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseExceptionHandlerMiddleware();
+
 }
 else
 {
@@ -109,10 +121,13 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseEndpointDefinitions();
+app.UseCors("AllowSpecificOrigin");
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseEndpointDefinitions();
 app.UseExceptionHandlerMiddleware();
 app.MapControllers();
+app.UseCors("AllowSpecificOrigin");
 
 app.Run();

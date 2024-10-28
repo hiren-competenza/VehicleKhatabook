@@ -16,7 +16,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context = context;
         }
 
-        public async Task<ApiResponse<List<IncomeCategory>>> GetIncomeCategoriesAsync(int userTypeId)
+        public async Task<List<IncomeCategory>> GetIncomeCategoriesAsync(int userTypeId)
         {
             var incomeCategories = await _context.IncomeCategories
                 .Where(ic => ic.RoleId == userTypeId && ic.IsActive)
@@ -28,7 +28,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     Description = ic.Description,
                     IsActive = ic.IsActive,
                 }).ToListAsync();
-            return ApiResponse<List<IncomeCategory>>.SuccessResponse(incomeCategories, "Get Income category successful.");
+            return incomeCategories;
         }
 
         public async Task<ApiResponse<IncomeCategory>> AddIncomeCategoryAsync(IncomeCategoryDTO categoryDTO)
@@ -79,7 +79,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             return ApiResponse<bool>.SuccessResponse(true, "Income category inactive successfull.");
         }
 
-        public async Task<ApiResponse<List<ExpenseCategory>>> GetExpenseCategoriesAsync(int userTypeId)
+        public async Task<List<ExpenseCategory>> GetExpenseCategoriesAsync(int userTypeId)
         {
             var expenseCategories = await _context.ExpenseCategories
                 .Where(ec => ec.RoleId == userTypeId && ec.IsActive)
@@ -91,7 +91,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     Description = ec.Description,
                     IsActive = ec.IsActive,
                 }).ToListAsync();
-            return ApiResponse<List<ExpenseCategory>>.SuccessResponse(expenseCategories, "Get Expense category successful.");
+            return expenseCategories;
         }
 
         public async Task<ApiResponse<ExpenseCategory>> AddExpenseCategoryAsync(ExpenseCategoryDTO categoryDTO)
@@ -196,10 +196,9 @@ namespace VehicleKhatabook.Repositories.Repositories
             var result = await _context.VehicleTypes.ToListAsync();
             return ApiResponse<List<VechileType>>.SuccessResponse(result);
         }
-        public async Task<ApiResponse<List<Country>>> GetCountryAsync()
+        public async Task<List<Country>> GetCountryAsync()
         {
-            var result = await _context.Countries.ToListAsync();
-            return ApiResponse<List<Country>>.SuccessResponse(result);
+            return await _context.Countries.ToListAsync();
         }
     }
 }

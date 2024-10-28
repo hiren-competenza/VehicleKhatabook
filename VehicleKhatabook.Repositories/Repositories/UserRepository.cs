@@ -16,7 +16,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<ApiResponse<User>> AddUserAsync(UserDTO userDTO)
+        public async Task<User> AddUserAsync(UserDTO userDTO)
         {
             var userReferCode = GenerateReferCode();
             var user = new User
@@ -35,14 +35,14 @@ namespace VehicleKhatabook.Repositories.Repositories
                 LanguageTypeId = userDTO.languageTypeId,
                 CreatedOn = DateTime.UtcNow,
                 UserTypeId = userDTO.UserTypeId,
-                Email = userDTO.Email,
+                //Email = userDTO.Email,
                 //CreatedBy = Guid.NewGuid(),
                 IsActive = true
             };
 
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
-            return ApiResponse<User>.SuccessResponse(user, "User Added successfull");
+            return user;
         }
 
         public async Task<UserDTO?> GetUserByIdAsync(Guid id)
@@ -56,7 +56,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 MobileNumber = user.MobileNumber,
-                mPIN = user.mPIN,
+                UserTypeId = user.UserTypeId,
+                //mPIN = user.mPIN,
                 UserReferCode = user.UserReferCode,
                 Role = user.Role,
                 IsPremiumUser = user.IsPremiumUser,
@@ -67,16 +68,19 @@ namespace VehicleKhatabook.Repositories.Repositories
             };
         }
 
-        public async Task<ApiResponse<User>> UpdateUserAsync(Guid id, UserDTO userDTO)
+        public async Task<User> UpdateUserAsync(Guid id, UserDTO userDTO)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == id && u.IsActive);
             if (user == null)
-                return ApiResponse<User>.FailureResponse("User Not Found");
+                return null;
 
             user.FirstName = userDTO.FirstName;
             user.LastName = userDTO.LastName;
             user.MobileNumber = userDTO.MobileNumber;
             user.mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN);
+            user.UserTypeId = userDTO.UserTypeId;
+            user.IsPremiumUser = userDTO.IsPremiumUser;
+            user.IsActive = userDTO.IsActive;
             user.Role = userDTO.Role;
             user.State = userDTO.State;
             user.District = userDTO.District;
@@ -85,7 +89,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _dbContext.Users.Update(user);
             await _dbContext.SaveChangesAsync();
-            return ApiResponse<User>.SuccessResponse(user, "User update successfull");
+            return user;
         }
 
         public async Task<bool> DeleteUserAsync(Guid id)
@@ -119,7 +123,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 IsActive = user.IsActive
             });
         }
-        public async Task<ApiResponse<UserDetailsDTO>> AuthenticateUser(UserLoginDTO userLogin)
+        public async Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLogin)
         {
             var user = await _dbContext.Users
               .Where(u => u.MobileNumber == userLogin.MobileNumber && u.IsActive).FirstOrDefaultAsync();
@@ -132,14 +136,19 @@ namespace VehicleKhatabook.Repositories.Repositories
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     MobileNumber = user.MobileNumber,
-                    Email = user.Email,
+                    //Email = user.Email,
                     RoleId = user.UserTypeId,
-                    RoleName = user.Role
+                    RoleName = user.Role,
+                    IsPremiumUser= user.IsPremiumUser,
+                    State = user.State,
+                    District = user.District,
+                    IsActive= user.IsActive,
+                    UserReferCode = user.UserReferCode,
+                    LanguageTypeId  = user.LanguageTypeId
                 };
-
-                return ApiResponse<UserDetailsDTO>.SuccessResponse(userDetailsDTO, "User authenticated successfully.");
+                return userDetailsDTO;
             }
-            return ApiResponse<UserDetailsDTO>.FailureResponse("Invalid mobile number or mPIN.");
+            return null;
         }
 
         public async Task<User> GetUserByMobileNumberAsync(string mobileNumber)
@@ -155,7 +164,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             return await _dbContext.Users.FindAsync(id);
         }
-        public async Task<ApiResponse<User>> AddDriverAsync(UserDTO UserDTO)
+        public async Task<User> AddDriverAsync(UserDTO UserDTO)
         {
             var driver = new User
             {
@@ -178,22 +187,20 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             await _dbContext.Users.AddAsync(driver);
             await _dbContext.SaveChangesAsync();
-
-            return ApiResponse<User>.SuccessResponse(driver, "New Driver added successfully.");
+            return driver;
         }
 
-        public async Task<ApiResponse<User?>> GetDriverByIdAsync(Guid id)
+        public async Task<User> GetDriverByIdAsync(Guid id)
         {
-            var user = await _dbContext.Users.FindAsync(id);
-            return user != null ? ApiResponse<User?>.SuccessResponse(user, "User found successfully") : ApiResponse<User?>.FailureResponse("Failed to load.") ;
+            return await _dbContext.Users.FindAsync(id);
         }
 
-        public async Task<ApiResponse<User>> UpdateDriverAsync(Guid id, UserDTO userDTO)
+        public async Task<User> UpdateDriverAsync(Guid id, UserDTO userDTO)
         {
             var driver = await _dbContext.Users.FindAsync(id);
             if (driver == null)
             {
-                return ApiResponse<User>.FailureResponse("Driver not found.");
+                return null;
             }
 
             driver.FirstName = userDTO.FirstName;
@@ -213,34 +220,29 @@ namespace VehicleKhatabook.Repositories.Repositories
             _dbContext.Users.Update(driver);
             await _dbContext.SaveChangesAsync();
 
-            return ApiResponse<User>.SuccessResponse(driver, "driver details update successfull");
+            return driver;
         }
 
-        public async Task<ApiResponse<bool>> DeleteDriverAsync(Guid id)
+        public async Task<bool> DeleteDriverAsync(Guid id)
         {
             var driver = await _dbContext.Users.FindAsync(id); ;
             if (driver == null)
             {
-                return ApiResponse<bool>.FailureResponse("Driver not found.");
+                return false;
             };
             driver.IsActive = false;
             _dbContext.Users.Update(driver);
             await _dbContext.SaveChangesAsync();
 
-            return ApiResponse<bool>.SuccessResponse(true, "Drver Deactive successful");
+            return true;
         }
 
-        public async Task<ApiResponse<List<User>>> GetAllDriversAsync()
+        public async Task<List<User>> GetAllDriversAsync()
         {
             var drivers = await _dbContext.Users
                                   .Where(u => u.IsActive == true && u.Role.ToLower() == "driver")
                                   .ToListAsync();
-
-            if (drivers == null || drivers.Count == 0)
-            {
-                return ApiResponse<List<User>>.FailureResponse($"No drivers found for user with ID.");
-            }
-            return ApiResponse<List<User>>.SuccessResponse(drivers, "Drivers retrieved successfully.");
+            return drivers;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context = context;
         }
 
-        public async Task<ApiResponse<Income>> AddIncomeAsync(IncomeDTO incomeDTO)
+        public async Task<Income> AddIncomeAsync(IncomeDTO incomeDTO)
         {
             var income = new Income
             {
@@ -32,7 +32,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.Incomes.Add(income);
             await _context.SaveChangesAsync();
-            return ApiResponse<Income>.SuccessResponse(income);
+            return income;
         }
 
         public async Task<ApiResponse<Income>> GetIncomeDetailsAsync(int id)
@@ -78,18 +78,18 @@ namespace VehicleKhatabook.Repositories.Repositories
         //    var incomes = await _context.Incomes.ToListAsync();
         //    return new ApiResponse<List<Income>> { Success = true, Data = incomes };
         //}
-        public async Task<ApiResponse<List<Income>>> GetIncomeAsync(Guid userId)
+        public async Task<List<Income>> GetIncomeAsync(Guid userId)
         {
             var result = await _context.Incomes
                 .Where(i => i.DriverID == userId)
                 .ToListAsync();
+            return result;
+            //if (result == null || result.Count == 0)
+            //{
+            //    return ApiResponse<List<Income>>.FailureResponse($"No income records found for user ID {userId}.");
+            //}
 
-            if (result == null || result.Count == 0)
-            {
-                return ApiResponse<List<Income>>.FailureResponse($"No income records found for user ID {userId}.");
-            }
-
-            return ApiResponse<List<Income>>.SuccessResponse(result);
+            //return ApiResponse<List<Income>>.SuccessResponse(result);
         }
     }
 }

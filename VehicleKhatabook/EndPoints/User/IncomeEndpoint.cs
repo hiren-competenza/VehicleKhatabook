@@ -27,15 +27,15 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddScoped<IIncomeRepository, IncomeRepository>();
         }
 
-        internal async Task<IResult> AddIncome(IncomeDTO incomeDTO, IIncomeService incomeService)
-        {
-            ApiResponse<Income> result = await incomeService.AddIncomeAsync(incomeDTO);
-            if (result.status != 200)
-            {
-                return Results.BadRequest(result);
-            }
-            return Results.Ok(result);
-        }
+        //internal async Task<IResult> AddIncome(IncomeDTO incomeDTO, IIncomeService incomeService)
+        //{
+        //    ApiResponse<Income> result = await incomeService.AddIncomeAsync(incomeDTO);
+        //    if (result.status != 200)
+        //    {
+        //        return Results.BadRequest(result);
+        //    }
+        //    return Results.Ok(result);
+        //}
 
         //internal async Task<IResult> GetIncomeDetails(int id, IIncomeService incomeService)
         //{

@@ -1,8 +1,6 @@
 ﻿using VehicleKhatabook.Entities.Models;
-using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
-using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 
 namespace VehicleKhatabook.Services.Services
@@ -17,33 +15,28 @@ namespace VehicleKhatabook.Services.Services
 
         }
 
-        public async Task<ApiResponse<Vehicle>> AddVehicleAsync(VehicleDTO vehicleDTO)
+        public async Task<Vehicle> AddVehicleAsync(VehicleDTO vehicleDTO)
         {
             return await _vehicleRepository.AddVehicleAsync(vehicleDTO);
         }
-        public async Task<ApiResponse<List<Vehicle>>> GetVehicleByIdAsync(Guid id)
+        public async Task<List<Vehicle>> GetVehicleByIdAsync(Guid id)
         {
             return await _vehicleRepository.GetVehicleByVehicleIdAsync(id);
         }
 
-        public async Task<ApiResponse<List<Vehicle>>> GetAllVehiclesAsync(Guid userId)
+        public async Task<(bool IsUserActive, bool HasVehicles, List<Vehicle>? Vehicles)> GetAllVehiclesAsync(Guid userId)
         {
             return await _vehicleRepository.GetAllVehiclesAsync(userId);
         }
 
-        public async Task<ApiResponse<Vehicle>> UpdateVehicleAsync(Guid id, VehicleDTO vehicleDTO)
+        public async Task<Vehicle> UpdateVehicleAsync(Guid id, VehicleDTO vehicleDTO)
         {
             return await _vehicleRepository.UpdateVehicleAsync(id,vehicleDTO);
         }
 
-        public async Task<ApiResponse<bool>> DeleteVehicleAsync(Guid id)
+        public async Task<bool> DeleteVehicleAsync(Guid id)
         {
-            var result = await _vehicleRepository.DeleteVehicleAsync(id);
-            if (result)
-            {
-                return ApiResponse<bool>.SuccessResponse(true);
-            }
-            return ApiResponse<bool>.FailureResponse("Failed to Delete");
+            return await _vehicleRepository.DeleteVehicleAsync(id);
         }
 
     }

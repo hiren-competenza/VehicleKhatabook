@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
@@ -16,10 +17,10 @@ namespace VehicleKhatabook.EndPoints.User
         {
             var vehileRoute = app.MapGroup("/api/vehicle").WithTags("Vehicle Management").RequireAuthorization("OwnerOrDriverPolicy");
             vehileRoute.MapPost("/Add", AddVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
-            vehileRoute.MapGet("/{id}", GetVehicleByVehicleIdAsync);
-            vehileRoute.MapPut("/{id}", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
-            vehileRoute.MapDelete("/{id}", DeleteVehicle);
-            vehileRoute.MapGet("/all", GetAllVehicles);
+            vehileRoute.MapGet("/GetVehicleByVehicleId{id}", GetVehicleByVehicleIdAsync);
+            vehileRoute.MapPut("/UpdateVehicleById{id}", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
+            vehileRoute.MapDelete("/DeleteVehicleById{id}", DeleteVehicle);
+            vehileRoute.MapGet("/GetAllVehiclesByUserId", GetAllVehicles);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -30,50 +31,76 @@ namespace VehicleKhatabook.EndPoints.User
 
         internal async Task<IResult> AddVehicle(VehicleDTO vehicleDTO, IVehicleService vehicleService)
         {
-            if (vehicleDTO == null)
-                return Results.BadRequest("Vehicle details are invalid");
-
             var result = await vehicleService.AddVehicleAsync(vehicleDTO);
-           return Results.Ok(result);
+
+            if (result != null)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Vehicle added successfully."));
+            }
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to add vehicle."));
         }
         internal async Task<IResult> GetVehicleByVehicleIdAsync(Guid id, IVehicleService vehicleService)
         {
             if (id == Guid.Empty)
             {
-                return Results.BadRequest("The provided vehicle ID is invalid. Please provide a valid ID.");
+                return Results.Ok(ApiResponse<object>.FailureResponse("The vehicle ID is invalid."));
             }
             var vehicle = await vehicleService.GetVehicleByIdAsync(id);
-            return Results.Ok(vehicle);
+             if (vehicle == null)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse($"No records found for vechile ID {id}."));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(vehicle, "Vehicle Get successfull"));
         }
 
         internal async Task<IResult> UpdateVehicle(Guid id, VehicleDTO vehicleDTO, IVehicleService vehicleService)
         {
             if (id == Guid.Empty)
             {
-                return Results.BadRequest("Invalid Id.");
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Id."));
             }
             if (vehicleDTO == null)
             {
-                return Results.BadRequest("Invalid request Body");
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid request Body"));
             }
             var updateVehicle = await vehicleService.UpdateVehicleAsync(id, vehicleDTO);
-            return Results.Ok(updateVehicle);
+            if (updateVehicle == null)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User or Vehicle does not exist."));
+            }
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(updateVehicle, "Vehicle updated successfully."));
         }
 
         internal async Task<IResult> DeleteVehicle(Guid id, IVehicleService vehicleService)
         {
             if (id == Guid.Empty)
             {
-                return Results.BadRequest("Invalid Id.");
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Id."));
             }
             var success = await vehicleService.DeleteVehicleAsync(id);
-            return Results.Ok(success);
+            if (!success)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Failed to delete"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(success, $"Vechicle delete successfull."));
         }
 
         internal async Task<IResult> GetAllVehicles(Guid userId, IVehicleService vehicleService)
         {
-            var vehicles = await vehicleService.GetAllVehiclesAsync(userId);
-            return Results.Ok(vehicles);
+            var (isUserActive, hasVehicles, vehicles) = await vehicleService.GetAllVehiclesAsync(userId);
+
+            if (!isUserActive)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse($"User with ID {userId} does not exist or is inactive."));
+            }
+
+            if (!hasVehicles)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(null, $"No vehicles found for user with ID {userId}."));
+            }
+
+            return Results.Ok(ApiResponse<List<Vehicle>>.SuccessResponse(vehicles, "Vehicles retrieved successfully."));
         }
     }
 }

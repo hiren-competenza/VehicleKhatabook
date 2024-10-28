@@ -16,7 +16,7 @@ namespace VehicleKhatabook.Services.Services
             _incomeRepository = incomeRepository;
         }
 
-        public async Task<ApiResponse<Income>> AddIncomeAsync(IncomeDTO incomeDTO)
+        public async Task<Income> AddIncomeAsync(IncomeDTO incomeDTO)
         {
             return await _incomeRepository.AddIncomeAsync(incomeDTO);
         }
@@ -40,7 +40,7 @@ namespace VehicleKhatabook.Services.Services
         //{
         //    return await _incomeRepository.GetAllIncomesAsync();
         //}
-        public async Task<ApiResponse<List<Income>>> GetIncomeAsync(Guid userId)
+        public async Task<List<Income>> GetIncomeAsync(Guid userId)
         {
             return await _incomeRepository.GetIncomeAsync(userId);
         }

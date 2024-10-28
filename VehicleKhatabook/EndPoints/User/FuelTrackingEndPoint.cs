@@ -1,4 +1,5 @@
 ﻿using VehicleKhatabook.Infrastructure;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
@@ -26,10 +27,14 @@ namespace VehicleKhatabook.EndPoints.User
         internal async Task<IResult> AddFuelTracking(FuelTrackingDTO fuelTrackingDTO, IFuelTrackingService fuelTrackingService)
         {
             if (fuelTrackingDTO == null)
-                return Results.BadRequest("Fuel tracking details are invalid");
+                return Results.Ok(ApiResponse<object>.FailureResponse("Fuel tracking details are invalid"));
 
             var result = await fuelTrackingService.AddFuelTrackingAsync(fuelTrackingDTO);
-            return (IResult)result;
+            if (result == null)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Failed to add fuel"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result,"Fuel added successful."));
         }
 
         internal async Task<IResult> GetFuelTracking(Guid id, IFuelTrackingService fuelTrackingService)
