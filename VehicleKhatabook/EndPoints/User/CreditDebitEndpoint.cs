@@ -43,7 +43,7 @@ namespace VehicleKhatabook.EndPoints.User
                 Income result = await incomeService.AddIncomeAsync(incomeDTO);
                 if(result == null)
                 {
-                    return Results.BadRequest(ApiResponse<object>.FailureResponse("failed to add income"));
+                    return Results.Ok(ApiResponse<object>.FailureResponse("failed to add income"));
                 }
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result,"Income added successful."));
             }
@@ -62,7 +62,7 @@ namespace VehicleKhatabook.EndPoints.User
 
                 Expense result = await expenseService.AddExpenseAsync(expenseDTO);
                 if (result == null)
-                    return Results.BadRequest(ApiResponse<object>.FailureResponse("failed to add expense."));
+                    return Results.Ok(ApiResponse<object>.FailureResponse("failed to add expense."));
 
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
             }
@@ -73,7 +73,7 @@ namespace VehicleKhatabook.EndPoints.User
             {
                 var result = await incomeService.GetIncomeAsync(userId);
                 if (result == null)
-                    return Results.BadRequest(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
+                    return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
 
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result));
             }
@@ -81,7 +81,7 @@ namespace VehicleKhatabook.EndPoints.User
             {
                 var result = await expenseService.GetExpenseAsync(userId);
                 if (result == null)
-                    return Results.BadRequest(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
+                    return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
 
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result));
             }

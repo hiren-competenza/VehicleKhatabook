@@ -14,18 +14,18 @@ namespace VehicleKhatabook.Models.Common
             Data = data;
         }
 
-        public static ApiResponse<T> SuccessResponse(T data, string message = "Request successful.")
+        public static ApiResponse<T> SuccessResponse(T data, string message = "Request successful.", int status = 200)
         {
-            return new ApiResponse<T>(200, message, data);
+            return new ApiResponse<T>(status, message, data);
         }
 
-        public static ApiResponse<T> FailureResponse(string message)
+        public static ApiResponse<T> FailureResponse(string message, int status = 400)
         {
-            return new ApiResponse<T>(400, message, default);
+            return new ApiResponse<T>(status, message, default);
         }
-        public static ApiResponse<T> FailureResponse500(string message)
+        public static ApiResponse<T> FailureResponse500(string message, int status = 500)
         {
-            return new ApiResponse<T>(500, message, default);
+            return new ApiResponse<T>(status, message, default);
         }
     }
 }

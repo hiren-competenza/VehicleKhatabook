@@ -27,12 +27,12 @@ namespace VehicleKhatabook.EndPoints.User
         internal async Task<IResult> AddFuelTracking(FuelTrackingDTO fuelTrackingDTO, IFuelTrackingService fuelTrackingService)
         {
             if (fuelTrackingDTO == null)
-                return Results.BadRequest(ApiResponse<object>.FailureResponse("Fuel tracking details are invalid"));
+                return Results.Ok(ApiResponse<object>.FailureResponse("Fuel tracking details are invalid"));
 
             var result = await fuelTrackingService.AddFuelTrackingAsync(fuelTrackingDTO);
             if (result == null)
             {
-                return Results.BadRequest(ApiResponse<object>.FailureResponse("Failed to add fuel"));
+                return Results.Ok(ApiResponse<object>.FailureResponse("Failed to add fuel"));
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(result,"Fuel added successful."));
         }

@@ -17,10 +17,10 @@ namespace VehicleKhatabook.EndPoints.User
         {
             var vehileRoute = app.MapGroup("/api/vehicle").WithTags("Vehicle Management").RequireAuthorization("OwnerOrDriverPolicy");
             vehileRoute.MapPost("/Add", AddVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
-            vehileRoute.MapGet("/{id}", GetVehicleByVehicleIdAsync);
-            vehileRoute.MapPut("/{id}", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
-            vehileRoute.MapDelete("/{id}", DeleteVehicle);
-            vehileRoute.MapGet("/all", GetAllVehicles);
+            vehileRoute.MapGet("/GetVehicleByVehicleId{id}", GetVehicleByVehicleIdAsync);
+            vehileRoute.MapPut("/UpdateVehicleById{id}", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
+            vehileRoute.MapDelete("/DeleteVehicleById{id}", DeleteVehicle);
+            vehileRoute.MapGet("/GetAllVehiclesByUserId", GetAllVehicles);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -37,18 +37,18 @@ namespace VehicleKhatabook.EndPoints.User
             {
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Vehicle added successfully."));
             }
-            return Results.BadRequest(ApiResponse<object>.FailureResponse("Failed to add vehicle."));
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to add vehicle."));
         }
         internal async Task<IResult> GetVehicleByVehicleIdAsync(Guid id, IVehicleService vehicleService)
         {
             if (id == Guid.Empty)
             {
-                return Results.BadRequest(ApiResponse<object>.FailureResponse("The vehicle ID is invalid."));
+                return Results.Ok(ApiResponse<object>.FailureResponse("The vehicle ID is invalid."));
             }
             var vehicle = await vehicleService.GetVehicleByIdAsync(id);
              if (vehicle == null)
             {
-                return Results.BadRequest(ApiResponse<object>.FailureResponse($"No records found for vechile ID {id}."));
+                return Results.Ok(ApiResponse<object>.FailureResponse($"No records found for vechile ID {id}."));
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(vehicle, "Vehicle Get successfull"));
         }
@@ -57,16 +57,16 @@ namespace VehicleKhatabook.EndPoints.User
         {
             if (id == Guid.Empty)
             {
-                return Results.BadRequest(ApiResponse<object>.FailureResponse("Invalid Id."));
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Id."));
             }
             if (vehicleDTO == null)
             {
-                return Results.BadRequest(ApiResponse<object>.FailureResponse("Invalid request Body"));
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid request Body"));
             }
             var updateVehicle = await vehicleService.UpdateVehicleAsync(id, vehicleDTO);
             if (updateVehicle == null)
             {
-                return Results.BadRequest(ApiResponse<object>.FailureResponse("User or Vehicle does not exist."));
+                return Results.Ok(ApiResponse<object>.FailureResponse("User or Vehicle does not exist."));
             }
 
             return Results.Ok(ApiResponse<object>.SuccessResponse(updateVehicle, "Vehicle updated successfully."));
@@ -76,12 +76,12 @@ namespace VehicleKhatabook.EndPoints.User
         {
             if (id == Guid.Empty)
             {
-                return Results.BadRequest(ApiResponse<object>.FailureResponse("Invalid Id."));
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Id."));
             }
             var success = await vehicleService.DeleteVehicleAsync(id);
             if (!success)
             {
-                return Results.BadRequest(ApiResponse<object>.FailureResponse("Failed to delete"));
+                return Results.Ok(ApiResponse<object>.FailureResponse("Failed to delete"));
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(success, $"Vechicle delete successfull."));
         }
@@ -92,7 +92,7 @@ namespace VehicleKhatabook.EndPoints.User
 
             if (!isUserActive)
             {
-                return Results.BadRequest(ApiResponse<object>.FailureResponse($"User with ID {userId} does not exist or is inactive."));
+                return Results.Ok(ApiResponse<object>.FailureResponse($"User with ID {userId} does not exist or is inactive."));
             }
 
             if (!hasVehicles)

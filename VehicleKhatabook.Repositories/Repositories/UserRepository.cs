@@ -35,7 +35,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 LanguageTypeId = userDTO.languageTypeId,
                 CreatedOn = DateTime.UtcNow,
                 UserTypeId = userDTO.UserTypeId,
-                Email = userDTO.Email,
+                //Email = userDTO.Email,
                 //CreatedBy = Guid.NewGuid(),
                 IsActive = true
             };
@@ -56,7 +56,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 MobileNumber = user.MobileNumber,
-                mPIN = user.mPIN,
+                UserTypeId = user.UserTypeId,
+                //mPIN = user.mPIN,
                 UserReferCode = user.UserReferCode,
                 Role = user.Role,
                 IsPremiumUser = user.IsPremiumUser,
@@ -77,6 +78,9 @@ namespace VehicleKhatabook.Repositories.Repositories
             user.LastName = userDTO.LastName;
             user.MobileNumber = userDTO.MobileNumber;
             user.mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN);
+            user.UserTypeId = userDTO.UserTypeId;
+            user.IsPremiumUser = userDTO.IsPremiumUser;
+            user.IsActive = userDTO.IsActive;
             user.Role = userDTO.Role;
             user.State = userDTO.State;
             user.District = userDTO.District;
@@ -132,9 +136,15 @@ namespace VehicleKhatabook.Repositories.Repositories
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     MobileNumber = user.MobileNumber,
-                    Email = user.Email,
+                    //Email = user.Email,
                     RoleId = user.UserTypeId,
-                    RoleName = user.Role
+                    RoleName = user.Role,
+                    IsPremiumUser= user.IsPremiumUser,
+                    State = user.State,
+                    District = user.District,
+                    IsActive= user.IsActive,
+                    UserReferCode = user.UserReferCode,
+                    LanguageTypeId  = user.LanguageTypeId
                 };
                 return userDetailsDTO;
             }
