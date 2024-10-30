@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using System.Security.Claims;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
@@ -17,9 +18,9 @@ namespace VehicleKhatabook.EndPoints.User
         {
             var vehileRoute = app.MapGroup("/api/vehicle").WithTags("Vehicle Management").RequireAuthorization("OwnerOrDriverPolicy");
             vehileRoute.MapPost("/Add", AddVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
-            vehileRoute.MapGet("/GetVehicleByVehicleId{id}", GetVehicleByVehicleIdAsync);
-            vehileRoute.MapPut("/UpdateVehicleById{id}", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
-            vehileRoute.MapDelete("/DeleteVehicleById{id}", DeleteVehicle);
+            vehileRoute.MapGet("/GetVehicleByVehicleId", GetVehicleByVehicleIdAsync);
+            vehileRoute.MapPut("/UpdateVehicleById", UpdateVehicle).AddEndpointFilter<ValidationFilter<VehicleDTO>>();
+            vehileRoute.MapDelete("/DeleteVehicleById", DeleteVehicle);
             vehileRoute.MapGet("/GetAllVehiclesByUserId", GetAllVehicles);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
@@ -29,8 +30,14 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddValidatorsFromAssemblyContaining<AddVehicleValidator>();
         }
 
-        internal async Task<IResult> AddVehicle(VehicleDTO vehicleDTO, IVehicleService vehicleService)
+        internal async Task<IResult> AddVehicle(HttpContext httpContext,VehicleDTO vehicleDTO, IVehicleService vehicleService)
         {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+            vehicleDTO.UserId = Guid.Parse(userId); 
             var result = await vehicleService.AddVehicleAsync(vehicleDTO);
 
             if (result != null)
@@ -86,9 +93,14 @@ namespace VehicleKhatabook.EndPoints.User
             return Results.Ok(ApiResponse<object>.SuccessResponse(success, $"Vechicle delete successfull."));
         }
 
-        internal async Task<IResult> GetAllVehicles(Guid userId, IVehicleService vehicleService)
+        internal async Task<IResult> GetAllVehicles(HttpContext httpContext, IVehicleService vehicleService)
         {
-            var (isUserActive, hasVehicles, vehicles) = await vehicleService.GetAllVehiclesAsync(userId);
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Unauthorized();
+            }
+            var (isUserActive, hasVehicles, vehicles) = await vehicleService.GetAllVehiclesAsync(Guid.Parse(userId));
 
             if (!isUserActive)
             {

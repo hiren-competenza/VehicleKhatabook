@@ -1,4 +1,8 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
+using System.Security.Claims;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
@@ -15,17 +19,12 @@ namespace VehicleKhatabook.EndPoints.User
         public void DefineEndpoints(WebApplication app)
         {
             var userRoute = app.MapGroup("api/user").WithTags("User Details and Driver").RequireAuthorization("OwnerOrDriverPolicy");
-            userRoute.MapGet("/GetUserProfile{id:guid}", GetUserById);
+            userRoute.MapGet("/GetUserProfile", GetUserById);
             userRoute.MapPut("/UpdateUser", UpdateUser);
             //userRoute.MapDelete("/{id:guid}", DeleteUser);
             //userRoute.MapGet("/", GetAllUsers);
-            userRoute.MapPost("/auth/forgot-mpin", ForgotMpin);
-            userRoute.MapPost("/auth/change-mpin", ResetMpin);
             userRoute.MapGet("/getExpenseIncomeCategoriesById", GetExpenseIncomeCategoriesAsync);
-            userRoute.MapPost("/OtpVerify", VerifyOtp);
-
-            userRoute.MapPost("/AddDriver", AddDriver);
-            userRoute.MapGet("/GetDriverDetailsById", GetDriverDetailsByUserId);
+            userRoute.MapGet("/GetDriverDetailsById", GetDriverDetailsById);
             userRoute.MapPut("/UpdateDriver", UpdateDriver);
             userRoute.MapDelete("/DeleteDriver", DeleteDriver);
             userRoute.MapGet("/GetAllDrivers", GetAllDrivers);
@@ -44,19 +43,31 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddScoped<IMasterDataRepository, MasterDataRepository>();
         }
 
-        internal async Task<IResult> GetUserById(Guid id, IUserService userService)
+        internal async Task<IResult> GetUserById(HttpContext httpContext, IUserService userService)
         {
-            var result = await userService.GetUserByIdAsync(id);
-            if(result == null)
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
             {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Failed to Get user/User not available"));
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
-            return Results.Ok(ApiResponse<object>.SuccessResponse(result));
-        }
 
-        internal async Task<IResult> UpdateUser(Guid id, UserDTO userDTO, IUserService userService)
+            var result = await userService.GetUserByIdAsync(Guid.Parse(userId));
+            if (result == null)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result, "User profile retrieved."));
+        }
+        internal async Task<IResult> UpdateUser(HttpContext httpContext, UserDTO userDTO, IUserService userService)
         {
-            var result = await userService.UpdateUserAsync(id, userDTO);
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+            userDTO.UserId = Guid.Parse(userId);
+            var result = await userService.UpdateUserAsync(userDTO);
             if (result == null)
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("User Not Found"));
@@ -75,34 +86,7 @@ namespace VehicleKhatabook.EndPoints.User
             var result = await userService.GetAllUsersAsync();
             return Results.Ok(result);
         }
-        private async Task<IResult> ForgotMpin(ForgotMpinDTO dto, IAuthService authService)
-        {
-            var (result,otp) = await authService.SendForgotMpinAsync(dto.MobileNumber);
-            if (result)
-            {
-                return Results.Ok(ApiResponse<object>.SuccessResponse(result,$"OTP sent successfully to reset mPIN : {otp}"));
-            }
-            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to send OTP. Please try again."));
-        }
-
-        private async Task<IResult> ResetMpin(ResetMpinDTO dto, IAuthService authService)
-        {
-            var result = await authService.ResetMpinAsync(dto);
-            if (result)
-            {
-                return Results.Ok(ApiResponse<object>.SuccessResponse(result,"mPIN reset successfully."));
-            }
-            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to reset mPIN. Please try again."));
-        }
-        internal async Task<IResult> VerifyOtp(IAuthService authService, Guid userId, string otpCode)
-        {
-            var result = await authService.VerifyOtpAsync(userId, otpCode);
-            if (result)
-            {
-                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Otp Verify successful."));
-            }
-            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to verify otp"));
-        }
+       
         private async Task<IResult> GetExpenseIncomeCategoriesAsync(IMasterDataService masterDataService, int userTypeId, bool active = true)
         {
             var incomeCategories = await masterDataService.GetIncomeCategoriesAsync(userTypeId);
@@ -116,59 +100,51 @@ namespace VehicleKhatabook.EndPoints.User
             //var jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
             return Results.Ok(ApiResponse<object>.SuccessResponse(response));
         }
-        internal async Task<IResult> AddDriver(UserDTO userDTO, IUserService userService)
-        {
-            if (userDTO == null)
-                return Results.Ok(ApiResponse<object>.FailureResponse("Driver details are invalid"));
+        
 
-            var result = await userService.AddDriverAsync(userDTO);
-            if (result == null)
-            {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Failed to register new driver"));
-            }
-            return Results.Ok(ApiResponse<object>.SuccessResponse(result,"New driver added successful."));
-        }
-
-        internal async Task<IResult> GetDriverDetailsByUserId(Guid id, IUserService userService)
+        internal async Task<IResult> GetDriverDetailsById(HttpContext httpContext, IUserService userService)
         {
-            if (id == Guid.Empty)
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
             {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Id."));
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
 
-            var driver = await userService.GetDriverByIdAsync(id);
+            var driver = await userService.GetDriverByIdAsync(Guid.Parse(userId));
             if (driver == null)
                 Results.Ok(ApiResponse<object>.FailureResponse("Driver not found"));
 
             return Results.Ok(ApiResponse<object>.SuccessResponse(driver, "Driver details found"));
         }
 
-        internal async Task<IResult> UpdateDriver(Guid id, UserDTO userDTO, IUserService userService)
+        internal async Task<IResult> UpdateDriver(HttpContext httpContext, UserDTO userDTO, IUserService userService)
         {
-            if (id == Guid.Empty)
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
             {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Id."));
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
             if (userDTO == null)
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("Invalid request body"));
             }
-
-            var updateDriver = await userService.UpdateDriverAsync(id, userDTO);
+            userDTO.UserId = Guid.Parse(userId);
+            var updateDriver = await userService.UpdateDriverAsync(Guid.Parse(userId), userDTO);
             if (updateDriver == null)
                 return Results.Ok(ApiResponse<object>.FailureResponse("Failed to update"));
 
             return Results.Ok(ApiResponse<object>.SuccessResponse(updateDriver, "driver update successful."));
         }
 
-        internal async Task<IResult> DeleteDriver(Guid id, IUserService userService)
+        internal async Task<IResult> DeleteDriver(HttpContext httpContext, IUserService userService)
         {
-            if (id == Guid.Empty)
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
             {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Id."));
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
 
-            var result = await userService.DeleteDriverAsync(id);
+            var result = await userService.DeleteDriverAsync(Guid.Parse(userId));
             if (!result)
             {
                 return Results.Ok("driver not found/failed to delete");

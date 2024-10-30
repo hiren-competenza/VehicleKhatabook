@@ -28,6 +28,7 @@ namespace VehicleKhatabook.Services.Services
             var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, userDetailsDTO.UserId.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, userDetailsDTO.UserId.ToString()),
             //new Claim(JwtRegisteredClaimNames.Email, userDetailsDTO.Email),
             new Claim("role", userDetailsDTO.RoleName.ToLower().ToString()),
             new Claim("firstname", userDetailsDTO.FirstName),
@@ -84,7 +85,7 @@ namespace VehicleKhatabook.Services.Services
             if (user != null && isValid)
             {   
                 user.mPIN = resetMpinDTO.NewMpin;
-                await _userRepository.UpdateUserAsync(resetMpinDTO.UserId, user);
+                await _userRepository.UpdateUserAsync(user);
                 return true;
             }
             return false;

@@ -15,6 +15,20 @@ namespace VehicleKhatabook.Services.Services
             _adminUserRepository = adminUserRepository;
         }
 
+        public async Task<(bool Success, AdminUserDTO AdminDetails)> AuthenticateAdminAsync(AdminLoginDTO adminLoginDTO)
+        {
+            var admin = await _adminUserRepository.GetAdminByMobileAndPasswordAsync(adminLoginDTO.MobileNumber, adminLoginDTO.Password);
+
+            if (admin != null)
+            {
+                //string token = _adminUserRepository.GenerateToken(admin); // Assuming GenerateToken method exists
+
+                return (true, admin);
+            }
+
+            return (false, null);
+        }
+
         public async Task<AdminUser> RegisterAdminAsync(AdminUserDTO adminUserDTO)
         {
             var adminUser = new AdminUser

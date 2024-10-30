@@ -22,7 +22,7 @@ namespace VehicleKhatabook.Models.DTOs
     {
         public AddVehicleValidator() 
         {
-            RuleFor(x => x.UserId).NotEmpty().WithMessage("User ID is required. Please enter a valid user.");
+            //RuleFor(x => x.UserId).NotEmpty().WithMessage("User ID is required. Please enter a valid user.");
             RuleFor(x => x.VehicleType).NotEmpty().WithMessage("Vehicle type is required. Please select a vehicle type.");
         }
     }

@@ -10,7 +10,7 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var subscriptionRoute = app.MapGroup("/api/subscription").WithTags("Subscription and Premium Features").RequireAuthorization("OwnerOrDriverPolicy");
+            var subscriptionRoute = app.MapGroup("/api/subscription").WithTags("Subscription and Premium Features")/*.RequireAuthorization("OwnerOrDriverPolicy")*/;
 
             subscriptionRoute.MapGet("/details", GetSubscriptionDetails);
             subscriptionRoute.MapPost("/upgrade", UpgradeToPremium);

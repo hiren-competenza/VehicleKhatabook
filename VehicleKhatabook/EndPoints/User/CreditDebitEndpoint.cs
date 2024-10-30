@@ -1,4 +1,6 @@
-﻿using VehicleKhatabook.Entities.Models;
+﻿using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
@@ -67,11 +69,16 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
             }
         }
-        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType, Guid userId, IIncomeService incomeService, IExpenseService expenseService)
+        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType,HttpContext httpContext, IIncomeService incomeService, IExpenseService expenseService)
         {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
             if (transactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
-                var result = await incomeService.GetIncomeAsync(userId);
+                var result = await incomeService.GetIncomeAsync(Guid.Parse(userId));
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
 
@@ -79,7 +86,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
             else
             {
-                var result = await expenseService.GetExpenseAsync(userId);
+                var result = await expenseService.GetExpenseAsync(Guid.Parse(userId));
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
 

@@ -2,6 +2,7 @@
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
+using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 
 namespace VehicleKhatabook.Repositories.Repositories
@@ -22,6 +23,23 @@ namespace VehicleKhatabook.Repositories.Repositories
             return adminUser;
         }
 
+        public async Task<AdminUserDTO> GetAdminByMobileAndPasswordAsync(string mobileNumber, string password)
+        {
+            return await _context.AdminUsers
+                .Where(admin => admin.MobileNumber == mobileNumber && admin.PasswordHash == password)
+                .Select(admin => new AdminUserDTO
+                {
+                    AdminID = admin.AdminID,
+                    FullName = admin.FullName,
+                    Username = admin.Username,
+                    Email = admin.Email,
+                    Password = admin.PasswordHash,
+                    Role = admin.Role,
+                    MobileNumber = admin.MobileNumber,
+                    IsActive = admin.IsActive
+                })
+                .FirstOrDefaultAsync();
+        }
         public async Task<AdminUser> UpdateAdminAsync(AdminUser adminUser)
         {
             var existingAdmin = await _context.AdminUsers.FindAsync(adminUser.AdminID);

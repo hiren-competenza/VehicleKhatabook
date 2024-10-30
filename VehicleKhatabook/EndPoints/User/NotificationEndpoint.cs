@@ -11,7 +11,7 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var notifications = app.MapGroup("/api/notifications").WithTags("Notifications & Alerts").RequireAuthorization("OwnerOrDriverPolicy");
+            var notifications = app.MapGroup("/api/notifications").WithTags("Notifications & Alerts")/*.RequireAuthorization("OwnerOrDriverPolicy")*/;
 
             notifications.MapGet("/", GetAllNotifications);
             notifications.MapPost("/mark-read/{id}", MarkNotificationAsRead);

@@ -1,4 +1,6 @@
-﻿using VehicleKhatabook.Infrastructure;
+﻿using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
@@ -12,7 +14,7 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var fuelRoute = app.MapGroup("/api/fuel-tracking").WithTags("Fuel Tracking").RequireAuthorization("OwnerOrDriverPolicy");
+            var fuelRoute = app.MapGroup("/api/fuel-tracking").WithTags("Fuel Tracking")/*.RequireAuthorization("OwnerOrDriverPolicy")*/;
             fuelRoute.MapPost("/", AddFuelTracking);
             //fuelRoute.MapGet("/{id}", GetFuelTracking);
             //fuelRoute.MapPut("/{id}", UpdateFuelTracking);
@@ -24,8 +26,14 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddScoped<IFuelTrackingService, FuelTrackingService>();
             services.AddScoped<IFuelTrackingRepository, FuelTrackingRepository>();
         }
-        internal async Task<IResult> AddFuelTracking(FuelTrackingDTO fuelTrackingDTO, IFuelTrackingService fuelTrackingService)
+        internal async Task<IResult> AddFuelTracking(HttpContext httpContext,FuelTrackingDTO fuelTrackingDTO, IFuelTrackingService fuelTrackingService)
         {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Unauthorized();
+            }
+            fuelTrackingDTO.UserId = Guid.Parse(userId);
             if (fuelTrackingDTO == null)
                 return Results.Ok(ApiResponse<object>.FailureResponse("Fuel tracking details are invalid"));
 
