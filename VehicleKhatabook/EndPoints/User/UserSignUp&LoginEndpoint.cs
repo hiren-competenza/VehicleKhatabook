@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using System.Security.Claims;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
@@ -17,6 +18,10 @@ namespace VehicleKhatabook.EndPoints.User
             var userRoute = app.MapGroup("api/user").WithTags("User Registration and Login");
             userRoute.MapPost("/v1/register", UserSignup).AddEndpointFilter<ValidationFilter<UserDTO>>();
             userRoute.MapPost("/Login", Login);
+            userRoute.MapPost("/auth/forgot-mpin", ForgotMpin);
+            userRoute.MapPost("/auth/change-mpin", ResetMpin);
+            userRoute.MapPost("/OtpVerify", VerifyOtp);
+            userRoute.MapPost("/AddDriver", AddDriver);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -54,6 +59,63 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.SuccessResponse(responseData, "Login successful."));
             }
             return Results.Ok(ApiResponse<UserDetailsDTO>.FailureResponse("Invalid mobile number or mPIN."));
+        }
+        private async Task<IResult> ForgotMpin(ForgotMpinDTO dto, IAuthService authService)
+        {
+            var (result, otp) = await authService.SendForgotMpinAsync(dto.MobileNumber);
+            if (result)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, $"OTP sent successfully to reset mPIN : {otp}"));
+            }
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to send OTP. Please try again."));
+        }
+
+        private async Task<IResult> ResetMpin(HttpContext httpContext, ResetMpinDTO dto, IAuthService authService)
+        {
+            //var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            //}
+            //dto.UserId = Guid.Parse(userId);
+            var result = await authService.ResetMpinAsync(dto);
+            if (result)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "mPIN reset successfully."));
+            }
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to reset mPIN. Please try again."));
+        }
+        internal async Task<IResult> VerifyOtp(HttpContext httpContext, IAuthService authService, string otpCode)
+        {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+            var result = await authService.VerifyOtpAsync(Guid.Parse(userId), otpCode);
+            if (result)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Otp Verify successful."));
+            }
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to verify otp"));
+        }
+        internal async Task<IResult> AddDriver(HttpContext httpContext, UserDTO userDTO, IUserService userService)
+        {
+            //var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            //}
+            //userDTO.UserId = Guid.Parse(userId);
+            if (userDTO == null)
+                return Results.Ok(ApiResponse<object>.FailureResponse("Driver details are invalid"));
+
+            var result = await userService.AddDriverAsync(userDTO);
+            if (result == null)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Failed to register new driver"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result, "New driver added successful."));
         }
     }
 }

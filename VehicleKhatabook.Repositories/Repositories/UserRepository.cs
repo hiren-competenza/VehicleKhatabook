@@ -68,16 +68,16 @@ namespace VehicleKhatabook.Repositories.Repositories
             };
         }
 
-        public async Task<User> UpdateUserAsync(Guid id, UserDTO userDTO)
+        public async Task<User> UpdateUserAsync(UserDTO userDTO)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == id && u.IsActive);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == userDTO.UserId && u.IsActive);
             if (user == null)
                 return null;
 
             user.FirstName = userDTO.FirstName;
             user.LastName = userDTO.LastName;
             user.MobileNumber = userDTO.MobileNumber;
-            user.mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN);
+            //user.mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN);
             user.UserTypeId = userDTO.UserTypeId;
             user.IsPremiumUser = userDTO.IsPremiumUser;
             user.IsActive = userDTO.IsActive;
@@ -172,7 +172,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 FirstName = UserDTO.FirstName,
                 LastName = UserDTO.LastName,
                 MobileNumber = UserDTO.MobileNumber,
-                mPIN = UserDTO.mPIN,
+                mPIN = BCrypt.Net.BCrypt.HashPassword(UserDTO.mPIN),
                 UserReferCode = UserDTO.UserReferCode,
                 ReferCode = UserDTO.ReferCode,
                 Role = UserDTO.Role,
@@ -206,7 +206,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             driver.FirstName = userDTO.FirstName;
             driver.LastName = userDTO.LastName;
             driver.MobileNumber = userDTO.MobileNumber;
-            driver.mPIN = userDTO.mPIN;
+            //driver.mPIN = userDTO.mPIN;
             driver.ReferCode = userDTO.ReferCode;
             driver.Role = userDTO.Role;
             driver.IsPremiumUser = userDTO.IsPremiumUser;

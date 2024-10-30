@@ -1,4 +1,5 @@
-﻿using VehicleKhatabook.Infrastructure;
+﻿using Microsoft.AspNetCore.Builder;
+using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
@@ -13,16 +14,33 @@ namespace VehicleKhatabook.EndPoints.Admin
         public void DefineEndpoints(WebApplication app)
         {
             var staticRoute = app.MapGroup("/api/admin").WithTags("Admin Management")/*.RequireAuthorization("AdminPolicy")*/;
-            staticRoute.MapPost("/RegisterAdmin", register);
-            staticRoute.MapPost("/UpdateAdmin", UpdateAdmin);
-            staticRoute.MapGet("/GetAdminById", GetAdminById);
-            staticRoute.MapGet("/GetAllAdmins", GetAllAdmins);
+            staticRoute.MapPost("/Login", AdminLogin);
+            //staticRoute.MapPost("/RegisterAdmin", register);
+            //staticRoute.MapPost("/UpdateAdmin", UpdateAdmin);
+            //staticRoute.MapGet("/GetAdminById", GetAdminById);
+            //staticRoute.MapGet("/GetAllAdmins", GetAllAdmins);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IAdminUserService, AdminUserService>();
             services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+        }
+        internal async Task<IResult> AdminLogin(AdminLoginDTO adminLoginDTO, IAdminUserService adminService)
+        {
+            var result = await adminService.AuthenticateAdminAsync(adminLoginDTO);
+
+            if (result.Success)
+            {
+                var responseData = new
+                {
+                    AdminDetails = result.AdminDetails
+                };
+
+                return Results.Ok(ApiResponse<object>.SuccessResponse(responseData, "Login successful."));
+            }
+
+            return Results.BadRequest(ApiResponse<object>.FailureResponse("Invalid mobile number or password."));
         }
         internal async Task<IResult> register(IAdminUserService adminUserService, AdminUserDTO adminDTO)
         {
