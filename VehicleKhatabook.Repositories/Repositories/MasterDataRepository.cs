@@ -191,10 +191,9 @@ namespace VehicleKhatabook.Repositories.Repositories
             //    }
             //};
         }
-        public async Task<ApiResponse<List<VechileType>>> GetAllVehicleTypesAsync()
+        public async Task<List<VechileType>> GetAllVehicleTypesAsync()
         {
-            var result = await _context.VehicleTypes.ToListAsync();
-            return ApiResponse<List<VechileType>>.SuccessResponse(result);
+            return await _context.VehicleTypes.ToListAsync();
         }
         public async Task<List<Country>> GetCountryAsync()
         {

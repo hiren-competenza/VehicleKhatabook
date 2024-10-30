@@ -5,7 +5,7 @@ namespace VehicleKhatabook.Models.DTOs
     public class VehicleDTO
     {
         public Guid UserId { get; set; }
-        public string? VehicleType { get; set; }
+        public int? VehicleTypeId { get; set; }
         public string? RegistrationNumber { get; set; }
         public string? NickName { get; set; }
         public DateTime InsuranceExpiry { get; set; }
@@ -23,7 +23,7 @@ namespace VehicleKhatabook.Models.DTOs
         public AddVehicleValidator() 
         {
             //RuleFor(x => x.UserId).NotEmpty().WithMessage("User ID is required. Please enter a valid user.");
-            RuleFor(x => x.VehicleType).NotEmpty().WithMessage("Vehicle type is required. Please select a vehicle type.");
+            RuleFor(x => x.VehicleTypeId).NotEmpty().WithMessage("Vehicle type is required. Please select a vehicle type.");
         }
     }
 }

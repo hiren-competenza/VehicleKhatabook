@@ -14,7 +14,6 @@ namespace VehicleKhatabook.EndPoints.Admin
             var staticRoute = app.MapGroup("/api/static").WithTags("Vehicle Types Management")/*.RequireAuthorization("AdminPolicy")*/;
             staticRoute.MapPost("/api/AddVehicleTypes", AddVehicleTypesAsync);
             staticRoute.MapPost("/api/UpdateVehicleType", UpdateVehicleTypeAsync);
-            staticRoute.MapGet("/api/vehicletypes", GetVehicleTypesAsync);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
@@ -32,11 +31,6 @@ namespace VehicleKhatabook.EndPoints.Admin
         {
             var result = await masterDataService.UpdateVehicleTypeAsync(vehicleTypeId, vehicleTypeDTO);
             return Results.Ok(result);
-        }
-        internal async Task<IResult> GetVehicleTypesAsync(IMasterDataService masterDataService)
-        {
-            var vehicleTypes = await masterDataService.GetAllVehicleTypesAsync();
-            return Results.Ok(vehicleTypes);
         }
     }
 }

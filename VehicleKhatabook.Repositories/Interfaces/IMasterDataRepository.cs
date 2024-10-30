@@ -17,7 +17,7 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<ApiResponse<bool>> DeleteExpenseCategoryAsync(int id);
         Task<ApiResponse<VechileType>> AddVehicleTypeAsync(VechileType vechileType);
         Task<ApiResponse<VechileType>> UpdateVehicleTypeAsync(int vehicleTypeId, VechileType vehicleTypeDTO);
-        Task<ApiResponse<List<VechileType>>> GetAllVehicleTypesAsync();
+        Task<List<VechileType>> GetAllVehicleTypesAsync();
         Task<List<Country>> GetCountryAsync();
     }
 }

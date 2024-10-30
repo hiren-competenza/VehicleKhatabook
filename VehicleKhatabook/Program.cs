@@ -128,6 +128,5 @@ app.UseAuthorization();
 app.UseEndpointDefinitions();
 app.UseExceptionHandlerMiddleware();
 app.MapControllers();
-app.UseCors("AllowSpecificOrigin");
 
 app.Run();

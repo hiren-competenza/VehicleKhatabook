@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Security.Claims;
@@ -29,7 +30,6 @@ namespace VehicleKhatabook.EndPoints.User
             userRoute.MapDelete("/DeleteDriver", DeleteDriver);
             userRoute.MapGet("/GetAllDrivers", GetAllDrivers);
             userRoute.MapGet("/GetAllCountry", GetCountryAsync);
-
             userRoute.MapGet("/GetAllSMSProvider", GetAllSMSProviders);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)

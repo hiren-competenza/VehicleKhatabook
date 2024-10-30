@@ -63,17 +63,16 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _masterDataRepository.UpdateVehicleTypeAsync(vehicleTypeId, vehicleTypeDTO);
         }
-        public async Task<ApiResponse<List<VechileType>>> GetAllVehicleTypesAsync()
+        public async Task<List<VechileType>> GetAllVehicleTypesAsync()
         {
             var vehicleTypes = await _masterDataRepository.GetAllVehicleTypesAsync();
 
-            var vehicleType = vehicleTypes.Data?.Select(vt => new VechileType
+            var vehicleType = vehicleTypes.Select(vt => new VechileType
             {
                 VehicleTypeId = vt.VehicleTypeId,
                 TypeName = vt.TypeName
             }).ToList();
-
-            return ApiResponse<List<VechileType>>.SuccessResponse(vehicleType);
+            return vehicleType;
         }
         public async Task<List<Country>> GetCountryAsync()
         {
