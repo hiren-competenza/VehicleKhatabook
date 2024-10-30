@@ -14,22 +14,12 @@ namespace VehicleKhatabook.EndPoints.Admin
             var staticRoute = app.MapGroup("/api/static").WithTags("Language Type Management").RequireAuthorization("AdminPolicy");
             staticRoute.MapPost("/AddLanguageType", AddLanguageType);
             staticRoute.MapPut("/UpdateLanguageType", UpdateLanguageType);
-            staticRoute.MapGet("/GetAllLanguageTypes", GetAllLanguageTypes);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<ILanguageTypeService, LanguageTypeService>();
             services.AddScoped<ILanguageTypeRepository, LanguageTypeRepository>();
-        }
-        public async Task<IResult> GetAllLanguageTypes(ILanguageTypeService languageTypeService)
-        {
-            var result = await languageTypeService.GetAllLanguageTypesAsync();
-            if (result.status == 200)
-            {
-                return Results.Ok(result);
-            }
-            return Results.BadRequest(result.Message);
         }
 
         public async Task<IResult> AddLanguageType(LanguageTypeDTO languageTypeDTO, ILanguageTypeService languageTypeService)

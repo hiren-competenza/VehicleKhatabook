@@ -12,7 +12,7 @@ namespace VehicleKhatabook.Entities.Models
         public Guid UserID { get; set; }
 
         [MaxLength(50)]
-        public string VehicleType { get; set; }
+        public int? VehicleTypeId { get; set; }
 
         [MaxLength(50)]
         public string RegistrationNumber { get; set; }
@@ -32,5 +32,7 @@ namespace VehicleKhatabook.Entities.Models
 
         [ForeignKey("UserID")]
         public User User { get; set; }
+        [ForeignKey("VehicleTypeId")]
+        public VechileType VehicleType { get; set; }
     }
 }

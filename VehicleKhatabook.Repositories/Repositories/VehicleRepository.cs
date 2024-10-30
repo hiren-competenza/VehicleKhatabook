@@ -19,7 +19,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             var vehicle = new Vehicle
             {
                 UserID = vehicleDTO.UserId,
-                VehicleType = vehicleDTO.VehicleType,
+                VehicleTypeId = vehicleDTO.VehicleTypeId,
                 RegistrationNumber = vehicleDTO.RegistrationNumber,
                 NickName = vehicleDTO.NickName,
                 InsuranceExpiry = vehicleDTO.InsuranceExpiry,
@@ -80,7 +80,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             }
 
             vehicleExist.UserID = vehicleDTO.UserId;
-            vehicleExist.VehicleType = vehicleDTO.VehicleType;
+            vehicleExist.VehicleTypeId = vehicleDTO.VehicleTypeId;
             vehicleExist.RegistrationNumber = vehicleDTO.RegistrationNumber;
             vehicleExist.NickName = vehicleDTO.NickName;
             vehicleExist.InsuranceExpiry = vehicleDTO.InsuranceExpiry;

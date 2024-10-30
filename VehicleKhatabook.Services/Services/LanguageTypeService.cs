@@ -14,10 +14,9 @@ namespace VehicleKhatabook.Services.Services
             _languageTypeRepository = languageTypeRepository;
         }
 
-        public async Task<ApiResponse<List<LanguageTypeDTO>>> GetAllLanguageTypesAsync()
+        public async Task<List<LanguageTypeDTO>> GetAllLanguageTypesAsync()
         {
-            var languageTypes = await _languageTypeRepository.GetAllLanguageTypesAsync();
-            return languageTypes.Count != 0 ? ApiResponse<List<LanguageTypeDTO>>.SuccessResponse(languageTypes) : ApiResponse<List<LanguageTypeDTO>>.FailureResponse("Not Found any Data");
+            return await _languageTypeRepository.GetAllLanguageTypesAsync();
         }
 
         public async Task<ApiResponse<LanguageTypeDTO>> AddLanguageTypeAsync(LanguageTypeDTO languageTypeDTO)

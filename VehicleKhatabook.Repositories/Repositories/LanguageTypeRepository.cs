@@ -22,7 +22,6 @@ namespace VehicleKhatabook.Repositories.Repositories
                                    {
                                        LanguageTypeId = lt.LanguageTypeId,
                                        LanguageName = lt.LanguageName,
-                                       Description = lt.Description,
                                        IsActive = lt.IsActive
                                    }).ToListAsync();
         }

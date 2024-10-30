@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Net.Http;
 using System.Security.Claims;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
@@ -27,8 +28,13 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddScoped<IIncomeService, IncomeService>();
             services.AddScoped<IExpenseService, ExpenseService>();
         }
-        internal async Task<IResult> AddIncomeExpenseAsync(IncomeExpenseDTO IncomeExpenseDTO, IIncomeService incomeService, IExpenseService expenseService)
+        internal async Task<IResult> AddIncomeExpenseAsync(HttpContext httpContext,IncomeExpenseDTO IncomeExpenseDTO, IIncomeService incomeService, IExpenseService expenseService)
         {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
             if (IncomeExpenseDTO.TransactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
                 var incomeDTO = new IncomeDTO
@@ -37,7 +43,8 @@ namespace VehicleKhatabook.EndPoints.User
                     IncomeAmount = IncomeExpenseDTO.Amount,
                     IncomeDate = IncomeExpenseDTO.Date,
                     IncomeDescription = IncomeExpenseDTO.Description,
-                    DriverID = IncomeExpenseDTO.DriverID,
+                    //DriverID = IncomeExpenseDTO.DriverID,
+                    DriverID = Guid.Parse(userId),
                     CreatedBy = IncomeExpenseDTO.CreatedBy,
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
@@ -57,7 +64,8 @@ namespace VehicleKhatabook.EndPoints.User
                     ExpenseAmount = IncomeExpenseDTO.Amount,
                     ExpenseDate = IncomeExpenseDTO.Date,
                     ExpenseDescription = IncomeExpenseDTO.Description,
-                    DriverID = IncomeExpenseDTO.DriverID,
+                    //DriverID = IncomeExpenseDTO.DriverID,
+                    DriverID = Guid.Parse(userId),
                     CreatedBy = IncomeExpenseDTO.CreatedBy,
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
