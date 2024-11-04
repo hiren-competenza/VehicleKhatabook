@@ -54,7 +54,7 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _userRepository.AuthenticateUser(userLoginDTO);
         }
-        public async Task<(bool Success, string Otp)> SendForgotMpinAsync(string mobileNumber)
+        public async Task<(bool Success, string Otp)> SendOtpAsync(string mobileNumber)
         {
             var user = await _userRepository.GetUserByMobileNumberAsync(mobileNumber);
             if (user != null)

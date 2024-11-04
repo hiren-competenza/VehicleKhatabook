@@ -62,10 +62,10 @@ namespace VehicleKhatabook.EndPoints.User
         }
         private async Task<IResult> ForgotMpin(ForgotMpinDTO dto, IAuthService authService)
         {
-            var (result, otp) = await authService.SendForgotMpinAsync(dto.MobileNumber);
+            var (result, otp) = await authService.SendOtpAsync(dto.MobileNumber);
             if (result)
             {
-                return Results.Ok(ApiResponse<object>.SuccessResponse(result, $"OTP sent successfully to reset mPIN : {otp}"));
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, $"OTP sent successfully : {otp}"));
             }
             return Results.Ok(ApiResponse<object>.FailureResponse("Failed to send OTP. Please try again."));
         }

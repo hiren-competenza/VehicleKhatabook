@@ -4,6 +4,6 @@
     {
         public string MobileNumber { get; set; }
         public string mPIN { get; set; }
-        public int UserTypeId { get; set; }
+        //public int UserTypeId { get; set; }
     }
 }
