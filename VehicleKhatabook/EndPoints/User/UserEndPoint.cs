@@ -87,18 +87,33 @@ namespace VehicleKhatabook.EndPoints.User
             return Results.Ok(result);
         }
        
-        private async Task<IResult> GetExpenseIncomeCategoriesAsync(IMasterDataService masterDataService, int userTypeId, bool active = true)
+        private async Task<IResult> GetExpenseIncomeCategoriesAsync(HttpContext httpContext, IUserService userService,IMasterDataService masterDataService, bool active = true)
         {
-            var incomeCategories = await masterDataService.GetIncomeCategoriesAsync(userTypeId);
-            var expenseCategories = await masterDataService.GetExpenseCategoriesAsync(userTypeId);
-
-            var response = new
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
             {
-                IncomeCategory = incomeCategories,
-                ExpenseCategory = expenseCategories
-            };
-            //var jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
-            return Results.Ok(ApiResponse<object>.SuccessResponse(response));
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+
+            var user = await userService.GetUserByIdAsync(Guid.Parse(userId));
+            //GetUserByIdAsync
+            if (user != null)
+            {
+                var incomeCategories = await masterDataService.GetIncomeCategoriesAsync(user.UserTypeId);
+                var expenseCategories = await masterDataService.GetExpenseCategoriesAsync(user.UserTypeId);
+
+                var response = new
+                {
+                    IncomeCategory = incomeCategories,
+                    ExpenseCategory = expenseCategories
+                };
+                //var jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
+                return Results.Ok(ApiResponse<object>.SuccessResponse(response));
+            }
+            else
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User Not Found"));
+            }
         }
         
 

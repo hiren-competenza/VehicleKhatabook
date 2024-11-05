@@ -16,36 +16,36 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context = context;
         }
 
-        public async Task<Expense> AddExpenseAsync(ExpenseDTO expenseDTO)
+        public async Task<UserExpense> AddExpenseAsync(ExpenseDTO expenseDTO)
         {
-            var expense = new Expense
+            var expense = new UserExpense
             {
                 ExpenseCategoryID = expenseDTO.ExpenseCategoryID,
                 ExpenseAmount = expenseDTO.ExpenseAmount,
                 ExpenseDate = expenseDTO.ExpenseDate,
                 ExpenseDescription = expenseDTO.ExpenseDescription,
-                DriverID = expenseDTO.DriverID,
+                UserID = expenseDTO.DriverID,
                 //CreatedBy = expenseDTO.CreatedBy,
                 CreatedOn = DateTime.UtcNow
             };
 
-            _context.Expenses.Add(expense);
+            _context.UserExpenses.Add(expense);
             await _context.SaveChangesAsync();
             return expense;
         }
 
-        public async Task<ApiResponse<Expense>> GetExpenseDetailsAsync(int id)
+        public async Task<ApiResponse<UserExpense>> GetExpenseDetailsAsync(int id)
         {
-            var expense = await _context.Expenses.FindAsync(id);
-            return expense != null ? ApiResponse<Expense>.SuccessResponse(expense, "Expense details retrieved successfully.")  : ApiResponse<Expense>.FailureResponse("Expense not found");
+            var expense = await _context.UserExpenses.FindAsync(id);
+            return expense != null ? ApiResponse<UserExpense>.SuccessResponse(expense, "Expense details retrieved successfully.")  : ApiResponse<UserExpense>.FailureResponse("Expense not found");
         }
 
-        public async Task<ApiResponse<Expense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO)
+        public async Task<ApiResponse<UserExpense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO)
         {
-            var expense = await _context.Expenses.FindAsync(id);
+            var expense = await _context.UserExpenses.FindAsync(id);
             if (expense == null)
             {
-                return ApiResponse<Expense>.FailureResponse($"Unable to update/expense for for id{id} Not Found");
+                return ApiResponse<UserExpense>.FailureResponse($"Unable to update/expense for for id{id} Not Found");
             }
 
             expense.ExpenseAmount = expenseDTO.ExpenseAmount;
@@ -55,41 +55,37 @@ namespace VehicleKhatabook.Repositories.Repositories
             //expense.ModifiedBy = expenseDTO.ModifiedBy;
             expense.LastModifiedOn = DateTime.UtcNow;
 
-            _context.Expenses.Update(expense);
+            _context.UserExpenses.Update(expense);
             await _context.SaveChangesAsync();
-            return ApiResponse<Expense>.SuccessResponse(expense, "Update Successfull");
+            return ApiResponse<UserExpense>.SuccessResponse(expense, "Update Successfull");
         }
 
         public async Task<ApiResponse<bool>> DeleteExpenseAsync(int id)
         {
-            var expense = await _context.Expenses.FindAsync(id);
+            var expense = await _context.UserExpenses.FindAsync(id);
             if (expense == null)
             {
                 return ApiResponse<bool>.FailureResponse("Expense not found");
             }
 
-            _context.Expenses.Remove(expense);
+            _context.UserExpenses.Remove(expense);
             await _context.SaveChangesAsync();
             return ApiResponse<bool>.SuccessResponse(true, "Delete successfully");
         }
 
-        public async Task<ApiResponse<List<Expense>>> GetAllExpensesAsync()
+        public async Task<ApiResponse<List<UserExpense>>> GetAllExpensesAsync()
         {
-            var expenses = await _context.Expenses.ToListAsync();
-            return expenses != null ? ApiResponse<List<Expense>>.SuccessResponse(expenses) : ApiResponse<List<Expense>>.FailureResponse("Failes to get List");
+            var expenses = await _context.UserExpenses.ToListAsync();
+            return expenses != null ? ApiResponse<List<UserExpense>>.SuccessResponse(expenses) : ApiResponse<List<UserExpense>>.FailureResponse("Failes to get List");
         }
-        public async Task<List<Expense>> GetExpenseAsync(Guid userId)
+        public async Task<List<UserExpense>> GetExpenseAsync(Guid userId,int months)
         {
-            var result = await _context.Expenses
-                .Where(e => e.DriverID == userId)
+            var startDate = DateTime.UtcNow.AddMonths(-months);
+
+            var result = await _context.UserExpenses
+                .Where(e => e.UserID == userId && e.ExpenseDate >= startDate)
                 .ToListAsync();
             return result;
-            //if (result == null || result.Count == 0)
-            //{
-            //    return ApiResponse<List<Expense>>.FailureResponse("User Not Found/Failed to load data");
-            //}
-
-            //return ApiResponse<List<Expense>>.SuccessResponse(result);
         }
     }
 }

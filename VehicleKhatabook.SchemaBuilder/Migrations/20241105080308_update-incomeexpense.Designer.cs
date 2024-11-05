@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VehicleKhatabook.Entities;
 
@@ -11,9 +12,11 @@ using VehicleKhatabook.Entities;
 namespace VehicleKhatabook.SchemaBuilder.Migrations
 {
     [DbContext(typeof(VehicleKhatabookDbContext))]
-    partial class VehicleKhatabookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241105080308_update-incomeexpense")]
+    partial class updateincomeexpense
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,6 +169,54 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.ToTable("Country");
                 });
 
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.Expense", b =>
+                {
+                    b.Property<int>("ExpenseID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExpenseID"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("ExpenseAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ExpenseCategoryID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpenseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExpenseDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ExpenseID");
+
+                    b.HasIndex("ExpenseCategoryID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Expenses");
+                });
+
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.ExpenseCategory", b =>
                 {
                     b.Property<int>("ExpenseCategoryID")
@@ -264,6 +315,54 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.HasIndex("VehicleID");
 
                     b.ToTable("FuelTrackings");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.Income", b =>
+                {
+                    b.Property<int>("IncomeID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IncomeID"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("IncomeAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("IncomeCategoryID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("IncomeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IncomeDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("IncomeID");
+
+                    b.HasIndex("IncomeCategoryID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Incomes");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.IncomeCategory", b =>
@@ -680,102 +779,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.UserExpense", b =>
-                {
-                    b.Property<int>("ExpenseID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExpenseID"));
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("ExpenseAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ExpenseCategoryID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ExpenseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ExpenseDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ExpenseID");
-
-                    b.HasIndex("ExpenseCategoryID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("UserExpenses");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.UserIncome", b =>
-                {
-                    b.Property<int>("IncomeID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IncomeID"));
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("IncomeAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("IncomeCategoryID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("IncomeDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("IncomeDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("IncomeID");
-
-                    b.HasIndex("IncomeCategoryID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("UserIncomes");
-                });
-
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.VechileType", b =>
                 {
                     b.Property<int>("VehicleTypeId")
@@ -894,6 +897,25 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.Expense", b =>
+                {
+                    b.HasOne("VehicleKhatabook.Entities.Models.ExpenseCategory", "ExpenseCategory")
+                        .WithMany()
+                        .HasForeignKey("ExpenseCategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VehicleKhatabook.Entities.Models.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExpenseCategory");
+
+                    b.Navigation("user");
+                });
+
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.FuelTracking", b =>
                 {
                     b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
@@ -911,6 +933,25 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Navigation("User");
 
                     b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.Income", b =>
+                {
+                    b.HasOne("VehicleKhatabook.Entities.Models.IncomeCategory", "IncomeCategory")
+                        .WithMany()
+                        .HasForeignKey("IncomeCategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IncomeCategory");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Notification", b =>
@@ -964,44 +1005,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasForeignKey("LanguageTypeId");
 
                     b.Navigation("LanguageType");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.UserExpense", b =>
-                {
-                    b.HasOne("VehicleKhatabook.Entities.Models.ExpenseCategory", "ExpenseCategory")
-                        .WithMany()
-                        .HasForeignKey("ExpenseCategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VehicleKhatabook.Entities.Models.User", "user")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExpenseCategory");
-
-                    b.Navigation("user");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.UserIncome", b =>
-                {
-                    b.HasOne("VehicleKhatabook.Entities.Models.IncomeCategory", "IncomeCategory")
-                        .WithMany()
-                        .HasForeignKey("IncomeCategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("IncomeCategory");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Vehicle", b =>

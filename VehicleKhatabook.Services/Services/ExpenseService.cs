@@ -15,17 +15,17 @@ namespace VehicleKhatabook.Services.Services
             _expenseRepository = expenseRepository;
         }
 
-        public async Task<Expense> AddExpenseAsync(ExpenseDTO expenseDTO)
+        public async Task<UserExpense> AddExpenseAsync(ExpenseDTO expenseDTO)
         {
             return await _expenseRepository.AddExpenseAsync(expenseDTO);
         }
 
-        public async Task<ApiResponse<Expense>> GetExpenseDetailsAsync(int id)
+        public async Task<ApiResponse<UserExpense>> GetExpenseDetailsAsync(int id)
         {
             return await _expenseRepository.GetExpenseDetailsAsync(id);
         }
 
-        public async Task<ApiResponse<Expense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO)
+        public async Task<ApiResponse<UserExpense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO)
         {
             return await _expenseRepository.UpdateExpenseAsync(id, expenseDTO);
         }
@@ -35,13 +35,13 @@ namespace VehicleKhatabook.Services.Services
             return await _expenseRepository.DeleteExpenseAsync(id);
         }
 
-        public async Task<ApiResponse<List<Expense>>> GetAllExpensesAsync()
+        public async Task<ApiResponse<List<UserExpense>>> GetAllExpensesAsync()
         {
             return await _expenseRepository.GetAllExpensesAsync();
         }
-        public async Task<List<Expense>> GetExpenseAsync(Guid userId)
+        public async Task<List<UserExpense>> GetExpenseAsync(Guid userId, int months)
         {
-            return await _expenseRepository.GetExpenseAsync(userId);
+            return await _expenseRepository.GetExpenseAsync(userId, months);
         }
     }
 }

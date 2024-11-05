@@ -16,29 +16,29 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context = context;
         }
 
-        public async Task<Income> AddIncomeAsync(IncomeDTO incomeDTO)
+        public async Task<UserIncome> AddIncomeAsync(IncomeDTO incomeDTO)
         {
-            var income = new Income
+            var income = new UserIncome
             {
                 IncomeCategoryID = incomeDTO.IncomeCategoryID,
                 IncomeAmount = incomeDTO.IncomeAmount,
                 IncomeDate = incomeDTO.IncomeDate,
-                DriverID = incomeDTO.DriverID,
+                UserID = incomeDTO.DriverID,
                 IncomeDescription = incomeDTO.IncomeDescription,
                 //CreatedBy = incomeDTO.CreatedBy,
                 CreatedOn = DateTime.UtcNow,
                 IsActive = true
             };
 
-            _context.Incomes.Add(income);
+            _context.UserIncomes.Add(income);
             await _context.SaveChangesAsync();
             return income;
         }
 
-        public async Task<ApiResponse<Income>> GetIncomeDetailsAsync(int id)
+        public async Task<ApiResponse<UserIncome>> GetIncomeDetailsAsync(int id)
         {
-            var income = await _context.Incomes.FindAsync(id);
-            return income != null ? ApiResponse<Income>.SuccessResponse(income) : ApiResponse<Income>.FailureResponse("Income not found");
+            var income = await _context.UserIncomes.FindAsync(id);
+            return income != null ? ApiResponse<UserIncome>.SuccessResponse(income) : ApiResponse<UserIncome>.FailureResponse("Income not found");
         }
 
         //public async Task<ApiResponse<Income>> UpdateIncomeAsync(int id, IncomeDTO incomeDTO)
@@ -78,18 +78,13 @@ namespace VehicleKhatabook.Repositories.Repositories
         //    var incomes = await _context.Incomes.ToListAsync();
         //    return new ApiResponse<List<Income>> { Success = true, Data = incomes };
         //}
-        public async Task<List<Income>> GetIncomeAsync(Guid userId)
+        public async Task<List<UserIncome>> GetIncomeAsync(Guid userId, int months)
         {
-            var result = await _context.Incomes
-                .Where(i => i.DriverID == userId)
+            var startDate = DateTime.UtcNow.AddMonths(-months);
+            var result = await _context.UserIncomes
+                .Where(i => i.UserID == userId && i.IncomeDate >= startDate)
                 .ToListAsync();
             return result;
-            //if (result == null || result.Count == 0)
-            //{
-            //    return ApiResponse<List<Income>>.FailureResponse($"No income records found for user ID {userId}.");
-            //}
-
-            //return ApiResponse<List<Income>>.SuccessResponse(result);
         }
     }
 }

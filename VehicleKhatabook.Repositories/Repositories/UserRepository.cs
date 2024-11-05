@@ -136,6 +136,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     MobileNumber = user.MobileNumber,
+                    Mpin = user.mPIN,
                     //Email = user.Email,
                     RoleId = user.UserTypeId,
                     RoleName = user.Role,
