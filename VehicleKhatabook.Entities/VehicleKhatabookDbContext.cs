@@ -14,8 +14,8 @@ namespace VehicleKhatabook.Entities
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<IncomeCategory> IncomeCategories { get; set; }
         public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
-        public DbSet<Income> Incomes { get; set; }
-        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<UserIncome> UserIncomes { get; set; }
+        public DbSet<UserExpense> UserExpenses { get; set; }
         public DbSet<FuelTracking> FuelTrackings { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Backup> Backups { get; set; }
@@ -33,8 +33,8 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<Subscription>().HasKey(s => s.SubscriptionID);
             modelBuilder.Entity<IncomeCategory>().HasKey(ic => ic.IncomeCategoryID);
             modelBuilder.Entity<ExpenseCategory>().HasKey(ec => ec.ExpenseCategoryID);
-            modelBuilder.Entity<Income>().HasKey(i => i.IncomeID);
-            modelBuilder.Entity<Expense>().HasKey(e => e.ExpenseID);
+            modelBuilder.Entity<UserIncome>().HasKey(i => i.IncomeID);
+            modelBuilder.Entity<UserExpense>().HasKey(e => e.ExpenseID);
             modelBuilder.Entity<FuelTracking>().HasKey(ft => ft.FuelTrackingID);
             modelBuilder.Entity<Notification>().HasKey(n => n.NotificationID);
             modelBuilder.Entity<Backup>().HasKey(b => b.BackupID);
@@ -92,12 +92,12 @@ namespace VehicleKhatabook.Entities
                 .WithMany()
                 .HasForeignKey(b => b.UserID);
 
-            modelBuilder.Entity<Income>()
+            modelBuilder.Entity<UserIncome>()
                 .HasOne(i => i.IncomeCategory)
                 .WithMany()
                 .HasForeignKey(i => i.IncomeCategoryID);
 
-            modelBuilder.Entity<Expense>()
+            modelBuilder.Entity<UserExpense>()
                 .HasOne(e => e.ExpenseCategory)
                 .WithMany()
                 .HasForeignKey(e => e.ExpenseCategoryID);

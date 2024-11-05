@@ -17,6 +17,7 @@
         public string District { get; set; }
         public bool IsActive { get; set; }
         public int? LanguageTypeId { get; set; }
+        public string? Mpin {  get; set; }
 
         //public Guid SessionId { get; set; }
     }

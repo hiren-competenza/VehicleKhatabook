@@ -49,7 +49,7 @@ namespace VehicleKhatabook.EndPoints.User
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
 
-                Income result = await incomeService.AddIncomeAsync(incomeDTO);
+                UserIncome result = await incomeService.AddIncomeAsync(incomeDTO);
                 if(result == null)
                 {
                     return Results.Ok(ApiResponse<object>.FailureResponse("failed to add income"));
@@ -70,14 +70,14 @@ namespace VehicleKhatabook.EndPoints.User
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
 
-                Expense result = await expenseService.AddExpenseAsync(expenseDTO);
+                UserExpense result = await expenseService.AddExpenseAsync(expenseDTO);
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse("failed to add expense."));
 
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
             }
         }
-        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType,HttpContext httpContext, IIncomeService incomeService, IExpenseService expenseService)
+        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType,HttpContext httpContext, IIncomeService incomeService, IExpenseService expenseService, int months)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
@@ -86,7 +86,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
             if (transactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
-                var result = await incomeService.GetIncomeAsync(Guid.Parse(userId));
+                var result = await incomeService.GetIncomeAsync(Guid.Parse(userId), months);// User paramter for Time Duration
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
 
@@ -94,7 +94,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
             else
             {
-                var result = await expenseService.GetExpenseAsync(Guid.Parse(userId));
+                var result = await expenseService.GetExpenseAsync(Guid.Parse(userId), months);// User paramter for Time Duration
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
 

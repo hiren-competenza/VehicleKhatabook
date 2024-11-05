@@ -6,12 +6,12 @@ namespace VehicleKhatabook.Services.Interfaces
 {
     public interface IExpenseService
     {
-        Task<Expense> AddExpenseAsync(ExpenseDTO expenseDTO);
-        Task<ApiResponse<Expense>> GetExpenseDetailsAsync(int id);
-        Task<ApiResponse<Expense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO);
+        Task<UserExpense> AddExpenseAsync(ExpenseDTO expenseDTO);
+        Task<ApiResponse<UserExpense>> GetExpenseDetailsAsync(int id);
+        Task<ApiResponse<UserExpense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO);
         Task<ApiResponse<bool>> DeleteExpenseAsync(int id);
-        Task<ApiResponse<List<Expense>>> GetAllExpensesAsync();
-        Task<List<Expense>> GetExpenseAsync(Guid userId);
+        Task<ApiResponse<List<UserExpense>>> GetAllExpensesAsync();
+        Task<List<UserExpense>> GetExpenseAsync(Guid userId, int months);
 
     }
 }
