@@ -38,9 +38,9 @@ namespace VehicleKhatabook.Repositories.Repositories
             await _dbContext.SaveChangesAsync();
             return vehicle;
         }
-        public async Task<List<Vehicle>> GetVehicleByVehicleIdAsync(Guid id)
+        public async Task<Vehicle> GetVehicleByVehicleIdAsync(Guid id)
         {
-            return await _dbContext.Vehicles.Where(i => i.VehicleID == id && i.IsActive == true).ToListAsync();
+            return await _dbContext.Vehicles.Where(i => i.VehicleID == id && i.IsActive == true).FirstOrDefaultAsync();
         }
 
 
@@ -54,7 +54,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             }
 
             var vehicles = await _dbContext.Vehicles
-                                            .Where(v => v.UserID == userId)
+                                            .Where(v => v.UserID == userId && v.IsActive)
                                             .ToListAsync();
 
             if (vehicles == null || vehicles.Count == 0)
@@ -70,16 +70,16 @@ namespace VehicleKhatabook.Repositories.Repositories
             var userExists = await _dbContext.Users.AnyAsync(u => u.UserID == vehicleDTO.UserId && u.IsActive == true);
             if (!userExists)
             {
-                    return null;
+                return null;
             }
 
             var vehicleExist = await _dbContext.Vehicles.FirstOrDefaultAsync(u => u.VehicleID == id && u.IsActive == true);
             if (vehicleExist == null)
             {
-                    return null;
+                return null;
             }
 
-            vehicleExist.UserID = vehicleDTO.UserId;
+            //vehicleExist.UserID = vehicleDTO.UserId;
             vehicleExist.VehicleTypeId = vehicleDTO.VehicleTypeId;
             vehicleExist.RegistrationNumber = vehicleDTO.RegistrationNumber;
             vehicleExist.NickName = vehicleDTO.NickName;
@@ -91,7 +91,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             vehicleExist.NationalPermitExpiry = vehicleDTO.NationalPermitExpiry;
             vehicleExist.ChassisNumber = vehicleDTO.ChassisNumber;
             vehicleExist.EngineNumber = vehicleDTO.EngineNumber;
-            vehicleExist.IsActive = vehicleDTO.IsActive;
+            vehicleExist.IsActive = true;
 
             _dbContext.Vehicles.Update(vehicleExist);
             await _dbContext.SaveChangesAsync();

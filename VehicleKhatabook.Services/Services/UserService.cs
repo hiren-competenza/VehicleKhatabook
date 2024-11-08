@@ -1,4 +1,6 @@
-﻿using VehicleKhatabook.Entities.Models;
+﻿using System.ComponentModel;
+using System.Data;
+using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
@@ -17,7 +19,16 @@ namespace VehicleKhatabook.Services.Services
 
         public async Task<User> CreateUserAsync(UserDTO userDTO)
         {
-            return await _userRepository.AddUserAsync(userDTO);
+            var isExists = await isMobileNumberAlreadyExists(userDTO.MobileNumber);
+            if (isExists)
+            {
+                return new User();
+            }
+            else
+            {
+                return await _userRepository.AddUserAsync(userDTO);
+            }
+
         }
 
         public async Task<UserDTO?> GetUserByIdAsync(Guid id)
@@ -62,6 +73,24 @@ namespace VehicleKhatabook.Services.Services
         public async Task<List<User>> GetAllDriversAsync()
         {
             return await _userRepository.GetAllDriversAsync();
+        }
+
+        public async Task<bool> isMobileNumberAlreadyExists(string phoneNumber)
+        {
+            var v = await _userRepository.GetUserByMobileNumberAsync(phoneNumber);
+            if (v != null)
+                return true;
+            else return false;
+        }
+
+
+        public async Task<bool> UpdateUserRoleAsync(Guid userId, string role)
+        {
+            return await _userRepository.UpdateUserRoleAsync(userId, role);
+        }
+        public async Task<bool> UpdateUserLanguageAsync(Guid userId, int languageTypeId)
+        {
+            return await _userRepository.UpdateUserLanguageAsync(userId, languageTypeId);
         }
     }
 }

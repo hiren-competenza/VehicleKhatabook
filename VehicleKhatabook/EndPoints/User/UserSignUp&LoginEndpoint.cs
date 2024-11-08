@@ -18,10 +18,10 @@ namespace VehicleKhatabook.EndPoints.User
             var userRoute = app.MapGroup("api/user").WithTags("User Registration and Login");
             userRoute.MapPost("/v1/register", UserSignup).AddEndpointFilter<ValidationFilter<UserDTO>>();
             userRoute.MapPost("/Login", Login);
-            userRoute.MapPost("/auth/forgot-mpin", ForgotMpin);
-            userRoute.MapPost("/auth/change-mpin", ResetMpin);
-            userRoute.MapPost("/OtpVerify", VerifyOtp);
-            userRoute.MapPost("/AddDriver", AddDriver);
+            userRoute.MapPost("/SendOTPforRegisteredUser", SendOTPforRegisteredUser);
+            userRoute.MapPost("/SendOTPforAnonymousUser", SendOTPforAnonymousUser);
+            userRoute.MapPost("/VerifyOtpForAnonymousUser", VerifyOtpForAnonymousUser);
+            //userRoute.MapPost("/AddDriver", AddDriver);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -40,6 +40,10 @@ namespace VehicleKhatabook.EndPoints.User
             if (result == null)
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("Failed to register"));
+            }
+            else if (String.IsNullOrEmpty(result.MobileNumber))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Mobile number already exists."));
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(result, "New user register successful."));
         }
@@ -60,42 +64,39 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<UserDetailsDTO>.FailureResponse("Invalid mobile number or mPIN."));
         }
-        private async Task<IResult> ForgotMpin(ForgotMpinDTO dto, IAuthService authService)
+        private async Task<IResult> SendOTPforRegisteredUser(ForgotMpinDTO dto, IAuthService authService)
         {
-            var (result, otp) = await authService.SendForgotMpinAsync(dto.MobileNumber);
+            var (result, otp) = await authService.SendOTPforRegisteredUser(dto.MobileNumber);
             if (result)
             {
-                return Results.Ok(ApiResponse<object>.SuccessResponse(result, $"OTP sent successfully to reset mPIN : {otp}"));
+                return Results.Ok(ApiResponse<object>.SuccessResponse(otp, $"OTP sent successfully : {otp.OtpCode}"));
             }
             return Results.Ok(ApiResponse<object>.FailureResponse("Failed to send OTP. Please try again."));
         }
 
-        private async Task<IResult> ResetMpin(HttpContext httpContext, ResetMpinDTO dto, IAuthService authService)
+        private async Task<IResult> SendOTPforAnonymousUser(ForgotMpinDTO dto, IAuthService authService)
         {
-            //var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //if (string.IsNullOrEmpty(userId))
-            //{
-            //    return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
-            //}
-            //dto.UserId = Guid.Parse(userId);
-            var result = await authService.ResetMpinAsync(dto);
+            var (result, otp) = await authService.SendOTPforAnonymousUser(dto.MobileNumber);
             if (result)
             {
-                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "mPIN reset successfully."));
+                return Results.Ok(ApiResponse<object>.SuccessResponse(otp, $"OTP sent successfully : {otp.OtpCode}"));
             }
-            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to reset mPIN. Please try again."));
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to send OTP. Please try again."));
         }
-        internal async Task<IResult> VerifyOtp(HttpContext httpContext, IAuthService authService, string otpCode)
+
+        internal async Task<IResult> VerifyOtpForAnonymousUser(IAuthService authService, string mobileNumber, string otpCode)
         {
-            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
+            if (!string.IsNullOrEmpty(mobileNumber))
+            {
+                var resultbyMobile = await authService.VerifyOtpbyMobilePhoneAsync(mobileNumber, otpCode);
+                if (resultbyMobile)
+                {
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(resultbyMobile, "Otp Verify successful."));
+                }
+            }
+            else
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
-            }
-            var result = await authService.VerifyOtpAsync(Guid.Parse(userId), otpCode);
-            if (result)
-            {
-                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Otp Verify successful."));
             }
             return Results.Ok(ApiResponse<object>.FailureResponse("Failed to verify otp"));
         }

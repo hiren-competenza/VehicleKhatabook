@@ -19,7 +19,7 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _vehicleRepository.AddVehicleAsync(vehicleDTO);
         }
-        public async Task<List<Vehicle>> GetVehicleByIdAsync(Guid id)
+        public async Task<Vehicle> GetVehicleByIdAsync(Guid id)
         {
             return await _vehicleRepository.GetVehicleByVehicleIdAsync(id);
         }

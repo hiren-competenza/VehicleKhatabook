@@ -30,14 +30,14 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddValidatorsFromAssemblyContaining<AddVehicleValidator>();
         }
 
-        internal async Task<IResult> AddVehicle(HttpContext httpContext,VehicleDTO vehicleDTO, IVehicleService vehicleService)
+        internal async Task<IResult> AddVehicle(HttpContext httpContext, VehicleDTO vehicleDTO, IVehicleService vehicleService)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
-            vehicleDTO.UserId = Guid.Parse(userId); 
+            vehicleDTO.UserId = Guid.Parse(userId);
             var result = await vehicleService.AddVehicleAsync(vehicleDTO);
 
             if (result != null)
@@ -46,22 +46,32 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<object>.FailureResponse("Failed to add vehicle."));
         }
-        internal async Task<IResult> GetVehicleByVehicleIdAsync(Guid id, IVehicleService vehicleService)
+        internal async Task<IResult> GetVehicleByVehicleIdAsync(HttpContext httpContext, Guid id, IVehicleService vehicleService)
         {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Request. Please login again"));
+            }
             if (id == Guid.Empty)
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("The vehicle ID is invalid."));
             }
             var vehicle = await vehicleService.GetVehicleByIdAsync(id);
-             if (vehicle == null)
+            if (vehicle == null)
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse($"No records found for vechile ID {id}."));
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(vehicle, "Vehicle Get successfull"));
         }
 
-        internal async Task<IResult> UpdateVehicle(Guid id, VehicleDTO vehicleDTO, IVehicleService vehicleService)
+        internal async Task<IResult> UpdateVehicle(HttpContext httpContext, Guid id, VehicleDTO vehicleDTO, IVehicleService vehicleService)
         {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Request. Please login again"));
+            }
             if (id == Guid.Empty)
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Id."));
@@ -70,6 +80,7 @@ namespace VehicleKhatabook.EndPoints.User
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("Invalid request Body"));
             }
+            vehicleDTO.UserId = Guid.Parse(userId);
             var updateVehicle = await vehicleService.UpdateVehicleAsync(id, vehicleDTO);
             if (updateVehicle == null)
             {
@@ -79,8 +90,13 @@ namespace VehicleKhatabook.EndPoints.User
             return Results.Ok(ApiResponse<object>.SuccessResponse(updateVehicle, "Vehicle updated successfully."));
         }
 
-        internal async Task<IResult> DeleteVehicle(Guid id, IVehicleService vehicleService)
+        internal async Task<IResult> DeleteVehicle(HttpContext httpContext, Guid id, IVehicleService vehicleService)
         {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Request. Please login again"));
+            }
             if (id == Guid.Empty)
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("Invalid Id."));

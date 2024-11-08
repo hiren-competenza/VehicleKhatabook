@@ -2,8 +2,7 @@
 {
     public class ResetMpinDTO
     {
-        public Guid UserId { get; set; }
-        public string OTP { get; set; }
+        public string CurrentMPin { get; set; }
         public string NewMpin { get; set; }
     }
 

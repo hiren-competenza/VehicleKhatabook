@@ -7,9 +7,11 @@ namespace VehicleKhatabook.Services.Interfaces
     public interface IAuthService
     {
         Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLoginDTO);
-        Task<(bool Success, string Otp)> SendForgotMpinAsync(string mobileNumber);
-        Task<bool> ResetMpinAsync(ResetMpinDTO resetMpinDTO);
+        Task<(bool Success, OtpRequest Otp)> SendOTPforRegisteredUser(string mobileNumber);
+        Task<(bool Success, OtpRequest Otp)> SendOTPforAnonymousUser(string mobileNumber);
+        Task<bool> ResetMpinAsync(ResetMpinDTO resetMpinDTO, string userId);
         string GenerateToken(UserDetailsDTO userDetailsDTO);
-        Task<bool> VerifyOtpAsync(Guid userId, string otpCode);
+        Task<bool> VerifyOtpbyUserIdAsync(Guid userId, string otpCode);
+        Task<bool> VerifyOtpbyMobilePhoneAsync(string mobileNumber, string otpCode);
     }
 }

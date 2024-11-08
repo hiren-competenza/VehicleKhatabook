@@ -2,8 +2,7 @@
 {
     public enum UserType
     {
-        Admin = 1,
-        Owner = 2,
-        Driver = 3
+        Owner = 1,
+        Driver = 2
     }
 }

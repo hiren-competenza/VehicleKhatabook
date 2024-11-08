@@ -31,6 +31,10 @@ namespace VehicleKhatabook.EndPoints.User
             userRoute.MapGet("/GetAllDrivers", GetAllDrivers);
             userRoute.MapGet("/GetAllCountry", GetCountryAsync);
             userRoute.MapGet("/GetAllSMSProvider", GetAllSMSProviders);
+            userRoute.MapPost("/VerifyOtpForLoggedInUser", VerifyOtpForLoggedInUser);
+            userRoute.MapPost("/changeMPpin", ResetMpin);// Must be Authorized
+            userRoute.MapPost("/changeRole", changeRole);
+            userRoute.MapPost("/changeLanguage", changeLanguage);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -200,6 +204,65 @@ namespace VehicleKhatabook.EndPoints.User
             }
 
             return Results.Ok(ApiResponse<object>.SuccessResponse(result));
+        }
+        internal async Task<IResult> VerifyOtpForLoggedInUser(HttpContext httpContext, IAuthService authService, string otpCode)
+        {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+            var result = await authService.VerifyOtpbyUserIdAsync(Guid.Parse(userId), otpCode);
+            if (result)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Otp Verify successful."));
+            }
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to verify otp"));
+        }
+        private async Task<IResult> ResetMpin(HttpContext httpContext, ResetMpinDTO mPins, IAuthService authService)
+        {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+
+            var result = await authService.ResetMpinAsync(mPins, userId);
+            if (result)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "mPIN reset successfully."));
+            }
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to reset mPIN. Please try again."));
+        }
+        private async Task<IResult> changeRole(HttpContext httpContext, string role, IUserService userService)
+        {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+
+            var result = await userService.UpdateUserRoleAsync(Guid.Parse(userId),role);
+            if (result)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Role changed successfully"));
+            }
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to change user role. Please try again."));
+        }
+        private async Task<IResult> changeLanguage(HttpContext httpContext, int languageTypeId, IUserService userService)
+        {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+
+            var result = await userService.UpdateUserLanguageAsync(Guid.Parse(userId), languageTypeId);
+            if (result)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Language changed successfully"));
+            }
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to change user language. Please try again."));
         }
     }
 }

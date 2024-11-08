@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Data;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
@@ -57,7 +58,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 LastName = user.LastName,
                 MobileNumber = user.MobileNumber,
                 UserTypeId = user.UserTypeId,
-                //mPIN = user.mPIN,
+                mPIN = user.mPIN,
                 UserReferCode = user.UserReferCode,
                 Role = user.Role,
                 IsPremiumUser = user.IsPremiumUser,
@@ -77,7 +78,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             user.FirstName = userDTO.FirstName;
             user.LastName = userDTO.LastName;
             user.MobileNumber = userDTO.MobileNumber;
-            //user.mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN);
+            user.mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN);
             user.UserTypeId = userDTO.UserTypeId;
             user.IsPremiumUser = userDTO.IsPremiumUser;
             user.IsActive = userDTO.IsActive;
@@ -140,12 +141,12 @@ namespace VehicleKhatabook.Repositories.Repositories
                     //Email = user.Email,
                     RoleId = user.UserTypeId,
                     RoleName = user.Role,
-                    IsPremiumUser= user.IsPremiumUser,
+                    IsPremiumUser = user.IsPremiumUser,
                     State = user.State,
                     District = user.District,
-                    IsActive= user.IsActive,
+                    IsActive = user.IsActive,
                     UserReferCode = user.UserReferCode,
-                    LanguageTypeId  = user.LanguageTypeId
+                    LanguageTypeId = user.LanguageTypeId
                 };
                 return userDetailsDTO;
             }
@@ -244,6 +245,35 @@ namespace VehicleKhatabook.Repositories.Repositories
                                   .Where(u => u.IsActive == true && u.Role.ToLower() == "driver")
                                   .ToListAsync();
             return drivers;
+        }
+        public async Task<bool> UpdateUserRoleAsync(Guid userId, string role)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == userId && u.IsActive);
+            if (user == null)
+                return false;
+            user.Role = role;
+            if (role.ToLower() == "driver")
+            {
+                user.UserTypeId = (int)UserType.Driver;
+            }
+            else
+            {
+                user.UserTypeId = (int)UserType.Owner;
+            }
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateUserLanguageAsync(Guid userId, int languageTypeId)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == userId && u.IsActive);
+            if (user == null)
+                return false;
+            user.LanguageTypeId = languageTypeId;
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
     }
 }
