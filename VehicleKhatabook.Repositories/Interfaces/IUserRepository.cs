@@ -19,5 +19,7 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<bool> DeleteDriverAsync(Guid id);
         Task<List<User>> GetAllDriversAsync();
         Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLoginDTO);
+        Task<bool> UpdateUserRoleAsync(Guid userId, string role);
+        Task<bool> UpdateUserLanguageAsync(Guid userId, int languageTypeId);
     }
 }

@@ -26,6 +26,12 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .FirstOrDefaultAsync(o => o.UserID == userId && o.OtpCode == otpCode);
         }
 
+        public async Task<OtpRequest> GetOtpByMobileAndCodeAsync(string mobileNumber, string otpCode)
+        {
+            return await _context.OtpRequests
+                .FirstOrDefaultAsync(o => o.MobileNumber == mobileNumber && o.OtpCode == otpCode);
+        }
+
         public async Task UpdateOtpAsync(OtpRequest otpRequest)
         {
             _context.OtpRequests.Update(otpRequest);

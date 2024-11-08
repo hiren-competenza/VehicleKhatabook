@@ -121,10 +121,10 @@ namespace VehicleKhatabook.Entities
                 .HasIndex(e => e.Name)
                 .IsUnique();
 
-            modelBuilder.Entity<OtpRequest>()
-                .HasOne(o => o.User)
-                .WithMany()  
-                .HasForeignKey(o => o.UserID);
+            //modelBuilder.Entity<OtpRequest>()
+            //    .HasOne(o => o.User)
+            //    .WithMany()  
+            //    .HasForeignKey(o => o.UserID);
 
             base.OnModelCreating(modelBuilder);
         }

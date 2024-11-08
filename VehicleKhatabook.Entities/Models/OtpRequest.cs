@@ -7,7 +7,6 @@ namespace VehicleKhatabook.Entities.Models
         [Key]
         public Guid OtpRequestId { get; set; } = Guid.NewGuid();
 
-        [Required]
         public Guid UserID { get; set; }
 
         [Required]
@@ -23,7 +22,7 @@ namespace VehicleKhatabook.Entities.Models
 
         public bool IsVerified { get; set; } = false;
 
-        public virtual User User { get; set; }
+        //public virtual User User { get; set; }
     }
 
 }

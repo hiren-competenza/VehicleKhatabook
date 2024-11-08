@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Net.Http;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
