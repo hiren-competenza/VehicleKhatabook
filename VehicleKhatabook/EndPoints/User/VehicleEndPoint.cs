@@ -64,7 +64,6 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(vehicle, "Vehicle Get successfull"));
         }
-
         internal async Task<IResult> UpdateVehicle(HttpContext httpContext, Guid id, VehicleDTO vehicleDTO, IVehicleService vehicleService)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -89,7 +88,6 @@ namespace VehicleKhatabook.EndPoints.User
 
             return Results.Ok(ApiResponse<object>.SuccessResponse(updateVehicle, "Vehicle updated successfully."));
         }
-
         internal async Task<IResult> DeleteVehicle(HttpContext httpContext, Guid id, IVehicleService vehicleService)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -108,7 +106,6 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(success, $"Vechicle delete successfull."));
         }
-
         internal async Task<IResult> GetAllVehicles(HttpContext httpContext, IVehicleService vehicleService)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

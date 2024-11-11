@@ -7,7 +7,7 @@ namespace VehicleKhatabook.Services.Interfaces
     public interface IUserService
     {
         Task<User> CreateUserAsync(UserDTO userDTO);
-        Task<UserDTO?> GetUserByIdAsync(Guid id);
+        Task<User?> GetUserByIdAsync(Guid id);
         Task<User> UpdateUserAsync(UserDTO userDTO);
         Task<bool> DeleteUserAsync(Guid id);
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
