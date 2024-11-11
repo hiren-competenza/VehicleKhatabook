@@ -46,47 +46,39 @@ namespace VehicleKhatabook.Repositories.Repositories
             return user;
         }
 
-        public async Task<UserDTO?> GetUserByIdAsync(Guid id)
+        public async Task<User?> GetUserByIdAsync(Guid id)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == id && u.IsActive == true);
             if (user == null) return null;
-
-            return new UserDTO
-            {
-                UserId = user.UserID,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                MobileNumber = user.MobileNumber,
-                UserTypeId = user.UserTypeId,
-                mPIN = user.mPIN,
-                UserReferCode = user.UserReferCode,
-                Role = user.Role,
-                IsPremiumUser = user.IsPremiumUser,
-                State = user.State,
-                District = user.District,
-                languageTypeId = user.LanguageTypeId,
-                IsActive = user.IsActive
-            };
+            else return user;
         }
 
-        public async Task<User> UpdateUserAsync(UserDTO userDTO)
+        public async Task<User?> GetUserByMobileAsync(string mobileNumber)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == userDTO.UserId && u.IsActive);
-            if (user == null)
-                return null;
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.MobileNumber == mobileNumber && u.IsActive == true);
+            if (user == null) return null;
 
-            user.FirstName = userDTO.FirstName;
-            user.LastName = userDTO.LastName;
-            user.MobileNumber = userDTO.MobileNumber;
-            user.mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN);
-            user.UserTypeId = userDTO.UserTypeId;
-            user.IsPremiumUser = userDTO.IsPremiumUser;
-            user.IsActive = userDTO.IsActive;
-            user.Role = userDTO.Role;
-            user.State = userDTO.State;
-            user.District = userDTO.District;
-            user.LanguageTypeId = userDTO.languageTypeId;
-            user.LastModifiedOn = DateTime.UtcNow;
+            else return user;
+        }
+
+        public async Task<User> UpdateUserAsync(User user)
+        {
+            //var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == userDTO.UserId && u.IsActive);
+            //if (user == null)
+            //    return null;
+
+            //user.FirstName = userDTO.FirstName;
+            //user.LastName = userDTO.LastName;
+            //user.MobileNumber = userDTO.MobileNumber;
+            //user.mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN);
+            //user.UserTypeId = userDTO.UserTypeId;
+            //user.IsPremiumUser = userDTO.IsPremiumUser;
+            //user.IsActive = userDTO.IsActive;
+            //user.Role = userDTO.Role;
+            //user.State = userDTO.State;
+            //user.District = userDTO.District;
+            //user.LanguageTypeId = userDTO.languageTypeId;
+            //user.LastModifiedOn = DateTime.UtcNow;
 
             _dbContext.Users.Update(user);
             await _dbContext.SaveChangesAsync();
@@ -153,10 +145,33 @@ namespace VehicleKhatabook.Repositories.Repositories
             return null;
         }
 
-        public async Task<User> GetUserByMobileNumberAsync(string mobileNumber)
+        public async Task<UserDetailsDTO> GetUserDetailsbyMobileAsync(string mobileNumber)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.MobileNumber == mobileNumber);
+            var user = await _dbContext.Users
+              .Where(u => u.MobileNumber == mobileNumber && u.IsActive).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                var userDetailsDTO = new UserDetailsDTO
+                {
+                    UserId = user.UserID,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    MobileNumber = user.MobileNumber,
+                    RoleId = user.UserTypeId,
+                    RoleName = user.Role,
+                    IsPremiumUser = user.IsPremiumUser,
+                    State = user.State,
+                    District = user.District,
+                    IsActive = user.IsActive,
+                    UserReferCode = user.UserReferCode,
+                    LanguageTypeId = user.LanguageTypeId
+                };
+                return userDetailsDTO;
+            }
+            return null;
         }
+
         public static string GenerateReferCode()
         {
             return Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();

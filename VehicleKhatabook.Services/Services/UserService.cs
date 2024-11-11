@@ -31,14 +31,34 @@ namespace VehicleKhatabook.Services.Services
 
         }
 
-        public async Task<UserDTO?> GetUserByIdAsync(Guid id)
+        public async Task<User?> GetUserByIdAsync(Guid id)
         {
             return await _userRepository.GetUserByIdAsync(id);
         }
 
         public async Task<User> UpdateUserAsync(UserDTO userDTO)
         {
-            return await _userRepository.UpdateUserAsync(userDTO);
+            var user = new User
+            {
+                UserID = Guid.NewGuid(),
+                FirstName = userDTO.FirstName,
+                LastName = userDTO.LastName,
+                MobileNumber = userDTO.MobileNumber,
+                mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN),
+                ReferCode = userDTO.ReferCode,
+                UserReferCode = userDTO.UserReferCode,
+                Role = userDTO.Role,
+                IsPremiumUser = userDTO.IsPremiumUser,
+                State = userDTO.State,
+                District = userDTO.District,
+                LanguageTypeId = userDTO.languageTypeId,
+                CreatedOn = DateTime.UtcNow,
+                UserTypeId = userDTO.UserTypeId,
+                //Email = userDTO.Email,
+                //CreatedBy = Guid.NewGuid(),
+                IsActive = true
+            };
+            return await _userRepository.UpdateUserAsync(user);
         }
 
         public async Task<bool> DeleteUserAsync(Guid id)
@@ -77,7 +97,7 @@ namespace VehicleKhatabook.Services.Services
 
         public async Task<bool> isMobileNumberAlreadyExists(string phoneNumber)
         {
-            var v = await _userRepository.GetUserByMobileNumberAsync(phoneNumber);
+            var v = await _userRepository.GetUserByMobileAsync(phoneNumber);
             if (v != null)
                 return true;
             else return false;

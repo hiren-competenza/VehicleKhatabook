@@ -20,16 +20,16 @@ namespace VehicleKhatabook.Repositories.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<OtpRequest> GetOtpByUserIdAndCodeAsync(Guid userId, string otpCode)
+        public async Task<OtpRequest> GetOtpByUserIdAndCodeAsync(Guid userId, string otpCode, string otpRequestId)
         {
             return await _context.OtpRequests
-                .FirstOrDefaultAsync(o => o.UserID == userId && o.OtpCode == otpCode);
+                .FirstOrDefaultAsync(o => o.UserID == userId && o.OtpCode == otpCode && o.OtpRequestId == new Guid(otpRequestId));
         }
 
-        public async Task<OtpRequest> GetOtpByMobileAndCodeAsync(string mobileNumber, string otpCode)
+        public async Task<OtpRequest> GetOtpByMobileAndCodeAsync(string mobileNumber, string otpCode, string otpRequestId)
         {
             return await _context.OtpRequests
-                .FirstOrDefaultAsync(o => o.MobileNumber == mobileNumber && o.OtpCode == otpCode);
+                .FirstOrDefaultAsync(o => o.MobileNumber == mobileNumber && o.OtpCode == otpCode && o.OtpRequestId == new Guid(otpRequestId));
         }
 
         public async Task UpdateOtpAsync(OtpRequest otpRequest)
