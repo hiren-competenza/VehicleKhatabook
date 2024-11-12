@@ -39,9 +39,9 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _expenseRepository.GetAllExpensesAsync();
         }
-        public async Task<List<UserExpense>> GetExpenseAsync(Guid userId, int months)
+        public async Task<List<UserExpense>> GetExpenseAsync(Guid userId, DateTime fromDate, DateTime toDate)
         {
-            return await _expenseRepository.GetExpenseAsync(userId, months);
+            return await _expenseRepository.GetExpenseAsync(userId, fromDate, toDate);
         }
     }
 }

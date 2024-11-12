@@ -78,12 +78,10 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expenses = await _context.UserExpenses.ToListAsync();
             return expenses != null ? ApiResponse<List<UserExpense>>.SuccessResponse(expenses) : ApiResponse<List<UserExpense>>.FailureResponse("Failes to get List");
         }
-        public async Task<List<UserExpense>> GetExpenseAsync(Guid userId,int months)
+        public async Task<List<UserExpense>> GetExpenseAsync(Guid userId, DateTime fromDate, DateTime toDate)
         {
-            var startDate = DateTime.UtcNow.AddMonths(-months);
-
             var result = await _context.UserExpenses
-                .Where(e => e.UserID == userId && e.ExpenseDate >= startDate)
+                .Where(e => e.UserID == userId && e.ExpenseDate >= fromDate && e.ExpenseDate <= toDate)
                 .ToListAsync();
             return result;
         }

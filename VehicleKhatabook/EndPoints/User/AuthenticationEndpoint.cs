@@ -15,7 +15,7 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var userRoute = app.MapGroup("auth").WithTags("User Authentication");
+            var userRoute = app.MapGroup("api/auth").WithTags("User Authentication");
             userRoute.MapPost("/register", UserSignup).AddEndpointFilter<ValidationFilter<UserDTO>>();
             userRoute.MapPost("/login", Login);
             userRoute.MapPost("/loginWithOTP", LoginwithOTP);

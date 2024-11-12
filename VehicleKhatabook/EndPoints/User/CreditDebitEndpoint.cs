@@ -26,7 +26,7 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddScoped<IIncomeService, IncomeService>();
             services.AddScoped<IExpenseService, ExpenseService>();
         }
-        internal async Task<IResult> AddIncomeExpenseAsync(HttpContext httpContext,IncomeExpenseDTO IncomeExpenseDTO, IIncomeService incomeService, IExpenseService expenseService)
+        internal async Task<IResult> AddIncomeExpenseAsync(HttpContext httpContext, IncomeExpenseDTO IncomeExpenseDTO, IIncomeService incomeService, IExpenseService expenseService)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
@@ -48,11 +48,11 @@ namespace VehicleKhatabook.EndPoints.User
                 };
 
                 UserIncome result = await incomeService.AddIncomeAsync(incomeDTO);
-                if(result == null)
+                if (result == null)
                 {
                     return Results.Ok(ApiResponse<object>.FailureResponse("failed to add income"));
                 }
-                return Results.Ok(ApiResponse<object>.SuccessResponse(result,"Income added successful."));
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Income added successful."));
             }
             else
             {
@@ -75,16 +75,46 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
             }
         }
-        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType,HttpContext httpContext, IIncomeService incomeService, IExpenseService expenseService, int months)
+        //internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType,HttpContext httpContext, IIncomeService incomeService, IExpenseService expenseService, int months)
+        //{
+        //    var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    if (string.IsNullOrEmpty(userId))
+        //    {
+        //        return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+        //    }
+        //    if (transactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
+        //    {
+        //        var result = await incomeService.GetIncomeAsync(Guid.Parse(userId), months);// User paramter for Time Duration
+        //        if (result == null)
+        //            return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
+
+        //        return Results.Ok(ApiResponse<object>.SuccessResponse(result));
+        //    }
+        //    else
+        //    {
+        //        var result = await expenseService.GetExpenseAsync(Guid.Parse(userId), months);// User paramter for Time Duration
+        //        if (result == null)
+        //            return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
+
+        //        return Results.Ok(ApiResponse<object>.SuccessResponse(result));
+        //    }
+        //}
+        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType, HttpContext httpContext, IIncomeService incomeService, IExpenseService expenseService, DateTime? fromDate, DateTime? toDate)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
-            if (transactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
+
+            // Set the date range to the current day if fromDate and toDate are not provided
+            var start = fromDate ?? DateTime.UtcNow.Date;
+            var end = toDate ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
+
+            // Fetch data based on transaction type and provided date range
+            if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
-                var result = await incomeService.GetIncomeAsync(Guid.Parse(userId), months);// User paramter for Time Duration
+                var result = await incomeService.GetIncomeAsync(Guid.Parse(userId), start, end);
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
 
@@ -92,12 +122,13 @@ namespace VehicleKhatabook.EndPoints.User
             }
             else
             {
-                var result = await expenseService.GetExpenseAsync(Guid.Parse(userId), months);// User paramter for Time Duration
+                var result = await expenseService.GetExpenseAsync(Guid.Parse(userId), start, end);
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
 
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result));
             }
         }
+
     }
 }

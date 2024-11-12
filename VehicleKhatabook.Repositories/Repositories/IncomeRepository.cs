@@ -78,11 +78,18 @@ namespace VehicleKhatabook.Repositories.Repositories
         //    var incomes = await _context.Incomes.ToListAsync();
         //    return new ApiResponse<List<Income>> { Success = true, Data = incomes };
         //}
-        public async Task<List<UserIncome>> GetIncomeAsync(Guid userId, int months)
+        //public async Task<List<UserIncome>> GetIncomeAsync(Guid userId, int months)
+        //{
+        //    var startDate = DateTime.UtcNow.AddMonths(-months);
+        //    var result = await _context.UserIncomes
+        //        .Where(i => i.UserID == userId && i.IncomeDate >= startDate)
+        //        .ToListAsync();
+        //    return result;
+        //}
+        public async Task<List<UserIncome>> GetIncomeAsync(Guid userId, DateTime fromDate, DateTime toDate)
         {
-            var startDate = DateTime.UtcNow.AddMonths(-months);
             var result = await _context.UserIncomes
-                .Where(i => i.UserID == userId && i.IncomeDate >= startDate)
+                .Where(i => i.UserID == userId && i.IncomeDate >= fromDate && i.IncomeDate <= toDate)
                 .ToListAsync();
             return result;
         }
