@@ -69,10 +69,19 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Update successful."));
         }
-        internal async Task<IResult> DeleteUser(Guid id, IUserService userService)
+        internal async Task<IResult> DeleteUser(HttpContext httpContext, IUserService userService)
         {
-            var result = await userService.DeleteUserAsync(id);
-            return result ? Results.Ok() : Results.NotFound();
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+            var result = await userService.DeleteUserAsync(Guid.Parse(userId));
+            if (!result)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User Not Found"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result, "User Deleted successfully."));
         }
         private async Task<IResult> SendOTPforRegisteredUser(ForgotMpinDTO dto, IAuthService authService)
         {

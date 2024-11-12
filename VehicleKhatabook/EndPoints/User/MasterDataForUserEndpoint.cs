@@ -15,9 +15,9 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var userRoute = app.MapGroup("user/master").WithTags("Master Data for Users");//.RequireAuthorization("OwnerOrDriverPolicy");
+            var userRoute = app.MapGroup("api/user/master").WithTags("Master Data for Users");//.RequireAuthorization("OwnerOrDriverPolicy");
             userRoute.MapGet("/getExpenseIncomeCategoriesById", GetExpenseIncomeCategoriesAsync).RequireAuthorization("OwnerOrDriverPolicy");
-            userRoute.MapGet("/getAllCountry", GetCountryAsync).RequireAuthorization("OwnerOrDriverPolicy");
+            userRoute.MapGet("/getAllCountry", GetCountryAsync);
             userRoute.MapGet("/getAllSMSProvider", GetAllSMSProviders).RequireAuthorization("OwnerOrDriverPolicy");
             userRoute.MapGet("/GetAllLanguageTypes", GetAllLanguageTypes);
             userRoute.MapGet("/vehicletypes", GetVehicleTypesAsync);

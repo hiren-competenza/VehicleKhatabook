@@ -40,9 +40,9 @@ namespace VehicleKhatabook.Services.Services
         //{
         //    return await _incomeRepository.GetAllIncomesAsync();
         //}
-        public async Task<List<UserIncome>> GetIncomeAsync(Guid userId, int months)
+        public async Task<List<UserIncome>> GetIncomeAsync(Guid userId, DateTime fromDate, DateTime toDate)
         {
-            return await _incomeRepository.GetIncomeAsync(userId,months);
+            return await _incomeRepository.GetIncomeAsync(userId, fromDate, toDate);
         }
     }
 }

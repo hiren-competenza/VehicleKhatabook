@@ -70,7 +70,8 @@ namespace VehicleKhatabook.Services.Services
             var vehicleType = vehicleTypes.Select(vt => new VechileType
             {
                 VehicleTypeId = vt.VehicleTypeId,
-                TypeName = vt.TypeName
+                TypeName = vt.TypeName,
+                IsActive = vt.IsActive
             }).ToList();
             return vehicleType;
         }
