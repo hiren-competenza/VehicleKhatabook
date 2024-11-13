@@ -11,9 +11,9 @@ namespace VehicleKhatabook.Entities.Models
         [MaxLength(100)]
         public string Name { get; set; }
         [Required]
-        public int RoleId { get; set; }
+        public int? RoleId { get; set; }
 
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
+        public string? Description { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

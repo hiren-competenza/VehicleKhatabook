@@ -46,7 +46,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
         public async Task<(bool IsUserActive, bool HasVehicles, List<Vehicle>? Vehicles)> GetAllVehiclesAsync(Guid userId)
         {
-            var userExists = await _dbContext.Users.AnyAsync(u => u.UserID == userId && u.IsActive);
+            var userExists = await _dbContext.Users.AnyAsync(u => u.UserID == userId && u.IsActive == true);
 
             if (!userExists)
             {
@@ -54,7 +54,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             }
 
             var vehicles = await _dbContext.Vehicles
-                                            .Where(v => v.UserID == userId && v.IsActive)
+                                            .Where(v => v.UserID == userId && v.IsActive == true)
                                             .ToListAsync();
 
             if (vehicles == null || vehicles.Count == 0)
@@ -102,7 +102,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             var vehicle = await _dbContext.Vehicles.FindAsync(id);
 
-            if (vehicle == null || !vehicle.IsActive)
+            if (vehicle == null || vehicle.IsActive == false)
                 return false;
 
             vehicle.IsActive = false;

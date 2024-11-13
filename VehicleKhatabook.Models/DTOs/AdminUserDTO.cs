@@ -11,7 +11,7 @@
         public string SecurityQuestion { get; set; }
         public string SecurityAnswer { get; set; }
         public string MobileNumber { get; set; }
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
     }
 
 }

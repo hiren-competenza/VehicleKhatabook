@@ -19,7 +19,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task<List<IncomeCategory>> GetIncomeCategoriesAsync(int userTypeId)
         {
             var incomeCategories = await _context.IncomeCategories
-                .Where(ic => ic.RoleId == userTypeId && ic.IsActive)
+                .Where(ic => ic.RoleId == userTypeId && ic.IsActive==true)
                 .Select(ic => new IncomeCategory
                 {
                     IncomeCategoryID = ic.IncomeCategoryID,
@@ -82,7 +82,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task<List<ExpenseCategory>> GetExpenseCategoriesAsync(int userTypeId)
         {
             var expenseCategories = await _context.ExpenseCategories
-                .Where(ec => ec.RoleId == userTypeId && ec.IsActive)
+                .Where(ec => ec.RoleId == userTypeId && ec.IsActive == true)
                 .Select(ec => new ExpenseCategory
                 {
                     ExpenseCategoryID = ec.ExpenseCategoryID,

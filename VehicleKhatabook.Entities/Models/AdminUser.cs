@@ -40,7 +40,7 @@ namespace VehicleKhatabook.Entities.Models
         public string? MobileNumber { get; set; }
 
         [Required]
-        public bool IsActive { get; set; } = true;
+        public bool? IsActive { get; set; } = true;
 
         public DateTime? LastLogin { get; set; }
 

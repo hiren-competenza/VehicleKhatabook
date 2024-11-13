@@ -17,7 +17,7 @@ namespace VehicleKhatabook.Entities.Models
 
         [Required]
         [MaxLength(15)]
-        public string? MobileNumber { get; set; }
+        public string MobileNumber { get; set; }
         public string? Email { get; set; }
         public string? mPIN { get; set; }
         public string? ReferCode { get; set; }
@@ -29,7 +29,7 @@ namespace VehicleKhatabook.Entities.Models
         public string? Role { get; set; }
         public Guid IdentifierId { get; set; } = Guid.NewGuid();
 
-        public bool IsPremiumUser { get; set; }
+        public bool? IsPremiumUser { get; set; }
         public string? State { get; set; }
         public string? District { get; set; }
 
@@ -39,7 +39,7 @@ namespace VehicleKhatabook.Entities.Models
         public LanguageType? LanguageType { get; set; }
         public int? LanguageTypeId { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
         public virtual ICollection<SMSProviderConfig> CreatedSMSProviderConfigs { get; set; }
         public virtual ICollection<SMSProviderConfig> ModifiedSMSProviderConfigs { get; set; }
     }

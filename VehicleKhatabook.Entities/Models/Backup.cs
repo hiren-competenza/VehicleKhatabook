@@ -11,8 +11,8 @@ namespace VehicleKhatabook.Entities.Models
         [Required]
         public Guid UserID { get; set; }
 
-        public DateTime BackupDate { get; set; } = DateTime.UtcNow;
-        public byte[] BackupData { get; set; } =  Array.Empty<byte>();
+        public DateTime? BackupDate { get; set; } = DateTime.UtcNow;
+        public byte[]? BackupData { get; set; } =  Array.Empty<byte>();
 
         [ForeignKey("UserID")]
         public User User { get; set; }

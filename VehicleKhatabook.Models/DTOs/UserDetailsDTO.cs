@@ -12,10 +12,10 @@
         public string UserReferCode { get; set; }
         //public int UserTypeId {  get; set; }
         public string MobileNumber { get; set; }
-        public bool IsPremiumUser { get; set; }
+        public bool? IsPremiumUser { get; set; }
         public string State { get; set;}
         public string District { get; set; }
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
         public int? LanguageTypeId { get; set; }
         public string? Mpin {  get; set; }
 
