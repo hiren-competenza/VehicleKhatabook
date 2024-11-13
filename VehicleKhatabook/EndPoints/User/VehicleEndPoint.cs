@@ -38,6 +38,16 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
             vehicleDTO.UserId = Guid.Parse(userId);
+            vehicleDTO.InsuranceExpiry = string.IsNullOrWhiteSpace(vehicleDTO.InsuranceExpiry.ToString()) ? null : vehicleDTO.InsuranceExpiry;
+            vehicleDTO.PollutionExpiry = string.IsNullOrWhiteSpace(vehicleDTO.PollutionExpiry.ToString()) ? null : vehicleDTO.PollutionExpiry;
+            vehicleDTO.FitnessExpiry = string.IsNullOrWhiteSpace(vehicleDTO.FitnessExpiry.ToString()) ? null : vehicleDTO.FitnessExpiry;
+            vehicleDTO.RoadTaxExpiry = string.IsNullOrWhiteSpace(vehicleDTO.RoadTaxExpiry.ToString()) ? null : vehicleDTO.RoadTaxExpiry;
+            vehicleDTO.RCPermitExpiry = string.IsNullOrWhiteSpace(vehicleDTO.RCPermitExpiry.ToString()) ? null : vehicleDTO.RCPermitExpiry;
+            vehicleDTO.NationalPermitExpiry = string.IsNullOrWhiteSpace(vehicleDTO.NationalPermitExpiry.ToString()) ? null : vehicleDTO.NationalPermitExpiry;
+            vehicleDTO.ChassisNumber = string.IsNullOrWhiteSpace(vehicleDTO.ChassisNumber) ? null : vehicleDTO.ChassisNumber;
+            vehicleDTO.EngineNumber = string.IsNullOrWhiteSpace(vehicleDTO.EngineNumber) ? null : vehicleDTO.EngineNumber;
+            vehicleDTO.IsActive = string.IsNullOrWhiteSpace(vehicleDTO.IsActive.ToString()) ? null : vehicleDTO.IsActive;
+
             var result = await vehicleService.AddVehicleAsync(vehicleDTO);
 
             if (result != null)
