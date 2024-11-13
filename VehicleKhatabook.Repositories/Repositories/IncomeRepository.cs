@@ -90,6 +90,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             var result = await _context.UserIncomes
                 .Where(i => i.UserID == userId && i.IncomeDate >= fromDate && i.IncomeDate <= toDate)
+                .Include(i => i.IncomeCategory)
                 .ToListAsync();
             return result;
         }

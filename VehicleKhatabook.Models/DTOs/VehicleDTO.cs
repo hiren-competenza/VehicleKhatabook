@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using System.Text.Json.Serialization;
+using VehicleKhatabook.Models.Common;
 
 namespace VehicleKhatabook.Models.DTOs
 {
@@ -8,19 +10,26 @@ namespace VehicleKhatabook.Models.DTOs
         public int? VehicleTypeId { get; set; }
         public string? RegistrationNumber { get; set; }
         public string? NickName { get; set; }
-        public DateTime InsuranceExpiry { get; set; }
-        public DateTime PollutionExpiry { get; set; }
-        public DateTime FitnessExpiry { get; set; }
-        public DateTime RoadTaxExpiry { get; set; }
-        public DateTime RCPermitExpiry { get; set; }
-        public DateTime NationalPermitExpiry { get; set; }
+        [JsonConverter(typeof(NullableDateTimeConverter))]
+        public DateTime? InsuranceExpiry { get; set; }
+        [JsonConverter(typeof(NullableDateTimeConverter))]
+        public DateTime? PollutionExpiry { get; set; }
+        [JsonConverter(typeof(NullableDateTimeConverter))]
+        public DateTime? FitnessExpiry { get; set; }
+        [JsonConverter(typeof(NullableDateTimeConverter))]
+        public DateTime? RoadTaxExpiry { get; set; }
+        [JsonConverter(typeof(NullableDateTimeConverter))]
+        public DateTime? RCPermitExpiry { get; set; }
+        [JsonConverter(typeof(NullableDateTimeConverter))]
+        public DateTime? NationalPermitExpiry { get; set; }
         public string? ChassisNumber { get; set; }
         public string? EngineNumber { get; set; }
-        public bool IsActive { get; set; }
+        [JsonConverter(typeof(NullableBoolConverter))]
+        public bool? IsActive { get; set; }
     }
     public class AddVehicleValidator : AbstractValidator<VehicleDTO>
     {
-        public AddVehicleValidator() 
+        public AddVehicleValidator()
         {
             //RuleFor(x => x.UserId).NotEmpty().WithMessage("User ID is required. Please enter a valid user.");
             RuleFor(x => x.VehicleTypeId).NotEmpty().WithMessage("Vehicle type is required. Please select a vehicle type.");

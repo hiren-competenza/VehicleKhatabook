@@ -82,6 +82,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             var result = await _context.UserExpenses
                 .Where(e => e.UserID == userId && e.ExpenseDate >= fromDate && e.ExpenseDate <= toDate)
+                .Include(i => i.ExpenseCategory)
                 .ToListAsync();
             return result;
         }

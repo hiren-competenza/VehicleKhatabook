@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using VehicleKhatabook.Services.Services;
+using VehicleKhatabook.Models.Common;
 
 var baseDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 var configuration = new ConfigurationBuilder()
@@ -18,6 +20,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add services to the container.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new NullableDateTimeConverter());
+        options.JsonSerializerOptions.Converters.Add(new NullableBoolConverter());
+    });
+
 
 builder.Services.AddDbContext<VehicleKhatabookDbContext>(options =>
 options.UseSqlServer(
