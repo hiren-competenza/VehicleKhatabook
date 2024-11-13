@@ -10,28 +10,28 @@ namespace VehicleKhatabook.Entities.Models
 
         [Required]
         [MaxLength(100)]
-        public string ProviderName { get; set; }
+        public string? ProviderName { get; set; }
 
         [Required]
         [MaxLength(500)]
-        public string APIUrl { get; set; }
+        public string? APIUrl { get; set; }
 
         [Required]
         [MaxLength(255)]
-        public string AuthKey { get; set; }
+        public string? AuthKey { get; set; }
 
         [MaxLength(100)]
         public string? ClientID { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string SenderID { get; set; }
+        public string? SenderID { get; set; }
 
         [Required]
-        public int Timeout { get; set; } = 30;
+        public int? Timeout { get; set; } = 30;
 
         [Required]
-        public bool IsActive { get; set; } = true;
+        public bool? IsActive { get; set; } = true;
 
         //[ForeignKey("CreatedBy")]
         //public virtual User CreatedByUser { get; set; }

@@ -17,7 +17,7 @@ namespace VehicleKhatabook.Entities.Models
         [MaxLength(50)]
         public string RegistrationNumber { get; set; }
 
-        public string NickName { get; set; }
+        public string? NickName { get; set; }
 
         public DateTime? InsuranceExpiry { get; set; }
         public DateTime? PollutionExpiry { get; set; }
@@ -25,10 +25,10 @@ namespace VehicleKhatabook.Entities.Models
         public DateTime? RoadTaxExpiry { get; set; }
         public DateTime? RCPermitExpiry { get; set; }
         public DateTime? NationalPermitExpiry { get; set; }
-        public string ChassisNumber { get; set; }
-        public string EngineNumber { get; set; }
+        public string? ChassisNumber { get; set; }
+        public string? EngineNumber { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
 
         [ForeignKey("UserID")]
         public User User { get; set; }

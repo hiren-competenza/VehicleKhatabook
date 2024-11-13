@@ -8,7 +8,6 @@ namespace VehicleKhatabook.Entities
         public VehicleKhatabookDbContext(DbContextOptions<VehicleKhatabookDbContext> options) : base(options) { }
 
         public DbSet<OtpRequest> OtpRequests { get; set; }
-        public DbSet<LanguagePreference> LanguagePreferences { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
@@ -22,9 +21,11 @@ namespace VehicleKhatabook.Entities
         public DbSet<ScreenContent> ScreenContents { get; set; }
         public DbSet<VechileType> VehicleTypes { get; set; }
         public DbSet<Country> Countries { get; set; }
-        public DbSet<LanguageType> LanguageTypes {  get; set; }
+        public DbSet<LanguageType> LanguageTypes { get; set; }
         public DbSet<AdminUser> AdminUsers { get; set; }
         public DbSet<SMSProviderConfig> SMSProviderConfigs { get; set; }
+        public DbSet<OwnerKhataCredit> OwnerKhataCredits { get; set; }
+        public DbSet<OwnerKhataDebit> OwnerKhataDebits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,7 +45,8 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<LanguageType>().HasKey(v => v.LanguageTypeId);
             modelBuilder.Entity<AdminUser>().HasKey(v => v.AdminID);
             modelBuilder.Entity<SMSProviderConfig>().HasKey(s => s.ProviderID);
-
+            modelBuilder.Entity<OwnerKhataCredit>().HasKey(s => s.Id);
+            modelBuilder.Entity<OwnerKhataDebit>().HasKey(s => s.Id);
             //modelBuilder.Entity<SMSProviderConfig>()
             //    .HasOne(s => s.CreatedByUser)
             //    .WithMany()
@@ -120,7 +122,14 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<ExpenseCategory>()
                 .HasIndex(e => e.Name)
                 .IsUnique();
-
+            modelBuilder.Entity<OwnerKhataDebit>()
+                .HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.UserId);
+            modelBuilder.Entity<OwnerKhataCredit>()
+               .HasOne(f => f.User)
+               .WithMany()
+               .HasForeignKey(f => f.UserId);
             //modelBuilder.Entity<OtpRequest>()
             //    .HasOne(o => o.User)
             //    .WithMany()  

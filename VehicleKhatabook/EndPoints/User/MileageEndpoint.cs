@@ -20,8 +20,7 @@ namespace VehicleKhatabook.EndPoints.User
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IFuelTrackingService, FuelTrackingService>();
-            services.AddScoped<IFuelTrackingRepository, FuelTrackingRepository>();
+
         }
         private IResult CalculateMileage(MileageInputDTO input)
         {

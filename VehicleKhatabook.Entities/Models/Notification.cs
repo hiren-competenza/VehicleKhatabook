@@ -12,10 +12,10 @@ namespace VehicleKhatabook.Entities.Models
         public Guid UserID { get; set; }
 
         [MaxLength(255)]
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
-        public DateTime NotificationDate { get; set; }
-        public bool IsRead { get; set; }
+        public DateTime? NotificationDate { get; set; }
+        public bool? IsRead { get; set; }
 
         [ForeignKey("UserID")]
         public User User { get; set; }

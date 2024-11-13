@@ -15,12 +15,12 @@ namespace VehicleKhatabook.Entities.Models
         [MaxLength(3)]
         public string? Code { get; set; }
 
-        public int DialCode { get; set; }
+        public int? DialCode { get; set; }
 
         [Required]
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
 
         [Required]
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 }

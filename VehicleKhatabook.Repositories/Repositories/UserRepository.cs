@@ -119,7 +119,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLogin)
         {
             var user = await _dbContext.Users
-              .Where(u => u.MobileNumber == userLogin.MobileNumber && u.IsActive).FirstOrDefaultAsync();
+              .Where(u => u.MobileNumber == userLogin.MobileNumber && u.IsActive == true).FirstOrDefaultAsync();
 
             if (user != null && BCrypt.Net.BCrypt.Verify(userLogin.mPIN, user.mPIN))
             {
@@ -148,7 +148,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task<UserDetailsDTO> GetUserDetailsbyMobileAsync(string mobileNumber)
         {
             var user = await _dbContext.Users
-              .Where(u => u.MobileNumber == mobileNumber && u.IsActive).FirstOrDefaultAsync();
+              .Where(u => u.MobileNumber == mobileNumber && u.IsActive == true).FirstOrDefaultAsync();
 
             if (user != null)
             {
@@ -263,7 +263,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         }
         public async Task<bool> UpdateUserRoleAsync(Guid userId, string role)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == userId && u.IsActive);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == userId && u.IsActive == true);
             if (user == null)
                 return false;
             user.Role = role;
@@ -282,7 +282,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
         public async Task<bool> UpdateUserLanguageAsync(Guid userId, int languageTypeId)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == userId && u.IsActive);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == userId && u.IsActive == true);
             if (user == null)
                 return false;
             user.LanguageTypeId = languageTypeId;

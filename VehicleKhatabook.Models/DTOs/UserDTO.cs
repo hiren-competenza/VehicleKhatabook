@@ -10,11 +10,11 @@ namespace VehicleKhatabook.Models.DTOs
         public string ReferCode { get; set; }
         public string UserReferCode { get; set; }
         public string Role { get; set; }
-        public bool IsPremiumUser { get; set; }
+        public bool? IsPremiumUser { get; set; }
         public string State { get; set; }
         public string District { get; set; }
         public int? languageTypeId { get; set; }
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
         public string? mPIN { get; set; }
         public Guid UserId { get; set; }
         public int UserTypeId { get; set; }

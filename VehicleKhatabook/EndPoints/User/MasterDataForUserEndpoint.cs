@@ -75,7 +75,7 @@ namespace VehicleKhatabook.EndPoints.User
         {
             var allProviders = await sMSProviderService.GetAllSMSProvidersAsync();
 
-            var activeProvider = allProviders.FirstOrDefault(provider => provider.IsActive);
+            var activeProvider = allProviders.FirstOrDefault(provider => provider.IsActive == true);
 
             var result = ApiResponse<List<SMSProviderDTO>>.SuccessResponse(activeProvider != null
                 ? new List<SMSProviderDTO> { activeProvider }
