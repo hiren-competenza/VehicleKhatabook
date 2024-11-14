@@ -11,10 +11,10 @@ namespace VehicleKhatabook.EndPoints.Admin
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var staticRoute = app.MapGroup("/api").WithTags("SMSProvider Management");
-            staticRoute.MapGet("/GetAllSMSProvider", GetAllSMSProviders);
-            staticRoute.MapPost("/AddSMSProvider", AddSMSProvider);
-            staticRoute.MapPut("/UpdateSMSProvider", UpdateSMSProvider);
+            var staticRoute = app.MapGroup("/api/master").WithTags("SMSProvider Management");
+            staticRoute.MapGet("/getAllSMSProvider", GetAllSMSProviders);
+            staticRoute.MapPost("/addSMSProvider", AddSMSProvider);
+            staticRoute.MapPut("/updateSMSProvider", UpdateSMSProvider);
         }
 
 

@@ -11,9 +11,9 @@ namespace VehicleKhatabook.EndPoints.Admin
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var staticRoute = app.MapGroup("/api/static").WithTags("Vehicle Types Management")/*.RequireAuthorization("AdminPolicy")*/;
-            staticRoute.MapPost("/api/AddVehicleTypes", AddVehicleTypesAsync);
-            staticRoute.MapPost("/api/UpdateVehicleType", UpdateVehicleTypeAsync);
+            var staticRoute = app.MapGroup("/api/master").WithTags("Vehicle Types Management")/*.RequireAuthorization("AdminPolicy")*/;
+            staticRoute.MapPost("/addVehicleType", AddVehicleTypesAsync);
+            staticRoute.MapPost("/updateVehicleType", UpdateVehicleTypeAsync);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
