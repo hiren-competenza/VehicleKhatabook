@@ -24,7 +24,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 ExpenseAmount = expenseDTO.ExpenseAmount,
                 ExpenseDate = expenseDTO.ExpenseDate,
                 ExpenseDescription = expenseDTO.ExpenseDescription,
-                UserID = expenseDTO.DriverID,
+                UserID = expenseDTO.UserId,
                 //CreatedBy = expenseDTO.CreatedBy,
                 CreatedOn = DateTime.UtcNow
             };

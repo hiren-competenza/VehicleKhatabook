@@ -23,7 +23,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 IncomeCategoryID = incomeDTO.IncomeCategoryID,
                 IncomeAmount = incomeDTO.IncomeAmount,
                 IncomeDate = incomeDTO.IncomeDate,
-                UserID = incomeDTO.DriverID,
+                UserID = incomeDTO.UserId,
                 IncomeDescription = incomeDTO.IncomeDescription,
                 //CreatedBy = incomeDTO.CreatedBy,
                 CreatedOn = DateTime.UtcNow,

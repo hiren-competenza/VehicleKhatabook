@@ -40,7 +40,9 @@ namespace VehicleKhatabook.Repositories.Repositories
         }
         public async Task<Vehicle> GetVehicleByVehicleIdAsync(Guid id)
         {
-            return await _dbContext.Vehicles.Where(i => i.VehicleID == id && i.IsActive == true).FirstOrDefaultAsync();
+            return await _dbContext.Vehicles.Where(i => i.VehicleID == id && i.IsActive == true)
+                .Include(i => i.VehicleType)
+                .FirstOrDefaultAsync();
         }
 
 
@@ -55,6 +57,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             var vehicles = await _dbContext.Vehicles
                                             .Where(v => v.UserID == userId && v.IsActive == true)
+                                            .Include(i => i.VehicleType)
                                             .ToListAsync();
 
             if (vehicles == null || vehicles.Count == 0)
