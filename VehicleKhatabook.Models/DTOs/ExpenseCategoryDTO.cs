@@ -1,11 +1,13 @@
-﻿namespace VehicleKhatabook.Models.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace VehicleKhatabook.Models.DTOs
 {
     public class ExpenseCategoryDTO
     {
+       // public int ExpenseCategoryID { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public int CreatedBy { get; set; }
-        public int ModifiedBy { get; set; }
-        public bool IsActive { get; set; }
+        public int? RoleId { get; set; }
+        public string? Description { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

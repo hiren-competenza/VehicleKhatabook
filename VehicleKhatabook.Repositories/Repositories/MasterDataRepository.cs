@@ -37,8 +37,9 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 Name = categoryDTO.Name,
                 Description = categoryDTO.Description,
-                CreatedBy = categoryDTO.CreatedBy,
+                RoleId = categoryDTO.RoleId,
                 CreatedOn = DateTime.UtcNow,
+                CreatedBy = 1,
                 IsActive = true
             };
 
@@ -57,7 +58,8 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             category.Name = categoryDTO.Name;
             category.Description = categoryDTO.Description;
-            category.ModifiedBy = categoryDTO.ModifiedBy;
+            category.RoleId = categoryDTO.RoleId;
+            category.ModifiedBy = 1;
             category.LastModifiedOn = DateTime.UtcNow;
             category.IsActive = category.IsActive;
 
@@ -100,7 +102,8 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 Name = categoryDTO.Name,
                 Description = categoryDTO.Description,
-                CreatedBy = categoryDTO.CreatedBy,
+                RoleId = categoryDTO.RoleId,
+                CreatedBy = 1,
                 CreatedOn = DateTime.UtcNow,
                 IsActive = true
             };
@@ -120,7 +123,8 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             category.Name = categoryDTO.Name;
             category.Description = categoryDTO.Description;
-            category.ModifiedBy = categoryDTO.ModifiedBy;
+            category.ModifiedBy = 1;
+            category.RoleId = categoryDTO.RoleId;
             category.LastModifiedOn = DateTime.UtcNow;
             category.IsActive = categoryDTO.IsActive;
             _context.ExpenseCategories.Update(category);
