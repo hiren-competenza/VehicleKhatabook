@@ -24,8 +24,12 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new NullableDateTimeConverter());
+        options.JsonSerializerOptions.Converters.Add(new NullableIntConverter());
+        options.JsonSerializerOptions.Converters.Add(new NullableDecimalConverter());
         options.JsonSerializerOptions.Converters.Add(new NullableBoolConverter());
+        options.JsonSerializerOptions.Converters.Add(new NullableStringConverter());
     });
+
 
 
 builder.Services.AddDbContext<VehicleKhatabookDbContext>(options =>

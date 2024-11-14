@@ -37,6 +37,11 @@ namespace VehicleKhatabook.EndPoints.User
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
+            var (isUserActive, hasVehicles, vehicles) = await vehicleService.GetAllVehiclesAsync(Guid.Parse(userId));
+            if (vehicles != null && vehicles.Count >= 3)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Only 3 vehicles allow for non premium user. Buy premium to add more vehicles."));
+            }
             vehicleDTO.UserId = Guid.Parse(userId);
             vehicleDTO.InsuranceExpiry = string.IsNullOrWhiteSpace(vehicleDTO.InsuranceExpiry.ToString()) ? null : vehicleDTO.InsuranceExpiry;
             vehicleDTO.PollutionExpiry = string.IsNullOrWhiteSpace(vehicleDTO.PollutionExpiry.ToString()) ? null : vehicleDTO.PollutionExpiry;

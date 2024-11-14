@@ -42,7 +42,7 @@ namespace VehicleKhatabook.EndPoints.User
                     IncomeDate = IncomeExpenseDTO.Date,
                     IncomeDescription = IncomeExpenseDTO.Description,
                     //DriverID = IncomeExpenseDTO.DriverID,
-                    DriverID = Guid.Parse(userId),
+                    UserId = Guid.Parse(userId),
                     CreatedBy = IncomeExpenseDTO.CreatedBy,
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
@@ -63,7 +63,7 @@ namespace VehicleKhatabook.EndPoints.User
                     ExpenseDate = IncomeExpenseDTO.Date,
                     ExpenseDescription = IncomeExpenseDTO.Description,
                     //DriverID = IncomeExpenseDTO.DriverID,
-                    DriverID = Guid.Parse(userId),
+                    UserId = Guid.Parse(userId),
                     CreatedBy = IncomeExpenseDTO.CreatedBy,
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
