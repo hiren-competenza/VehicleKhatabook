@@ -36,7 +36,7 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<ExpenseCategory>().HasKey(ec => ec.ExpenseCategoryID);
             modelBuilder.Entity<UserIncome>().HasKey(i => i.IncomeID);
             modelBuilder.Entity<UserExpense>().HasKey(e => e.ExpenseID);
-            modelBuilder.Entity<FuelTracking>().HasKey(ft => ft.FuelTrackingID);
+            modelBuilder.Entity<FuelTracking>().HasKey(ft => ft.Id);
             modelBuilder.Entity<Notification>().HasKey(n => n.NotificationID);
             modelBuilder.Entity<Backup>().HasKey(b => b.BackupID);
             modelBuilder.Entity<ScreenContent>().HasKey(sc => sc.ScreenContentID);
@@ -103,17 +103,6 @@ namespace VehicleKhatabook.Entities
                 .HasOne(e => e.ExpenseCategory)
                 .WithMany()
                 .HasForeignKey(e => e.ExpenseCategoryID);
-
-            modelBuilder.Entity<FuelTracking>()
-                .HasOne(f => f.User)
-                .WithMany()
-                .HasForeignKey(f => f.UserId);
-
-            modelBuilder.Entity<FuelTracking>()
-                .HasOne(f => f.Vehicle)
-                .WithMany()
-                .HasForeignKey(f => f.VehicleID);
-
 
             modelBuilder.Entity<IncomeCategory>()
                 .HasIndex(i => i.Name)

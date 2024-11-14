@@ -1,33 +1,28 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace VehicleKhatabook.Entities.Models
 {
     public class FuelTracking : EntityBase
     {
         [Key]
-        public Guid FuelTrackingID { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
-        [Required]
-        public Guid VehicleID { get; set; }
-
-        [Required]
-        public Guid UserId { get; set; }
-
-        public decimal StartMeterReading { get; set; }
-        public decimal EndMeterReading { get; set; }
-        public decimal StartFuelLevel { get; set; }
-        public decimal EndFuelLevel { get; set; }
-        public decimal FuelAdded { get; set; }
-        public decimal Mileage { get; set; }
-
-        public DateTime TripStartDate { get; set; }
-        public DateTime TripEndDate { get; set; }
-
-        [ForeignKey("VehicleID")]
-        public Vehicle Vehicle { get; set; }
-
-        [ForeignKey("UserId")]
-        public User User { get; set; }
+        public int StartVehicleMeterReading { get; set; }
+        public int EndVehicleMeterReading { get; set; }
+        public double StartFuelLevelInLiters { get; set; }
+        public double EndFuelLevelInLiters { get; set; }
+        [Column(TypeName = "json")]
+        public string FuelAddedInLitersJson { get; set; }
+        // This property is not mapped to the database, used for ease of access to FuelAddedInLiters as a list.
+        [NotMapped]
+        public List<double> FuelAddedInLiters
+        {
+            get => string.IsNullOrEmpty(FuelAddedInLitersJson)
+                   ? new List<double>()
+                   : JsonSerializer.Deserialize<List<double>>(FuelAddedInLitersJson);
+            set => FuelAddedInLitersJson = JsonSerializer.Serialize(value);
+        }
     }
 }
