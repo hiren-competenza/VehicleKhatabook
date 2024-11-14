@@ -47,16 +47,6 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<SMSProviderConfig>().HasKey(s => s.ProviderID);
             modelBuilder.Entity<OwnerKhataCredit>().HasKey(s => s.Id);
             modelBuilder.Entity<OwnerKhataDebit>().HasKey(s => s.Id);
-            //modelBuilder.Entity<SMSProviderConfig>()
-            //    .HasOne(s => s.CreatedByUser)
-            //    .WithMany()
-            //    .HasForeignKey(s => s.CreatedBy);
-
-            //modelBuilder.Entity<SMSProviderConfig>()
-            //    .HasOne(s => s.ModifiedByUser)
-            //    .WithMany()
-            //    .HasForeignKey(s => s.ModifiedBy);
-
             modelBuilder.Entity<AdminUser>()
                 .HasOne(s => s.CreatedByAdmin)
                 .WithMany()
@@ -119,11 +109,6 @@ namespace VehicleKhatabook.Entities
                .HasOne(f => f.User)
                .WithMany()
                .HasForeignKey(f => f.UserId);
-            //modelBuilder.Entity<OtpRequest>()
-            //    .HasOne(o => o.User)
-            //    .WithMany()  
-            //    .HasForeignKey(o => o.UserID);
-
             base.OnModelCreating(modelBuilder);
         }
     }

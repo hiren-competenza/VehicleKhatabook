@@ -42,8 +42,6 @@ namespace VehicleKhatabook.Repositories.Repositories
                 SenderID = smsProviderDTO.SenderID,
                 Timeout = smsProviderDTO.Timeout,
                 IsActive = smsProviderDTO.IsActive,
-                CreatedBy = smsProviderDTO.CreatedBy,
-                CreatedOn = DateTime.Now
             };
 
             _dbContext.SMSProviderConfigs.Add(smsProvider);
@@ -68,8 +66,6 @@ namespace VehicleKhatabook.Repositories.Repositories
             smsProvider.SenderID = smsProviderDTO.SenderID;
             smsProvider.Timeout = smsProviderDTO.Timeout;
             smsProvider.IsActive = smsProviderDTO.IsActive;
-            smsProvider.ModifiedBy = smsProviderDTO.ModifiedBy;
-            smsProvider.LastModifiedOn = DateTime.Now;
 
             await _dbContext.SaveChangesAsync();
             return smsProviderDTO;

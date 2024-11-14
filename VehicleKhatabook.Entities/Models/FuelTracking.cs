@@ -9,11 +9,11 @@ namespace VehicleKhatabook.Entities.Models
         [Key]
         public int Id { get; set; }
 
-        public int StartVehicleMeterReading { get; set; }
+        public int StartVehicleMeterReading { get; set; }   
         public int EndVehicleMeterReading { get; set; }
         public double StartFuelLevelInLiters { get; set; }
         public double EndFuelLevelInLiters { get; set; }
-        [Column(TypeName = "json")]
+        [Column(TypeName = "nvarchar(max)")]
         public string FuelAddedInLitersJson { get; set; }
         // This property is not mapped to the database, used for ease of access to FuelAddedInLiters as a list.
         [NotMapped]

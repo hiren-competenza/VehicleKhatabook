@@ -2,9 +2,8 @@
 
 namespace VehicleKhatabook.Models.DTOs
 {
-    public class MileageInputDTO
+    public class FuelTrackingDTO
     {
-
         [JsonPropertyName("startVehicleMeterReading")]
         public int StartVehicleMeterReading { get; set; }
 
