@@ -11,10 +11,10 @@ namespace VehicleKhatabook.EndPoints.Admin
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var staticRoute = app.MapGroup("/api/static").WithTags("Income Category Management").RequireAuthorization("AdminPolicy");
-            staticRoute.MapPost("/income-category", AddIncomeCategory);
-            staticRoute.MapPut("/income-category/{id}", UpdateIncomeCategory);
-            staticRoute.MapDelete("/income-category/{id}", DeleteIncomeCategory);
+            var staticRoute = app.MapGroup("/api/master").WithTags("Income Category Management");//.RequireAuthorization("AdminPolicy");
+            staticRoute.MapPost("/addIncomeCategory", AddIncomeCategory);
+            staticRoute.MapPut("/updateIncomeCategory/{id}", UpdateIncomeCategory);
+            staticRoute.MapDelete("/deleteIncomeCategory/{id}", DeleteIncomeCategory);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)

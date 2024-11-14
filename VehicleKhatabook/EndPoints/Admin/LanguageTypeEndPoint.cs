@@ -11,9 +11,9 @@ namespace VehicleKhatabook.EndPoints.Admin
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var staticRoute = app.MapGroup("/api/static").WithTags("Language Type Management").RequireAuthorization("AdminPolicy");
-            staticRoute.MapPost("/AddLanguageType", AddLanguageType);
-            staticRoute.MapPut("/UpdateLanguageType", UpdateLanguageType);
+            var staticRoute = app.MapGroup("/api/master").WithTags("Language Type Management");//.RequireAuthorization("AdminPolicy");
+            staticRoute.MapPost("/addLanguageType", AddLanguageType);
+            staticRoute.MapPut("/updateLanguageType", UpdateLanguageType);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
