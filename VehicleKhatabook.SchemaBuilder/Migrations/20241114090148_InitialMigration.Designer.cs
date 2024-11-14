@@ -12,8 +12,8 @@ using VehicleKhatabook.Entities;
 namespace VehicleKhatabook.SchemaBuilder.Migrations
 {
     [DbContext(typeof(VehicleKhatabookDbContext))]
-    [Migration("20241021103523_OtpRequest")]
-    partial class OtpRequest
+    [Migration("20241114090148_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,85 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.AdminUser", b =>
+                {
+                    b.Property<int>("AdminID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdminID"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool?>("IsActive")
+                        .IsRequired()
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MobileNumber")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedByAdminAdminID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SecurityAnswerHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("SecurityQuestion")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("AdminID");
+
+                    b.HasIndex("ModifiedBy");
+
+                    b.HasIndex("ModifiedByAdminAdminID");
+
+                    b.ToTable("AdminUsers");
+                });
+
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Backup", b =>
                 {
                     b.Property<Guid>("BackupID")
@@ -32,10 +111,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("BackupData")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<DateTime>("BackupDate")
+                    b.Property<DateTime?>("BackupDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CreatedBy")
@@ -72,13 +150,15 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DialCode")
+                    b.Property<int?>("DialCode")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool?>("IsActive")
+                        .IsRequired()
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -89,54 +169,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Country");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.Expense", b =>
-                {
-                    b.Property<int>("ExpenseID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExpenseID"));
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("DriverID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("ExpenseAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ExpenseCategoryID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ExpenseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ExpenseDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("ExpenseID");
-
-                    b.HasIndex("DriverID");
-
-                    b.HasIndex("ExpenseCategoryID");
-
-                    b.ToTable("Expenses");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.ExpenseCategory", b =>
@@ -154,10 +186,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModifiedOn")
@@ -171,7 +202,8 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("ExpenseCategoryID");
@@ -184,9 +216,11 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.FuelTracking", b =>
                 {
-                    b.Property<Guid>("FuelTrackingID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
@@ -194,97 +228,31 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("EndFuelLevel")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("EndFuelLevelInLiters")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("EndMeterReading")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("FuelAdded")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("LastModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Mileage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("ModifiedBy")
+                    b.Property<int>("EndVehicleMeterReading")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("StartFuelLevel")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("StartMeterReading")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("TripEndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("TripStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("VehicleID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("FuelTrackingID");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("VehicleID");
-
-                    b.ToTable("FuelTrackings");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.Income", b =>
-                {
-                    b.Property<int>("IncomeID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IncomeID"));
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("DriverID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("IncomeAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("IncomeCategoryID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("IncomeDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("IncomeDescription")
+                    b.Property<string>("FuelAddedInLitersJson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
-                    b.HasKey("IncomeID");
+                    b.Property<double>("StartFuelLevelInLiters")
+                        .HasColumnType("float");
 
-                    b.HasIndex("DriverID");
+                    b.Property<int>("StartVehicleMeterReading")
+                        .HasColumnType("int");
 
-                    b.HasIndex("IncomeCategoryID");
+                    b.HasKey("Id");
 
-                    b.ToTable("Incomes");
+                    b.ToTable("FuelTrackings");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.IncomeCategory", b =>
@@ -302,10 +270,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModifiedOn")
@@ -319,7 +286,8 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("IncomeCategoryID");
@@ -330,26 +298,41 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.ToTable("IncomeCategories");
                 });
 
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.LanguagePreference", b =>
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.LanguageType", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<int>("LanguageTypeId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LanguageTypeId"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("LanguageCode")
+                    b.Property<string>("Description")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LanguageName")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("UserId");
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
 
-                    b.ToTable("LanguagePreferences");
+                    b.HasKey("LanguageTypeId");
+
+                    b.ToTable("LanguageTypes");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Notification", b =>
@@ -364,21 +347,20 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsRead")
+                    b.Property<bool?>("IsRead")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("NotificationDate")
+                    b.Property<DateTime?>("NotificationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserID")
@@ -430,9 +412,124 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
 
                     b.HasKey("OtpRequestId");
 
+                    b.ToTable("OtpRequests");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.OwnerKhataCredit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Mobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OwnerKhataCredits");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.OwnerKhataDebit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Mobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OwnerKhataDebits");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.SMSProviderConfig", b =>
+                {
+                    b.Property<int>("ProviderID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProviderID"));
+
+                    b.Property<string>("APIUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("AuthKey")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ClientID")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool?>("IsActive")
+                        .IsRequired()
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ProviderName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SenderID")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("Timeout")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserID1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProviderID");
+
                     b.HasIndex("UserID");
 
-                    b.ToTable("OtpRequests");
+                    b.HasIndex("UserID1");
+
+                    b.ToTable("SMSProviderConfigs");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.ScreenContent", b =>
@@ -444,12 +541,10 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScreenContentID"));
 
                     b.Property<string>("ContentKey")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ContentValue")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -463,7 +558,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Language")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
@@ -474,7 +568,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ScreenName")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -548,14 +641,14 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<Guid>("IdentifierId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsPremiumUser")
+                    b.Property<bool?>("IsPremiumUser")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("LanguageTypeId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -594,7 +687,103 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
 
                     b.HasKey("UserID");
 
+                    b.HasIndex("LanguageTypeId");
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.UserExpense", b =>
+                {
+                    b.Property<int>("ExpenseID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExpenseID"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("ExpenseAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ExpenseCategoryID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpenseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExpenseDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ExpenseID");
+
+                    b.HasIndex("ExpenseCategoryID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("UserExpenses");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.UserIncome", b =>
+                {
+                    b.Property<int>("IncomeID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IncomeID"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("IncomeAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("IncomeCategoryID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("IncomeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IncomeDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("IncomeID");
+
+                    b.HasIndex("IncomeCategoryID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("UserIncomes");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.VechileType", b =>
@@ -605,7 +794,7 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehicleTypeId"));
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("TypeName")
@@ -624,7 +813,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ChassisNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CreatedBy")
@@ -634,7 +822,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EngineNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("FitnessExpiry")
@@ -643,7 +830,7 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<DateTime?>("InsuranceExpiry")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModifiedOn")
@@ -656,7 +843,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("NickName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("PollutionExpiry")
@@ -676,16 +862,32 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("VehicleType")
-                        .IsRequired()
+                    b.Property<int?>("VehicleTypeId")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.HasKey("VehicleID");
 
                     b.HasIndex("UserID");
 
+                    b.HasIndex("VehicleTypeId");
+
                     b.ToTable("Vehicles");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.AdminUser", b =>
+                {
+                    b.HasOne("VehicleKhatabook.Entities.Models.AdminUser", "CreatedByAdmin")
+                        .WithMany()
+                        .HasForeignKey("ModifiedBy");
+
+                    b.HasOne("VehicleKhatabook.Entities.Models.AdminUser", "ModifiedByAdmin")
+                        .WithMany()
+                        .HasForeignKey("ModifiedByAdminAdminID");
+
+                    b.Navigation("CreatedByAdmin");
+
+                    b.Navigation("ModifiedByAdmin");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Backup", b =>
@@ -699,63 +901,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.Expense", b =>
-                {
-                    b.HasOne("VehicleKhatabook.Entities.Models.User", "Driver")
-                        .WithMany()
-                        .HasForeignKey("DriverID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VehicleKhatabook.Entities.Models.ExpenseCategory", "ExpenseCategory")
-                        .WithMany()
-                        .HasForeignKey("ExpenseCategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Driver");
-
-                    b.Navigation("ExpenseCategory");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.FuelTracking", b =>
-                {
-                    b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VehicleKhatabook.Entities.Models.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.Income", b =>
-                {
-                    b.HasOne("VehicleKhatabook.Entities.Models.User", "Driver")
-                        .WithMany()
-                        .HasForeignKey("DriverID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VehicleKhatabook.Entities.Models.IncomeCategory", "IncomeCategory")
-                        .WithMany()
-                        .HasForeignKey("IncomeCategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Driver");
-
-                    b.Navigation("IncomeCategory");
-                });
-
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Notification", b =>
                 {
                     b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
@@ -767,15 +912,37 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.OtpRequest", b =>
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.OwnerKhataCredit", b =>
                 {
                     b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.OwnerKhataDebit", b =>
+                {
+                    b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.SMSProviderConfig", b =>
+                {
+                    b.HasOne("VehicleKhatabook.Entities.Models.User", null)
+                        .WithMany("CreatedSMSProviderConfigs")
+                        .HasForeignKey("UserID");
+
+                    b.HasOne("VehicleKhatabook.Entities.Models.User", null)
+                        .WithMany("ModifiedSMSProviderConfigs")
+                        .HasForeignKey("UserID1");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Subscription", b =>
@@ -789,6 +956,53 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.User", b =>
+                {
+                    b.HasOne("VehicleKhatabook.Entities.Models.LanguageType", "LanguageType")
+                        .WithMany()
+                        .HasForeignKey("LanguageTypeId");
+
+                    b.Navigation("LanguageType");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.UserExpense", b =>
+                {
+                    b.HasOne("VehicleKhatabook.Entities.Models.ExpenseCategory", "ExpenseCategory")
+                        .WithMany()
+                        .HasForeignKey("ExpenseCategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VehicleKhatabook.Entities.Models.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExpenseCategory");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.UserIncome", b =>
+                {
+                    b.HasOne("VehicleKhatabook.Entities.Models.IncomeCategory", "IncomeCategory")
+                        .WithMany()
+                        .HasForeignKey("IncomeCategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IncomeCategory");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Vehicle", b =>
                 {
                     b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
@@ -797,7 +1011,20 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("VehicleKhatabook.Entities.Models.VechileType", "VehicleType")
+                        .WithMany()
+                        .HasForeignKey("VehicleTypeId");
+
                     b.Navigation("User");
+
+                    b.Navigation("VehicleType");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.User", b =>
+                {
+                    b.Navigation("CreatedSMSProviderConfigs");
+
+                    b.Navigation("ModifiedSMSProviderConfigs");
                 });
 #pragma warning restore 612, 618
         }

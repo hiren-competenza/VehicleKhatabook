@@ -213,9 +213,11 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.FuelTracking", b =>
                 {
-                    b.Property<Guid>("FuelTrackingID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
@@ -223,47 +225,29 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("EndFuelLevel")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("EndFuelLevelInLiters")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("EndMeterReading")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("EndVehicleMeterReading")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("FuelAdded")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("FuelAddedInLitersJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Mileage")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("StartFuelLevel")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("StartFuelLevelInLiters")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("StartMeterReading")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("StartVehicleMeterReading")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("TripEndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("TripStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("VehicleID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("FuelTrackingID");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("VehicleID");
+                    b.HasKey("Id");
 
                     b.ToTable("FuelTrackings");
                 });
@@ -512,21 +496,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool?>("IsActive")
                         .IsRequired()
                         .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
 
                     b.Property<string>("ProviderName")
                         .IsRequired()
@@ -924,25 +896,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.FuelTracking", b =>
-                {
-                    b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VehicleKhatabook.Entities.Models.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Notification", b =>

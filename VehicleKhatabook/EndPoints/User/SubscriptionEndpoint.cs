@@ -1,4 +1,7 @@
-﻿using VehicleKhatabook.Infrastructure;
+﻿using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using VehicleKhatabook.Infrastructure;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
@@ -24,30 +27,34 @@ namespace VehicleKhatabook.EndPoints.User
 
         internal async Task<IResult> GetSubscriptionDetails(HttpContext context, ISubscriptionService service)
         {
-            var userId = context.User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
-            if (userId == null)
-                return Results.BadRequest("User ID not found.");
+            var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
 
             var result = await service.GetSubscriptionDetailsAsync(Guid.Parse(userId));
-            if (result != null)
+            if (result == null)
             {
-                return Results.Ok(result);
+                return Results.Ok(ApiResponse<object>.FailureResponse("Subscription details not found."));
             }
-            return Results.NotFound("Subscription details not found.");
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result, "User is already subscribed"));
         }
 
         internal async Task<IResult> UpgradeToPremium(HttpContext context, ISubscriptionService service)
         {
-            var userId = context.User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
-            if (userId == null)
-                return Results.BadRequest("User ID not found.");
+            var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
 
             var upgraded = await service.UpgradeToPremiumAsync(Guid.Parse(userId));
-            if (upgraded)
+            if (!upgraded)
             {
-                return Results.Ok("Successfully upgraded to Premium.");
+                return Results.Ok(ApiResponse<object>.FailureResponse("Failed to upgrade subscription."));
             }
-            return Results.BadRequest("Failed to upgrade subscription.");
+            return Results.Ok(ApiResponse<object>.SuccessResponse(true, "Successfully upgraded to Premium."));
         }
     }
 }

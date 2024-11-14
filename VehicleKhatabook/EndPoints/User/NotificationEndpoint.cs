@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using VehicleKhatabook.Infrastructure;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
@@ -26,21 +27,21 @@ namespace VehicleKhatabook.EndPoints.User
         private async Task<IResult> GetAllNotifications(Guid userId, INotificationService notificationService)
         {
             var notifications = await notificationService.GetAllNotificationsAsync(userId);
-            if (notifications.Any())
+            if (notifications == null)
             {
-                return Results.Ok(notifications);
+                return Results.Ok(ApiResponse<object>.FailureResponse("No notification found"));
             }
-            return Results.NoContent();
+            return Results.Ok(ApiResponse<object>.SuccessResponse(notifications, "Notification"));
         }
 
         private async Task<IResult> MarkNotificationAsRead(Guid id, INotificationService notificationService)
         {
             var notification = await notificationService.MarkNotificationAsReadAsync(id);
-            if (notification != null)
+            if (notification == null)
             {
-                return Results.Ok(notification);
+                return Results.Ok(ApiResponse<object>.FailureResponse("Notification not found."));
             }
-            return Results.NotFound("Notification not found.");
+            return Results.Ok(ApiResponse<object>.SuccessResponse(notification, "Notification read"));
         }
     }
 }

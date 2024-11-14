@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VehicleKhatabook.Entities.Models
 {
-    public class SMSProviderConfig : EntityBase
+    public class SMSProviderConfig 
     {
         [Key]
         public int ProviderID { get; set; }
@@ -33,11 +33,6 @@ namespace VehicleKhatabook.Entities.Models
         [Required]
         public bool? IsActive { get; set; } = true;
 
-        //[ForeignKey("CreatedBy")]
-        //public virtual User CreatedByUser { get; set; }
-
-        //[ForeignKey("ModifiedBy")]
-        //public virtual User? ModifiedByUser { get; set; }
     }
 
 }
