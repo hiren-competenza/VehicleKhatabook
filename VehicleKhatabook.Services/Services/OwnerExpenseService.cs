@@ -25,9 +25,9 @@ namespace VehicleKhatabook.Services.Services
             return await _ownerExpenseRepository.AddOwnerExpenseAsync(expenseDTO);
         }
 
-        public async Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid userId, DateTime fromDate, DateTime toDate)
+        public async Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid userId, Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
         {
-            return await _ownerExpenseRepository.GetOwnerExpenseAsync(userId, fromDate, toDate);
+            return await _ownerExpenseRepository.GetOwnerExpenseAsync(userId,driverOwnerUserId, fromDate, toDate);
         }
 
         public async Task<ApiResponse<OwnerKhataDebit>> GetOwnerExpenseDetailsAsync(Guid id)

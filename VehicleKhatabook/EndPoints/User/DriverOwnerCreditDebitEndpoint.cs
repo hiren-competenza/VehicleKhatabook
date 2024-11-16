@@ -11,11 +11,11 @@ using VehicleKhatabook.Services.Services;
 
 namespace VehicleKhatabook.EndPoints.User
 {
-    public class OwnerCreditDebitEndpoint : IEndpointDefinition
+    public class DriverOwnerCreditDebitEndpoint : IEndpointDefinition
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var expenseRoute = app.MapGroup("/api/ownerincomeExpense").WithTags("Owner IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy");
+            var expenseRoute = app.MapGroup("/api/driverOwnerIncomeExpense").WithTags("Owner IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy");
             expenseRoute.MapPost("/add", AddIncomeExpenseAsync);
             expenseRoute.MapGet("/get", GetIncomeExpenseAsyncByUserId);
         }
@@ -42,6 +42,7 @@ namespace VehicleKhatabook.EndPoints.User
                 Date = ownerIncomeExpenseDTO.Date,
                 Amount = ownerIncomeExpenseDTO.Amount,
                 Note = ownerIncomeExpenseDTO.Note,
+                DriverOwnerUserId = ownerIncomeExpenseDTO.DriverOwnerUserId,
             };
             if (TransactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
@@ -61,7 +62,7 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
             }
         }
-        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType, HttpContext httpContext, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService, DateTime? fromDate, DateTime? toDate)
+        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType, string driverOwnerUserId, HttpContext httpContext, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService, DateTime? fromDate, DateTime? toDate)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
@@ -76,7 +77,7 @@ namespace VehicleKhatabook.EndPoints.User
             // Fetch data based on transaction type and provided date range
             if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
-                var result = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(userId), start, end);
+                var result = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(userId), Guid.Parse(driverOwnerUserId), start, end);
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
 
@@ -84,7 +85,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
             else
             {
-                var result = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(userId), start, end);
+                var result = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(userId), Guid.Parse(driverOwnerUserId), start, end);
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
 

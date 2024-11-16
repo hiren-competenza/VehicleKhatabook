@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VehicleKhatabook.Entities;
 
@@ -11,9 +12,11 @@ using VehicleKhatabook.Entities;
 namespace VehicleKhatabook.SchemaBuilder.Migrations
 {
     [DbContext(typeof(VehicleKhatabookDbContext))]
-    partial class VehicleKhatabookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241115140514_OwnerDriverManaged_Fixed")]
+    partial class OwnerDriverManaged_Fixed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -780,6 +783,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("VehicleID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("ExpenseID");
 
                     b.HasIndex("ExpenseCategoryID");
@@ -828,6 +834,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("VehicleID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("IncomeID");

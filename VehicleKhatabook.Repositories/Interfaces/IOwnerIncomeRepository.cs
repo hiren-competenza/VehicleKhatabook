@@ -13,6 +13,6 @@ namespace VehicleKhatabook.Repositories.Interfaces
     {
         Task<OwnerKhataCredit> AddOwnerIncomeAsync(OwnerIncomeExpenseDTO incomeDTO);
         Task<ApiResponse<OwnerKhataCredit>> GetOwnerIncomeDetailsAsync(Guid id);
-        Task<List<OwnerKhataCredit>> GetOwnerIncomeAsync(Guid userId, DateTime fromDate, DateTime toDate);
+        Task<List<OwnerKhataCredit>> GetOwnerIncomeAsync(Guid userId, Guid driverOwnerUserId, DateTime fromDate, DateTime toDate);
     }
 }

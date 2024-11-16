@@ -11,6 +11,6 @@ namespace VehicleKhatabook.Repositories.Interfaces
         //Task<ApiResponse<Income>> UpdateIncomeAsync(int id, IncomeDTO incomeDTO);
         //Task<ApiResponse<bool>> DeleteIncomeAsync(int id);
         //Task<ApiResponse<List<Income>>> GetAllIncomesAsync();
-        Task<List<UserIncome>> GetIncomeAsync(Guid userId, DateTime fromDate, DateTime toDate);
+        Task<List<UserIncome>> GetIncomeAsync(Guid userId, Guid vehicleId, DateTime fromDate, DateTime toDate);
     }
 }

@@ -26,6 +26,7 @@ namespace VehicleKhatabook.Entities
         public DbSet<SMSProviderConfig> SMSProviderConfigs { get; set; }
         public DbSet<OwnerKhataCredit> OwnerKhataCredits { get; set; }
         public DbSet<OwnerKhataDebit> OwnerKhataDebits { get; set; }
+        public DbSet<DriverOwnerUser> DriverOwnerUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,6 +48,7 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<SMSProviderConfig>().HasKey(s => s.ProviderID);
             modelBuilder.Entity<OwnerKhataCredit>().HasKey(s => s.Id);
             modelBuilder.Entity<OwnerKhataDebit>().HasKey(s => s.Id);
+            modelBuilder.Entity<DriverOwnerUser>().HasKey(s => s.DriverOwnerUserId);
             modelBuilder.Entity<AdminUser>()
                 .HasOne(s => s.CreatedByAdmin)
                 .WithMany()
@@ -66,7 +68,8 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<Vehicle>()
                 .HasOne(v => v.User)
                 .WithMany()
-                .HasForeignKey(v => v.UserID);
+                .HasForeignKey(v => v.UserID)
+                .HasConstraintName("FK_User_Vehicle");
 
             modelBuilder.Entity<Vehicle>()
                 .HasOne(v => v.VehicleType)
@@ -89,10 +92,22 @@ namespace VehicleKhatabook.Entities
                 .WithMany()
                 .HasForeignKey(i => i.IncomeCategoryID);
 
+            modelBuilder.Entity<UserIncome>()
+                .HasOne(i => i.Vehicle)
+                .WithMany()
+                .HasForeignKey(i => i.IncomeVehicleId)
+                .HasConstraintName("FK_UserIncome_IncomeVehicle");
+
             modelBuilder.Entity<UserExpense>()
                 .HasOne(e => e.ExpenseCategory)
                 .WithMany()
                 .HasForeignKey(e => e.ExpenseCategoryID);
+
+            modelBuilder.Entity<UserExpense>()
+                .HasOne(e => e.Vehicle)
+                .WithMany()
+                .HasForeignKey(e => e.ExpenseVehicleId)
+                .HasConstraintName("FK_UserExpense_ExpenseVehicle");
 
             modelBuilder.Entity<IncomeCategory>()
                 .HasIndex(i => i.Name)
@@ -101,14 +116,39 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<ExpenseCategory>()
                 .HasIndex(e => e.Name)
                 .IsUnique();
+
             modelBuilder.Entity<OwnerKhataDebit>()
                 .HasOne(f => f.User)
                 .WithMany()
                 .HasForeignKey(f => f.UserId);
+
+            //modelBuilder.Entity<OwnerKhataDebit>()
+            //   .HasOne(f => f.DriverOwnerUser)
+            //   .WithMany()
+            //   .HasForeignKey(f => f.DriverOwnerId)
+            //   .OnDelete(DeleteBehavior.NoAction)
+            //  .HasConstraintName("FK_OwnerKhataDebit_DriverOwner");
+
+
             modelBuilder.Entity<OwnerKhataCredit>()
                .HasOne(f => f.User)
                .WithMany()
-               .HasForeignKey(f => f.UserId);
+               .HasForeignKey(f => f.UserId)
+               .OnDelete(DeleteBehavior.NoAction);
+
+            //modelBuilder.Entity<OwnerKhataCredit>()
+            //  .HasOne(f => f.DriverOwnerUser)
+            //  .WithMany()
+            //  .HasForeignKey(f => f.DriverOwnerId)
+            //  .OnDelete(DeleteBehavior.NoAction)
+            //  .HasConstraintName("FK_OwnerKhataCredit_DriverOwner");
+
+
+            modelBuilder.Entity<DriverOwnerUser>()
+               .HasOne(f => f.user)
+               .WithMany()
+               .HasForeignKey(f => f.UserID);
+
             base.OnModelCreating(modelBuilder);
         }
     }
