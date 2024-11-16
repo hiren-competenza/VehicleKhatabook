@@ -25,6 +25,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 ExpenseDate = expenseDTO.ExpenseDate,
                 ExpenseDescription = expenseDTO.ExpenseDescription,
                 UserID = expenseDTO.UserId,
+                ExpenseVehicleId = expenseDTO.ExpenseVehicleId,
                 //CreatedBy = expenseDTO.CreatedBy,
                 CreatedOn = DateTime.UtcNow
             };
@@ -37,7 +38,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task<ApiResponse<UserExpense>> GetExpenseDetailsAsync(int id)
         {
             var expense = await _context.UserExpenses.FindAsync(id);
-            return expense != null ? ApiResponse<UserExpense>.SuccessResponse(expense, "Expense details retrieved successfully.")  : ApiResponse<UserExpense>.FailureResponse("Expense not found");
+            return expense != null ? ApiResponse<UserExpense>.SuccessResponse(expense, "Expense details retrieved successfully.") : ApiResponse<UserExpense>.FailureResponse("Expense not found");
         }
 
         public async Task<ApiResponse<UserExpense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO)
@@ -52,6 +53,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             expense.ExpenseCategoryID = expenseDTO.ExpenseCategoryID;
             expense.ExpenseDate = expenseDTO.ExpenseDate;
             expense.ExpenseDescription = expenseDTO.ExpenseDescription;
+            expense.ExpenseVehicleId = expenseDTO.ExpenseVehicleId;
             //expense.ModifiedBy = expenseDTO.ModifiedBy;
             expense.LastModifiedOn = DateTime.UtcNow;
 
@@ -78,11 +80,12 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expenses = await _context.UserExpenses.ToListAsync();
             return expenses != null ? ApiResponse<List<UserExpense>>.SuccessResponse(expenses) : ApiResponse<List<UserExpense>>.FailureResponse("Failes to get List");
         }
-        public async Task<List<UserExpense>> GetExpenseAsync(Guid userId, DateTime fromDate, DateTime toDate)
+        public async Task<List<UserExpense>> GetExpenseAsync(Guid userId, Guid vehicleId, DateTime fromDate, DateTime toDate)
         {
             var result = await _context.UserExpenses
-                .Where(e => e.UserID == userId && e.ExpenseDate >= fromDate && e.ExpenseDate <= toDate)
+                .Where(e => e.UserID == userId && e.ExpenseVehicleId == vehicleId && e.ExpenseDate >= fromDate && e.ExpenseDate <= toDate)
                 .Include(i => i.ExpenseCategory)
+                .Include(i => i.Vehicle)
                 .ToListAsync();
             return result;
         }

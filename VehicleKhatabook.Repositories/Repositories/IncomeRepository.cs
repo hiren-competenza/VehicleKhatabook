@@ -25,6 +25,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 IncomeDate = incomeDTO.IncomeDate,
                 UserID = incomeDTO.UserId,
                 IncomeDescription = incomeDTO.IncomeDescription,
+                IncomeVehicleId = incomeDTO.IncomeVehicleId,
                 //CreatedBy = incomeDTO.CreatedBy,
                 CreatedOn = DateTime.UtcNow,
                 IsActive = true
@@ -86,11 +87,12 @@ namespace VehicleKhatabook.Repositories.Repositories
         //        .ToListAsync();
         //    return result;
         //}
-        public async Task<List<UserIncome>> GetIncomeAsync(Guid userId, DateTime fromDate, DateTime toDate)
+        public async Task<List<UserIncome>> GetIncomeAsync(Guid userId, Guid vehicleId, DateTime fromDate, DateTime toDate)
         {
             var result = await _context.UserIncomes
-                .Where(i => i.UserID == userId && i.IncomeDate >= fromDate && i.IncomeDate <= toDate)
+                .Where(i => i.UserID == userId && i.IncomeVehicleId == vehicleId && i.IncomeDate >= fromDate && i.IncomeDate <= toDate)
                 .Include(i => i.IncomeCategory)
+                .Include(i => i.Vehicle)
                 .ToListAsync();
             return result;
         }

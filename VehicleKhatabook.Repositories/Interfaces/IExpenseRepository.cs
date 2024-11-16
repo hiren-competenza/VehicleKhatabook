@@ -11,6 +11,6 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<ApiResponse<UserExpense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO);
         Task<ApiResponse<bool>> DeleteExpenseAsync(int id);
         Task<ApiResponse<List<UserExpense>>> GetAllExpensesAsync();
-        Task<List<UserExpense>> GetExpenseAsync(Guid userId, DateTime fromDate, DateTime toDate);
+        Task<List<UserExpense>> GetExpenseAsync(Guid userId, Guid vehicleId, DateTime fromDate, DateTime toDate);
     }
 }

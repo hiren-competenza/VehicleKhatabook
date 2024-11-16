@@ -31,16 +31,17 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Date = expenseDTO.Date,
                 Amount = expenseDTO.Amount,
                 Note = expenseDTO.Note,
+                DriverOwnerId = expenseDTO.DriverOwnerUserId,
             };
             _context.OwnerKhataDebits.Add(expense);
             await _context.SaveChangesAsync();
             return expense;
         }
 
-        public async Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid userId, DateTime fromDate, DateTime toDate)
+        public async Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid userId, Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
         {
             var result = await _context.OwnerKhataDebits
-                .Where(e => e.UserId == userId && e.Date >= fromDate && e.Date <= toDate)
+                .Where(e => e.UserId == userId && e.DriverOwnerId == driverOwnerUserId && e.Date >= fromDate && e.Date <= toDate)
                 .ToListAsync();
             return result;
         }
