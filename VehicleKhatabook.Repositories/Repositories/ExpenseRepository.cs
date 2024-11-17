@@ -32,6 +32,12 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.UserExpenses.Add(expense);
             await _context.SaveChangesAsync();
+            await _context.Entry(expense).Reference(v => v.ExpenseCategory).LoadAsync();
+            await _context.Entry(expense).Reference(v => v.Vehicle).LoadAsync();
+            if (expense.Vehicle != null)
+            {
+                await _context.Entry(expense.Vehicle).Reference(v => v.User).LoadAsync();
+            }
             return expense;
         }
 
@@ -80,12 +86,16 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expenses = await _context.UserExpenses.ToListAsync();
             return expenses != null ? ApiResponse<List<UserExpense>>.SuccessResponse(expenses) : ApiResponse<List<UserExpense>>.FailureResponse("Failes to get List");
         }
-        public async Task<List<UserExpense>> GetExpenseAsync( Guid vehicleId, DateTime fromDate, DateTime toDate)
+        public async Task<List<UserExpense>> GetExpenseAsync(Guid vehicleId, DateTime fromDate, DateTime toDate)
         {
             var result = await _context.UserExpenses
                 .Where(e => e.ExpenseVehicleId == vehicleId && e.ExpenseDate >= fromDate && e.ExpenseDate <= toDate)
                 .Include(i => i.ExpenseCategory)
-                .Include(i => i.Vehicle)
+                //.Include(i => i.Vehicle)
+                .Include(e => e.Vehicle)            // Include related Vehicle details
+                    .ThenInclude(v => v.VehicleType) // Include VehicleType through Vehicle
+                .Include(e => e.Vehicle)            // Include related Vehicle details
+                    .ThenInclude(v => v.User)
                 .ToListAsync();
             return result;
         }

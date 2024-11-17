@@ -36,12 +36,15 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _dbContext.Vehicles.Add(vehicle);
             await _dbContext.SaveChangesAsync();
+            await _dbContext.Entry(vehicle).Reference(v => v.VehicleType).LoadAsync();
+            await _dbContext.Entry(vehicle).Reference(v => v.User).LoadAsync();
             return vehicle;
         }
         public async Task<Vehicle> GetVehicleByVehicleIdAsync(Guid id)
         {
             return await _dbContext.Vehicles.Where(i => i.VehicleID == id && i.IsActive == true)
                 .Include(i => i.VehicleType)
+                .Include(i => i.User)
                 .FirstOrDefaultAsync();
         }
 
@@ -58,6 +61,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             var vehicles = await _dbContext.Vehicles
                                             .Where(v => v.UserID == userId && v.IsActive == true)
                                             .Include(i => i.VehicleType)
+                                            .Include(i => i.User)
                                             .ToListAsync();
 
             if (vehicles == null || vehicles.Count == 0)
@@ -98,6 +102,11 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _dbContext.Vehicles.Update(vehicleExist);
             await _dbContext.SaveChangesAsync();
+
+            await _dbContext.Entry(vehicleExist).Reference(v => v.VehicleType).LoadAsync();
+            await _dbContext.Entry(vehicleExist).Reference(v => v.User).LoadAsync();
+
+            // Return the updated vehicle with related data
             return vehicleExist;
         }
 

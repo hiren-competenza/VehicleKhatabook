@@ -33,6 +33,14 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.UserIncomes.Add(income);
             await _context.SaveChangesAsync();
+            await _context.Entry(income).Reference(v => v.IncomeCategory).LoadAsync();
+            await _context.Entry(income).Reference(v => v.Vehicle).LoadAsync();
+            if (income.Vehicle != null)
+            {
+                await _context.Entry(income.Vehicle).Reference(v => v.User).LoadAsync();
+            }
+
+            // Return the updated vehicle with related data
             return income;
         }
 
@@ -92,7 +100,10 @@ namespace VehicleKhatabook.Repositories.Repositories
             var result = await _context.UserIncomes
                 .Where(i => i.IncomeVehicleId == vehicleId && i.IncomeDate >= fromDate && i.IncomeDate <= toDate)
                 .Include(i => i.IncomeCategory)
-                .Include(i => i.Vehicle)
+                .Include(e => e.Vehicle)            // Include related Vehicle details
+                    .ThenInclude(v => v.VehicleType) // Include VehicleType through Vehicle
+                .Include(e => e.Vehicle)            // Include related Vehicle details
+                    .ThenInclude(v => v.User)
                 .ToListAsync();
             return result;
         }
