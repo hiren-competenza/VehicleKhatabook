@@ -24,7 +24,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 ExpenseAmount = expenseDTO.ExpenseAmount,
                 ExpenseDate = expenseDTO.ExpenseDate,
                 ExpenseDescription = expenseDTO.ExpenseDescription,
-                UserID = expenseDTO.UserId,
+                //UserID = expenseDTO.UserId,
                 ExpenseVehicleId = expenseDTO.ExpenseVehicleId,
                 //CreatedBy = expenseDTO.CreatedBy,
                 CreatedOn = DateTime.UtcNow
@@ -80,10 +80,10 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expenses = await _context.UserExpenses.ToListAsync();
             return expenses != null ? ApiResponse<List<UserExpense>>.SuccessResponse(expenses) : ApiResponse<List<UserExpense>>.FailureResponse("Failes to get List");
         }
-        public async Task<List<UserExpense>> GetExpenseAsync(Guid userId, Guid vehicleId, DateTime fromDate, DateTime toDate)
+        public async Task<List<UserExpense>> GetExpenseAsync( Guid vehicleId, DateTime fromDate, DateTime toDate)
         {
             var result = await _context.UserExpenses
-                .Where(e => e.UserID == userId && e.ExpenseVehicleId == vehicleId && e.ExpenseDate >= fromDate && e.ExpenseDate <= toDate)
+                .Where(e => e.ExpenseVehicleId == vehicleId && e.ExpenseDate >= fromDate && e.ExpenseDate <= toDate)
                 .Include(i => i.ExpenseCategory)
                 .Include(i => i.Vehicle)
                 .ToListAsync();

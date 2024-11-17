@@ -10,7 +10,7 @@ namespace VehicleKhatabook.Entities.Models
         [Required]
         public int IncomeCategoryID { get; set; }
         public Guid IncomeVehicleId { get; set; }
-        public Guid UserID { get; set; }
+        //public Guid UserID { get; set; }
         public DateTime IncomeDate { get; set; } = DateTime.Now;
         public decimal IncomeAmount { get; set; }
         public string? IncomeDescription { get; set; }

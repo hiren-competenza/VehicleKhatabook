@@ -6,7 +6,7 @@
         public decimal IncomeAmount { get; set; }
         public DateTime IncomeDate { get; set; }
         public string IncomeDescription { get; set; }
-        public Guid UserId { get; set; }
+        //public Guid UserId { get; set; }
         public Guid IncomeVehicleId { get; set; }
         public string CreatedBy { get; set; }
         public string? ModifiedBy { get; set; }

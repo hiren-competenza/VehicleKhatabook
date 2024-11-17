@@ -26,7 +26,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expense = new OwnerKhataDebit
             {
                 Name = expenseDTO.Name,
-                UserId = expenseDTO.UserId,
+                //UserId = expenseDTO.UserId,
                 Mobile = expenseDTO.Mobile,
                 Date = expenseDTO.Date,
                 Amount = expenseDTO.Amount,
@@ -38,10 +38,10 @@ namespace VehicleKhatabook.Repositories.Repositories
             return expense;
         }
 
-        public async Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid userId, Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
+        public async Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
         {
             var result = await _context.OwnerKhataDebits
-                .Where(e => e.UserId == userId && e.DriverOwnerId == driverOwnerUserId && e.Date >= fromDate && e.Date <= toDate)
+                .Where(e => e.DriverOwnerId == driverOwnerUserId && e.Date >= fromDate && e.Date <= toDate)
                 .ToListAsync();
             return result;
         }

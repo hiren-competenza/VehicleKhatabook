@@ -37,7 +37,7 @@ namespace VehicleKhatabook.EndPoints.User
             var ownerDTO = new OwnerIncomeExpenseDTO
             {
                 Name = ownerIncomeExpenseDTO.Name,
-                UserId = Guid.Parse(userId),
+                //UserId = Guid.Parse(userId),
                 Mobile = ownerIncomeExpenseDTO.Mobile,
                 Date = ownerIncomeExpenseDTO.Date,
                 Amount = ownerIncomeExpenseDTO.Amount,
@@ -77,7 +77,7 @@ namespace VehicleKhatabook.EndPoints.User
             // Fetch data based on transaction type and provided date range
             if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
-                var result = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(userId), Guid.Parse(driverOwnerUserId), start, end);
+                var result = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId), start, end);
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
 
@@ -85,7 +85,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
             else
             {
-                var result = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(userId), Guid.Parse(driverOwnerUserId), start, end);
+                var result = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(driverOwnerUserId), start, end);
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
 

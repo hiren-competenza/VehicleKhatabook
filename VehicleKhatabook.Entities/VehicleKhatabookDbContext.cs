@@ -118,9 +118,10 @@ namespace VehicleKhatabook.Entities
                 .IsUnique();
 
             modelBuilder.Entity<OwnerKhataDebit>()
-                .HasOne(f => f.User)
+                .HasOne(f => f.DriverOwnerUser)
                 .WithMany()
-                .HasForeignKey(f => f.UserId);
+                .HasForeignKey(f => f.DriverOwnerId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             //modelBuilder.Entity<OwnerKhataDebit>()
             //   .HasOne(f => f.DriverOwnerUser)
@@ -131,9 +132,9 @@ namespace VehicleKhatabook.Entities
 
 
             modelBuilder.Entity<OwnerKhataCredit>()
-               .HasOne(f => f.User)
+               .HasOne(f => f.DriverOwnerUser)
                .WithMany()
-               .HasForeignKey(f => f.UserId)
+               .HasForeignKey(f => f.DriverOwnerId)
                .OnDelete(DeleteBehavior.NoAction);
 
             //modelBuilder.Entity<OwnerKhataCredit>()
