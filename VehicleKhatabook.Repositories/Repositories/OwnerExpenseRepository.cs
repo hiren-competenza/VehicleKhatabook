@@ -35,6 +35,13 @@ namespace VehicleKhatabook.Repositories.Repositories
             };
             _context.OwnerKhataDebits.Add(expense);
             await _context.SaveChangesAsync();
+            await _context.Entry(expense).Reference(i => i.DriverOwnerUser).LoadAsync();
+
+            // Load Vehicle's related User details
+            if (expense.DriverOwnerUser != null)
+            {
+                await _context.Entry(expense.DriverOwnerUser).Reference(v => v.user).LoadAsync();
+            }
             return expense;
         }
 
@@ -42,6 +49,8 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             var result = await _context.OwnerKhataDebits
                 .Where(e => e.DriverOwnerId == driverOwnerUserId && e.Date >= fromDate && e.Date <= toDate)
+                .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
+                    .ThenInclude(v => v.user) // Include VehicleType through Vehicle
                 .ToListAsync();
             return result;
         }
