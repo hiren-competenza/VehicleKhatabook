@@ -14,7 +14,7 @@ namespace VehicleKhatabook.Entities.Models
         public decimal ExpenseAmount { get; set; }
         public DateTime ExpenseDate { get; set; }
         public string? ExpenseDescription { get; set; }
-        public Guid UserID { get; set; }
+        //public Guid UserID { get; set; }
         public Guid ExpenseVehicleId { get; set; }
         public bool? IsActive { get; set; }
         [ForeignKey("ExpenseCategoryID")]

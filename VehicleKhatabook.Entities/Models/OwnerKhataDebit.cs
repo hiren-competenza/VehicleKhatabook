@@ -7,7 +7,7 @@ namespace VehicleKhatabook.Entities.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public Guid UserId { get; set; }
+        //public Guid UserId { get; set; }
         public Guid DriverOwnerId { get; set; }
         public string? Name { get; set; }
         public string? Mobile { get; set; }
@@ -15,8 +15,9 @@ namespace VehicleKhatabook.Entities.Models
         public decimal? Amount { get; set; }
         public string? Note { get; set; }
 
-        [ForeignKey("UserId")]
-        public User User { get; set; }
+        //[ForeignKey("UserId")]
+        // public User User { get; set; }
+         public DriverOwnerUser DriverOwnerUser { get; set; }
 
     }
 }

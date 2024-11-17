@@ -43,7 +43,7 @@ namespace VehicleKhatabook.EndPoints.User
                     IncomeDescription = IncomeExpenseDTO.Description,
                     IncomeVehicleId = IncomeExpenseDTO.VehicleId,
                     //DriverID = IncomeExpenseDTO.DriverID,
-                    UserId = Guid.Parse(userId),
+                    //UserId = Guid.Parse(userId),
                     CreatedBy = IncomeExpenseDTO.CreatedBy,
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
 
@@ -66,7 +66,7 @@ namespace VehicleKhatabook.EndPoints.User
                     ExpenseDescription = IncomeExpenseDTO.Description,
                     //DriverID = IncomeExpenseDTO.DriverID,
                     ExpenseVehicleId = IncomeExpenseDTO.VehicleId,
-                    UserId = Guid.Parse(userId),
+                    //UserId = Guid.Parse(userId),
                     CreatedBy = IncomeExpenseDTO.CreatedBy,
                     ModifiedBy = IncomeExpenseDTO.ModifiedBy
                 };
@@ -117,7 +117,7 @@ namespace VehicleKhatabook.EndPoints.User
             // Fetch data based on transaction type and provided date range
             if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
-                var result = await incomeService.GetIncomeAsync(Guid.Parse(userId), Guid.Parse(vehicleId), start, end);
+                var result = await incomeService.GetIncomeAsync(Guid.Parse(vehicleId), start, end);
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
 
@@ -125,7 +125,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
             else
             {
-                var result = await expenseService.GetExpenseAsync(Guid.Parse(userId), Guid.Parse(vehicleId), start, end);
+                var result = await expenseService.GetExpenseAsync(Guid.Parse(vehicleId), start, end);
                 if (result == null)
                     return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
 
