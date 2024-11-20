@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
@@ -38,11 +37,13 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 Name = categoryDTO.Name,
                 Description = categoryDTO.Description,
-                IncomeCategoryLanguageJson = categoryDTO.IncomeCategoryLanguageJson,
-                RoleId = categoryDTO.RoleId,
-                CreatedOn = DateTime.UtcNow,
                 CreatedBy = 1,
-                IsActive = true
+                CreatedOn = DateTime.UtcNow,
+                ModifiedBy = categoryDTO.ModifiedBy,
+                IsActive = true,
+                RoleId= categoryDTO.RoleId,
+                IncomeCategoryID = categoryDTO.IncomeCategoryID,
+                IncomeCategoryLanguageJson = categoryDTO.IncomeCategoryLanguageJson
             };
 
             _context.IncomeCategories.Add(category);
@@ -109,7 +110,9 @@ namespace VehicleKhatabook.Repositories.Repositories
                 RoleId = categoryDTO.RoleId,
                 CreatedBy = 1,
                 CreatedOn = DateTime.UtcNow,
-                IsActive = true
+                IsActive = true,
+                ExpenseCategoryID = categoryDTO.ExpenseCategoryID,
+
             };
 
             _context.ExpenseCategories.Add(category);
@@ -211,6 +214,41 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task<List<VechileType>> GetAllVehicleTypesAsync()
         {
             return await _context.VehicleTypes.ToListAsync();
+        }
+        public async Task<List<IncomeCategoryDTO>> GetAllIncomeCategoryAsyc()
+        {
+            var income = _context.IncomeCategories.ToList();
+
+            var incomeCategory = income.Select(vt => new IncomeCategoryDTO
+            {
+                IncomeCategoryID = vt.IncomeCategoryID,
+                Name = vt.Name,
+                IncomeCategoryLanguageJson = vt.IncomeCategoryLanguageJson,
+                Description = vt.Description,
+                IsActive = (bool)vt.IsActive,
+                RoleId = (int)vt.RoleId,
+
+            }).ToList();
+            return incomeCategory;
+
+
+        }
+        public async Task<List<ExpenseCategoryDTO>> GetAllExpenseCategoryAsyc()
+        {
+            var expense = _context.ExpenseCategories.ToList();
+
+            var expenseCategory = expense.Select(vt => new ExpenseCategoryDTO
+            {
+                ExpenseCategoryID = vt.ExpenseCategoryID,
+                Name = vt.Name,
+                Description = vt.Description,
+                IsActive = (bool)vt.IsActive,
+                RoleId = (int)vt.RoleId,
+
+            }).ToList();
+            return expenseCategory;
+
+
         }
         public async Task<List<Country>> GetCountryAsync()
         {

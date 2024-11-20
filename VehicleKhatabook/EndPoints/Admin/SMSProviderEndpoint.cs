@@ -14,7 +14,7 @@ namespace VehicleKhatabook.EndPoints.Admin
             var staticRoute = app.MapGroup("/api/master").WithTags("SMSProvider Management");
             staticRoute.MapGet("/getAllSMSProvider", GetAllSMSProviders);
             staticRoute.MapPost("/addSMSProvider", AddSMSProvider);
-            staticRoute.MapPut("/updateSMSProvider", UpdateSMSProvider);
+            staticRoute.MapPut("/updateSMSProvider{id}", UpdateSMSProvider);
         }
 
 
@@ -34,11 +34,11 @@ namespace VehicleKhatabook.EndPoints.Admin
             var result = await sMSProviderService.AddSMSProviderAsync(smsProviderDTO);
             return Results.Ok(result);
         }
-        internal async Task<IResult> UpdateSMSProvider(int id,  SMSProviderDTO smsProviderDTO,  ISMSProviderService sMSProviderService)
+        internal async Task<IResult> UpdateSMSProvider(int id, SMSProviderDTO smsProviderDTO, ISMSProviderService sMSProviderService)
         {
             var result = await sMSProviderService.UpdateSMSProviderAsync(id, smsProviderDTO);
             return Results.Ok(result);
-           
+
         }
     }
 }

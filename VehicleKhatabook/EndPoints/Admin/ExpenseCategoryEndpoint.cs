@@ -1,4 +1,5 @@
 ﻿using VehicleKhatabook.Infrastructure;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
@@ -13,8 +14,9 @@ namespace VehicleKhatabook.EndPoints.Admin
         {
             var staticRoute = app.MapGroup("/api/master").WithTags("Expense Category Management");//.RequireAuthorization("AdminPolicy");
             staticRoute.MapPost("/addExpenseCategory", AddExpenseCategory);
-            staticRoute.MapPut("/updaeExpenseCategory/{id}", UpdateExpenseCategory);
+            staticRoute.MapPut("/updateExpenseCategory/{id}", UpdateExpenseCategory);
             staticRoute.MapDelete("/deleteExpenseCategory/{id}", DeleteExpenseCategory);
+            staticRoute.MapGet("/GetExpenseCategories", GetExpenseCategoriesAsync);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
@@ -39,6 +41,14 @@ namespace VehicleKhatabook.EndPoints.Admin
         {
             var result = await masterDataService.DeleteExpenseCategoryAsync(id);
             return Results.Ok(result);
+        }
+        internal async Task<IResult> GetExpenseCategoriesAsync(IMasterDataService masterDataService)
+        {
+
+            var response = await masterDataService.GetExpenseCategory();
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(response));
+
         }
     }
 }
