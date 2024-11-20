@@ -20,7 +20,10 @@ namespace VehicleKhatabook.EndPoints.User
             userRoute.MapGet("/getAllCountry", GetCountryAsync);
             userRoute.MapGet("/getAllSMSProvider", GetAllSMSProviders).RequireAuthorization("OwnerOrDriverPolicy");
             userRoute.MapGet("/GetAllLanguageTypes", GetAllLanguageTypes);
-            userRoute.MapGet("/vehicletypes", GetVehicleTypesAsync);
+            userRoute.MapGet("/vehicletypes", GetVehicleTypesAsync).RequireAuthorization("OwnerOrDriverPolicy");
+            userRoute.MapGet("/allVehicletypes", GetVehicleAllTypesAsync); //Additional
+            userRoute.MapGet("/getAllExpenseIncomeCategoriesById", GetAllExpenseIncomeCategoriesAsync).RequireAuthorization("OwnerOrDriverPolicy");//additional
+
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -34,7 +37,7 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddScoped<ILanguageTypeService, LanguageTypeService>();
             services.AddScoped<ILanguageTypeRepository, LanguageTypeRepository>();
         }
-        private async Task<IResult> GetExpenseIncomeCategoriesAsync(HttpContext httpContext, IUserService userService, IMasterDataService masterDataService, bool active = true)
+        private async Task<IResult> GetAllExpenseIncomeCategoriesAsync(HttpContext httpContext, IUserService userService, IMasterDataService masterDataService, bool active = true)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
@@ -97,7 +100,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(result));
         }
-        internal async Task<IResult> GetVehicleTypesAsync(IMasterDataService masterDataService)
+        internal async Task<IResult> GetVehicleAllTypesAsync(IMasterDataService masterDataService)
         {
             var vehicleTypes = await masterDataService.GetAllVehicleTypesAsync();
             if (!vehicleTypes.Any())
@@ -105,6 +108,58 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.FailureResponse("Not Found Any Vehicle List"));
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(vehicleTypes));
+        }
+
+        internal async Task<IResult> GetVehicleTypesAsync(HttpContext httpContext, IUserService userService, IMasterDataService masterDataService)
+        {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+
+            var user = await userService.GetUserByIdAsync(Guid.Parse(userId));
+            if (user != null)
+            {
+                var vehicleTypes = await masterDataService.GetVehicleTypeForuserlanguageAsync(user.LanguageTypeId ?? 0);
+                if (!vehicleTypes.Any())
+                {
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Not Found Any Vehicle List"));
+                }
+                return Results.Ok(ApiResponse<object>.SuccessResponse(vehicleTypes));
+            }
+            else
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User Not Found"));
+            }
+        }
+        private async Task<IResult> GetExpenseIncomeCategoriesAsync(HttpContext httpContext, IUserService userService, IMasterDataService masterDataService, bool active = true)
+        {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+
+            var user = await userService.GetUserByIdAsync(Guid.Parse(userId));
+            //GetUserByIdAsync
+            if (user != null)
+            {
+                var incomeCategories = await masterDataService.GetIncomeCategoriesForuserlanguageAsync(user.UserTypeId, user.LanguageTypeId ?? 0);
+                var expenseCategories = await masterDataService.GetExpenseCategoriesForuserlanguageAsync(user.UserTypeId, user.LanguageTypeId ?? 0);
+
+                var response = new
+                {
+                    IncomeCategory = incomeCategories,
+                    ExpenseCategory = expenseCategories
+                };
+                //var jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
+                return Results.Ok(ApiResponse<object>.SuccessResponse(response));
+            }
+            else
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User Not Found"));
+            }
         }
     }
 }

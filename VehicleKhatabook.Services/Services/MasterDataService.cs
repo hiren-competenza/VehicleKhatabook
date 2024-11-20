@@ -88,5 +88,19 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _masterDataRepository.GetCountryAsync();
         }
+
+
+        public async Task<List<ExpenseCategory>> GetExpenseCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId)
+        {
+            return await _masterDataRepository.GetExpenseCategoriesForuserlanguageAsync(userTypeId, languageTypeId);
+        }
+        public async Task<List<IncomeCategory>> GetIncomeCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId)
+        {
+            return await _masterDataRepository.GetIncomeCategoriesForuserlanguageAsync(userTypeId, languageTypeId);
+        }
+        public async Task<List<VechileType>> GetVehicleTypeForuserlanguageAsync(int languageTypeId)
+        {
+            return await _masterDataRepository.GetVehicleTypeForuserlanguageAsync(languageTypeId);
+        }
     }
 }

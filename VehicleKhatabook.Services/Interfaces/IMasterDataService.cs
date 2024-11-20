@@ -21,5 +21,9 @@ namespace VehicleKhatabook.Services.Interfaces
         Task<List<IncomeCategoryDTO>> GetIncomeCategory();
         Task<List<ExpenseCategoryDTO>> GetExpenseCategory();
         Task<List<Country>> GetCountryAsync();
+
+        Task<List<ExpenseCategory>> GetExpenseCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId);
+        Task<List<IncomeCategory>> GetIncomeCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId);
+        Task<List<VechileType>> GetVehicleTypeForuserlanguageAsync(int languageTypeId);
     }
 }
