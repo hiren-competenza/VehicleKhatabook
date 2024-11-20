@@ -1,0 +1,115 @@
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: left;
+    }
+
+    .form-container,
+    .income-category-list,
+    .expense-category-list,
+    .vehicle-type-form {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .expense-category-form,
+    .income-category-form,
+    .vehicle-type-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .button-row,
+    .button-group {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-start;
+    }
+
+    .action-button {
+        padding: 8px 16px;
+        font-size: 14px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .submit-button {
+        width: 120px;
+        padding: 8px 20px;
+        font-size: 16px;
+        background-color: #007bff; /* Blue background */
+        border-color: #007bff;    /* Blue border */
+        color: white;             /* White text */
+        align-self: center;
+        margin-top: 15px;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .submit-button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+        border-color: #0056b3;
+    }
+
+    table {
+        margin-top: 20px;
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table th,
+    .table td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+    }
+
+    .pagination {
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .pagination Button {
+        margin: 0 5px;
+    }
+
+    @media (max-width: 768px) {
+        .submit-button {
+            width: 100%;
+        }
+
+        .expense-category-form,
+        .income-category-form,
+        .vehicle-type-form {
+            flex-direction: column;
+        }
+
+        .expense-category-list,
+        .income-category-list {
+            padding: 15px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .table-responsive {
+            -webkit-overflow-scrolling: touch;
+        }
+    }

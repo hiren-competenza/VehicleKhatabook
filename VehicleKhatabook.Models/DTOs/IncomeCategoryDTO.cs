@@ -9,7 +9,11 @@ namespace VehicleKhatabook.Models.DTOs
         public int? RoleId { get; set; }
         public string? Description { get; set; }
         public string? IncomeCategoryLanguageJson { get; set; }
+        public int IncomeCategoryID { get; set; }
 
         public bool? IsActive { get; set; }
+
+        public int CreatedBy { get; set; }
+        public int ModifiedBy { get; set; }
     }
 }

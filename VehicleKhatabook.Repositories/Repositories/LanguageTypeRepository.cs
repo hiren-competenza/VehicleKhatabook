@@ -20,6 +20,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             return await _dbContext.LanguageTypes
                                    .Select(lt => new LanguageTypeDTO
                                    {
+                                       Description = lt.Description,
                                        LanguageTypeId = lt.LanguageTypeId,
                                        LanguageName = lt.LanguageName,
                                        IsActive = lt.IsActive

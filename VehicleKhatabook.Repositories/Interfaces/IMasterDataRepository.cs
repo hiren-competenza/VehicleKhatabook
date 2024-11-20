@@ -19,5 +19,7 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<ApiResponse<VechileType>> UpdateVehicleTypeAsync(int vehicleTypeId, VechileTypeDTO vehicleTypeDTO);
         Task<List<VechileType>> GetAllVehicleTypesAsync();
         Task<List<Country>> GetCountryAsync();
+        Task<List<IncomeCategoryDTO>> GetAllIncomeCategoryAsyc();
+        Task<List<ExpenseCategoryDTO>> GetAllExpenseCategoryAsyc();
     }
 }

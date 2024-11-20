@@ -1,0 +1,81 @@
+@import "./variables";
+@import "./imagefield";
+
+
+.text-primary{
+    color: $primary !important;
+}
+.background-primary{
+    background-color: $primary;
+}
+
+.text-secondary{
+    color: $secondary;
+}
+.background-secondary{
+    background-color: $secondary;
+}
+.border-primary{
+    border-color: $primary !important;
+}
+
+.btn-primary{
+    background-color: $primary;
+    border-color: $primary;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-primary:hover{
+    background-color: #5c9494;
+    border-color: #5c9494;
+    color: $primary;
+}
+
+.btn-action{
+    background-color: $action;
+    border-color: $action;
+}
+
+.btn-action:active{
+    background-color: $action;
+    border-color: $action;
+}
+
+
+.page-item{
+    span.page-link
+    {
+        background-color: $action;
+        border-color: $action;
+        color: #fff;
+    }
+
+    a.page-link{
+        background-color:  #fff;
+       
+        color: $action;
+    }
+}
+
+tbody {
+    tr {
+        &:hover {
+            background-color: $gray-200; /* Color when row is hovered */
+        }
+                
+        &:hover td {
+            background-color: transparent;
+        }
+
+        // &:nth-child(even) td {
+        //     background-color: #fff;
+        //     color: $primary;
+        // }
+        
+        // &:nth-child(odd) td {
+        //     background-color: $gray-200;
+        //     color: $primary;
+        // }
+    }
+}

@@ -1,0 +1,30 @@
+.primary-button {
+  button {
+    border: 1px solid #70062c;
+    background: #70062c;
+    padding: 10px 20px;
+    color: #fff;
+    border-radius: 50px;
+
+    i {
+      font-size: 15px;
+      transition: 0.2s;
+      margin-left: 2px;
+      transform: rotate(
+        30deg
+      ); // Changed `rotate` to `transform: rotate` for better compatibility
+    }
+  }
+
+  &:hover {
+    button {
+      background: #fff;
+      color: #70062c;
+      transition: 0.3s;
+
+      i {
+        transform: rotate(0deg); // Changed `rotate` to `transform: rotate`
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
+using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 
 namespace VehicleKhatabook.Services.Services
@@ -74,6 +75,14 @@ namespace VehicleKhatabook.Services.Services
                 IsActive = vt.IsActive
             }).ToList();
             return vehicleType;
+        }
+        public async Task<List<IncomeCategoryDTO>> GetIncomeCategory()
+        {
+            return await _masterDataRepository.GetAllIncomeCategoryAsyc();
+        }
+        public async Task<List<ExpenseCategoryDTO>> GetExpenseCategory()
+        {
+            return await _masterDataRepository.GetAllExpenseCategoryAsyc();
         }
         public async Task<List<Country>> GetCountryAsync()
         {

@@ -1,0 +1,42 @@
+// img {
+//     opacity: 1;
+//     display: block;
+//     width: 100%;
+//     transition: .5s ease;
+//     backface-visibility: hidden;
+//  }
+
+.image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.hoverIcon {
+  transition: 0.5s ease;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hoverIcon-bg {
+  border: 60px solid #f2f2f2;
+  border-radius: 60px;
+  height: 2rem;
+  opacity: 0;
+  z-index: 0;
+}
+
+.form-control:hover .hoverIcon {
+  opacity: 1;
+}
+
+.form-control:hover .hoverIcon-bg {
+  opacity: 0.5;
+  transition: 0.5s ease;
+}

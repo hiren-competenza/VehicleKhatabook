@@ -1,4 +1,5 @@
 ﻿using VehicleKhatabook.Infrastructure;
+using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
@@ -15,6 +16,7 @@ namespace VehicleKhatabook.EndPoints.Admin
             staticRoute.MapPost("/addIncomeCategory", AddIncomeCategory);
             staticRoute.MapPut("/updateIncomeCategory/{id}", UpdateIncomeCategory);
             staticRoute.MapDelete("/deleteIncomeCategory/{id}", DeleteIncomeCategory);
+            staticRoute.MapGet("/GetIncomeCategories", GetIncomeCategoriesAsync);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
@@ -39,6 +41,14 @@ namespace VehicleKhatabook.EndPoints.Admin
         {
             var result = await masterDataService.DeleteIncomeCategoryAsync(id);
             return Results.Ok(result);
+        }
+        internal async Task<IResult> GetIncomeCategoriesAsync(IMasterDataService masterDataService)
+        {
+
+            var response = await masterDataService.GetIncomeCategory();
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(response));
+
         }
     }
 }
