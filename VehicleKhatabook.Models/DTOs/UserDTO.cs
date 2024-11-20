@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using System.Text.Json.Serialization;
+using VehicleKhatabook.Models.Common;
 
 namespace VehicleKhatabook.Models.DTOs
 {
@@ -8,9 +10,15 @@ namespace VehicleKhatabook.Models.DTOs
         public string LastName { get; set; }
         public string MobileNumber { get; set; }
         public string ReferCode { get; set; }
+        [JsonConverter(typeof(NullableIntConverter))]
+        public int? ReferCodeCount { get; set; }
         public string UserReferCode { get; set; }
         public string Role { get; set; }
         public bool? IsPremiumUser { get; set; }
+        [JsonConverter(typeof(NullableDateTimeConverter))]
+        public DateTime? PremiumStartDate { get; set; }
+        [JsonConverter(typeof(NullableDateTimeConverter))]
+        public DateTime? PremiumExpiryDate { get; set; }
         public string State { get; set; }
         public string District { get; set; }
         public int? languageTypeId { get; set; }
@@ -18,7 +26,7 @@ namespace VehicleKhatabook.Models.DTOs
         public string? mPIN { get; set; }
         public Guid UserId { get; set; }
         public int UserTypeId { get; set; }
-        public string? Email {  get; set; } //NOt in UI
+        public string? Email { get; set; } //NOt in UI
 
     }
     public class AddUserValidator : AbstractValidator<UserDTO>

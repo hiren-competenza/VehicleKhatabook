@@ -13,11 +13,6 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<bool> DeleteUserAsync(Guid id);
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
         Task<User> GetUserByIdAsync(int id);
-        Task<User> AddDriverAsync(UserDTO userDTO);
-        Task<User> GetDriverByIdAsync(Guid id);
-        Task<User> UpdateDriverAsync(Guid id, UserDTO userDTO);
-        Task<bool> DeleteDriverAsync(Guid id);
-        Task<List<User>> GetAllDriversAsync();
         Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLoginDTO);
         Task<UserDetailsDTO> GetUserDetailsbyMobileAsync(string mobileNumber);
         Task<bool> UpdateUserRoleAsync(Guid userId, string role);

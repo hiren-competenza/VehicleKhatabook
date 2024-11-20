@@ -21,6 +21,7 @@ namespace VehicleKhatabook.Entities.Models
         public string? Email { get; set; }
         public string? mPIN { get; set; }
         public string? ReferCode { get; set; }
+        public int? ReferCodeCount { get; set; }
         public string? UserReferCode { get; set; }
         [Required]
         public int UserTypeId { get; set; }
@@ -30,12 +31,14 @@ namespace VehicleKhatabook.Entities.Models
         public Guid IdentifierId { get; set; } = Guid.NewGuid();
 
         public bool? IsPremiumUser { get; set; }
+        public DateTime? PremiumStartDate { get; set; }
+        public DateTime? PremiumExpiryDate { get; set; }
         public string? State { get; set; }
         public string? District { get; set; }
 
         //public int LanguageTypeId { get; set; } 
 
-        [ForeignKey("LanguageTypeId")] 
+        [ForeignKey("LanguageTypeId")]
         public LanguageType? LanguageType { get; set; }
         public int? LanguageTypeId { get; set; }
 

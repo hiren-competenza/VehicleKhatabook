@@ -27,21 +27,54 @@ namespace VehicleKhatabook.EndPoints.User
         {
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IVehicleService, VehicleService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddValidatorsFromAssemblyContaining<AddVehicleValidator>();
         }
 
-        internal async Task<IResult> AddVehicle(HttpContext httpContext, VehicleDTO vehicleDTO, IVehicleService vehicleService)
+        internal async Task<IResult> AddVehicle(HttpContext httpContext, VehicleDTO vehicleDTO, IVehicleService vehicleService, IUserService userService)
         {
+            //var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            //}
+            //var (isUserActive, hasVehicles, vehicles) = await vehicleService.GetAllVehiclesAsync(Guid.Parse(userId));
+            //if (vehicles != null && vehicles.Count >= 3)
+            //{
+            //    return Results.Ok(ApiResponse<object>.FailureResponse("Only 3 vehicles allow for non premium user. Buy premium to add more vehicles."));
+            //}
+
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
-            var (isUserActive, hasVehicles, vehicles) = await vehicleService.GetAllVehiclesAsync(Guid.Parse(userId));
-            if (vehicles != null && vehicles.Count >= 3)
+
+            // Fetch user details to check premium status
+            var user = await userService.GetUserByIdAsync(Guid.Parse(userId));
+            if (user == null)
             {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Only 3 vehicles allow for non premium user. Buy premium to add more vehicles."));
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
+
+            int maxVehiclesAllowed = (user.IsPremiumUser ?? false) ? 10 : 3;
+
+            var (isUserActive, hasVehicles, vehicles) = await vehicleService.GetAllVehiclesAsync(Guid.Parse(userId));
+            if (vehicles != null && vehicles.Count >= maxVehiclesAllowed)
+            {
+                if (user.IsPremiumUser.GetValueOrDefault(false))
+                {
+                    // Premium user exceeding the 10-vehicle limit
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Premium users can only add up to 10 vehicles. This is an application limitation."));
+                }
+                else
+                {
+                    // Non-premium user exceeding the 3-vehicle limit
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Non-premium users can only add up to 3 vehicles. Buy premium to add more vehicles."));
+                }
+            }
+
+
             vehicleDTO.UserId = Guid.Parse(userId);
             vehicleDTO.InsuranceExpiry = string.IsNullOrWhiteSpace(vehicleDTO.InsuranceExpiry.ToString()) ? null : vehicleDTO.InsuranceExpiry;
             vehicleDTO.PollutionExpiry = string.IsNullOrWhiteSpace(vehicleDTO.PollutionExpiry.ToString()) ? null : vehicleDTO.PollutionExpiry;

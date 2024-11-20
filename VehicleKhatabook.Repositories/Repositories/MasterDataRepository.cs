@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
@@ -19,7 +20,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task<List<IncomeCategory>> GetIncomeCategoriesAsync(int userTypeId)
         {
             var incomeCategories = await _context.IncomeCategories
-                .Where(ic => ic.RoleId == userTypeId && ic.IsActive==true)
+                .Where(ic => ic.RoleId == userTypeId && ic.IsActive == true)
                 .Select(ic => new IncomeCategory
                 {
                     IncomeCategoryID = ic.IncomeCategoryID,
@@ -37,6 +38,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 Name = categoryDTO.Name,
                 Description = categoryDTO.Description,
+                IncomeCategoryLanguageJson = categoryDTO.IncomeCategoryLanguageJson,
                 RoleId = categoryDTO.RoleId,
                 CreatedOn = DateTime.UtcNow,
                 CreatedBy = 1,
@@ -45,7 +47,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.IncomeCategories.Add(category);
             await _context.SaveChangesAsync();
-            return ApiResponse<IncomeCategory>.SuccessResponse(category , "Income category added successful.");
+            return ApiResponse<IncomeCategory>.SuccessResponse(category, "Income category added successful.");
         }
 
         public async Task<ApiResponse<IncomeCategory>> UpdateIncomeCategoryAsync(int id, IncomeCategoryDTO categoryDTO)
@@ -58,6 +60,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             category.Name = categoryDTO.Name;
             category.Description = categoryDTO.Description;
+            category.IncomeCategoryLanguageJson = categoryDTO.IncomeCategoryLanguageJson;
             category.RoleId = categoryDTO.RoleId;
             category.ModifiedBy = 1;
             category.LastModifiedOn = DateTime.UtcNow;
@@ -102,6 +105,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 Name = categoryDTO.Name,
                 Description = categoryDTO.Description,
+                ExpenseCategoryLanguageJson = categoryDTO.ExpenseCategoryLanguageJson,
                 RoleId = categoryDTO.RoleId,
                 CreatedBy = 1,
                 CreatedOn = DateTime.UtcNow,
@@ -110,7 +114,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             _context.ExpenseCategories.Add(category);
             await _context.SaveChangesAsync();
-            return ApiResponse<ExpenseCategory>.SuccessResponse(category , "New Expense category added successfull.");
+            return ApiResponse<ExpenseCategory>.SuccessResponse(category, "New Expense category added successfull.");
         }
 
         public async Task<ApiResponse<ExpenseCategory>> UpdateExpenseCategoryAsync(int id, ExpenseCategoryDTO categoryDTO)
@@ -123,6 +127,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             category.Name = categoryDTO.Name;
             category.Description = categoryDTO.Description;
+            category.ExpenseCategoryLanguageJson = categoryDTO.ExpenseCategoryLanguageJson;
             category.ModifiedBy = 1;
             category.RoleId = categoryDTO.RoleId;
             category.LastModifiedOn = DateTime.UtcNow;
@@ -144,12 +149,16 @@ namespace VehicleKhatabook.Repositories.Repositories
             await _context.SaveChangesAsync();
             return ApiResponse<bool>.SuccessResponse(true, "Expense category inactive successfull.");
         }
-        public async Task<ApiResponse<VechileType>> AddVehicleTypeAsync(VechileType vechileType)
+        public async Task<ApiResponse<VechileType>> AddVehicleTypeAsync(VechileTypeDTO vechileTypeDTO)
         {
             var vehicleType = new VechileType
             {
-                TypeName = vechileType.TypeName,
+                TypeName = vechileTypeDTO.TypeName,
+                Description = vechileTypeDTO.Description,
+                VehicleTypeLanguageJson = vechileTypeDTO.VehicleTypeLanguageJson,
                 IsActive = true,
+                CreatedBy = 1,
+                CreatedOn = DateTime.UtcNow,
             };
 
             await _context.AddAsync(vehicleType);
@@ -169,7 +178,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         }
 
 
-        public async Task<ApiResponse<VechileType>> UpdateVehicleTypeAsync(int vehicleTypeId, VechileType vehicleTypeDTO)
+        public async Task<ApiResponse<VechileType>> UpdateVehicleTypeAsync(int vehicleTypeId, VechileTypeDTO vehicleTypeDTO)
         {
             var vehicleType = await _context.VehicleTypes.FindAsync(vehicleTypeId);
 
@@ -180,7 +189,11 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             vehicleType.TypeName = vehicleTypeDTO.TypeName;
             vehicleType.IsActive = vehicleTypeDTO.IsActive;
-             _context.Update(vehicleType);
+            vehicleType.Description = vehicleTypeDTO.Description;
+            vehicleType.VehicleTypeLanguageJson = vehicleTypeDTO.VehicleTypeLanguageJson;
+            vehicleType.ModifiedBy = 1;
+            vehicleType.LastModifiedOn = DateTime.UtcNow;
+            _context.Update(vehicleType);
             await _context.SaveChangesAsync();
 
 
