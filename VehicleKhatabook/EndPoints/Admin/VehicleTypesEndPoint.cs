@@ -1,5 +1,6 @@
 ﻿using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
+using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
 using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
@@ -22,12 +23,12 @@ namespace VehicleKhatabook.EndPoints.Admin
             services.AddScoped<IMasterDataRepository, MasterDataRepository>();
         }
 
-        internal async Task<IResult> AddVehicleTypesAsync(VechileType vechileType, IMasterDataService masterDataService)
+        internal async Task<IResult> AddVehicleTypesAsync(VechileTypeDTO vechileType, IMasterDataService masterDataService)
         {
             var vehicleTypes = await masterDataService.AddVehicleTypesAsync(vechileType);
             return Results.Ok(vehicleTypes);
         }
-        internal async Task<IResult> UpdateVehicleTypeAsync(int vehicleTypeId, VechileType vehicleTypeDTO, IMasterDataService masterDataService)
+        internal async Task<IResult> UpdateVehicleTypeAsync(int vehicleTypeId, VechileTypeDTO vehicleTypeDTO, IMasterDataService masterDataService)
         {
             var result = await masterDataService.UpdateVehicleTypeAsync(vehicleTypeId, vehicleTypeDTO);
             return Results.Ok(result);

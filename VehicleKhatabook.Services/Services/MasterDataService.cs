@@ -55,11 +55,11 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _masterDataRepository.DeleteExpenseCategoryAsync(id);
         }
-        public async Task<ApiResponse<VechileType>> AddVehicleTypesAsync(VechileType vechileType)
+        public async Task<ApiResponse<VechileType>> AddVehicleTypesAsync(VechileTypeDTO vechileType)
         {
             return await _masterDataRepository.AddVehicleTypeAsync(vechileType);
         }
-        public async Task<ApiResponse<VechileType>> UpdateVehicleTypeAsync(int vehicleTypeId, VechileType vehicleTypeDTO)
+        public async Task<ApiResponse<VechileType>> UpdateVehicleTypeAsync(int vehicleTypeId, VechileTypeDTO vehicleTypeDTO)
         {
             return await _masterDataRepository.UpdateVehicleTypeAsync(vehicleTypeId, vehicleTypeDTO);
         }

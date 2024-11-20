@@ -14,6 +14,8 @@ namespace VehicleKhatabook.Entities.Models
         public int? RoleId { get; set; }
 
         public string? Description { get; set; }
+        public string? IncomeCategoryLanguageJson { get; set; }
+
         public bool? IsActive { get; set; }
     }
 }
