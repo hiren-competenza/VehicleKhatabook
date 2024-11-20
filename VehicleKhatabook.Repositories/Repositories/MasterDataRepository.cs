@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
@@ -41,7 +42,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 CreatedOn = DateTime.UtcNow,
                 ModifiedBy = categoryDTO.ModifiedBy,
                 IsActive = true,
-                RoleId= categoryDTO.RoleId,
+                RoleId = categoryDTO.RoleId,
                 IncomeCategoryID = categoryDTO.IncomeCategoryID,
                 IncomeCategoryLanguageJson = categoryDTO.IncomeCategoryLanguageJson
             };
@@ -254,5 +255,88 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             return await _context.Countries.ToListAsync();
         }
+
+
+        public async Task<List<ExpenseCategory>> GetExpenseCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId)
+        {
+            var result = await _context.ExpenseCategories
+                .Where(ec => ec.RoleId == userTypeId)  // Filter by RoleId
+                .ToListAsync();
+
+            foreach (var expenseCategory in result)
+            {
+                if (!string.IsNullOrEmpty(expenseCategory.ExpenseCategoryLanguageJson))  // Check if the JSON is not null or empty
+                {
+                    var languageData = JsonConvert.DeserializeObject<List<MasterDataJsonLanguageDTO>>(expenseCategory.ExpenseCategoryLanguageJson);
+
+                    var matchedLanguage = languageData.FirstOrDefault(lang => lang.LanguageTypeId == languageTypeId);
+
+                    if (matchedLanguage != null)
+                    {
+                        expenseCategory.Name = matchedLanguage.TranslatedFieldValue;  // Assign the translated language to the Name field
+                    }
+
+                    // Optionally, clear the JSON field after processing
+                    expenseCategory.ExpenseCategoryLanguageJson = null;
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<List<IncomeCategory>> GetIncomeCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId)
+        {
+            var result = await _context.IncomeCategories
+                .Where(ec => ec.RoleId == userTypeId)  // Filter by RoleId
+                .ToListAsync();
+
+            foreach (var expenseCategory in result)
+            {
+                if (!string.IsNullOrEmpty(expenseCategory.IncomeCategoryLanguageJson))  // Check if the JSON is not null or empty
+                {
+                    var languageData = JsonConvert.DeserializeObject<List<MasterDataJsonLanguageDTO>>(expenseCategory.IncomeCategoryLanguageJson);
+
+                    var matchedLanguage = languageData.FirstOrDefault(lang => lang.LanguageTypeId == languageTypeId);
+
+                    if (matchedLanguage != null)
+                    {
+                        expenseCategory.Name = matchedLanguage.TranslatedFieldValue;  // Assign the translated language to the Name field
+                    }
+
+                    // Optionally, clear the JSON field after processing
+                    expenseCategory.IncomeCategoryLanguageJson = null;
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<List<VechileType>> GetVehicleTypeForuserlanguageAsync(int languageTypeId)
+        {
+            var result = await _context.VehicleTypes.ToListAsync();
+
+            foreach (var vehicleType in result)
+            {
+                if (!string.IsNullOrEmpty(vehicleType.VehicleTypeLanguageJson)) // Check if JSON is not null or empty
+                {
+                    // Deserialize the JSON field into a dynamic list
+                    var languageData = JsonConvert.DeserializeObject<List<dynamic>>(vehicleType.VehicleTypeLanguageJson);
+
+                    // Find the matched language by LanguageTypeId
+                    var matchedLanguage = languageData.FirstOrDefault(lang => lang.languageTypeId == languageTypeId);
+
+                    if (matchedLanguage != null)
+                    {
+                        // Assign the translated language to the TypeName field
+                        vehicleType.TypeName = matchedLanguage.translatedLanguage;
+                    }
+
+                    // Optionally, set VehicleTypeLanguageJson to null to exclude it from the result
+                    vehicleType.VehicleTypeLanguageJson = null;
+                }
+            }
+            return result;
+        }
+
     }
 }
