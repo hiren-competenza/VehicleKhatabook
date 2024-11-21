@@ -245,6 +245,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Description = vt.Description,
                 IsActive = (bool)vt.IsActive,
                 RoleId = (int)vt.RoleId,
+                ExpenseCategoryLanguageJson = vt.ExpenseCategoryLanguageJson,
 
             }).ToList();
             return expenseCategory;

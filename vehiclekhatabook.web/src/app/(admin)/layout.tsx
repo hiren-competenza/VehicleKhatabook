@@ -6,40 +6,6 @@ import NavbarTop from "@/Components/Header/Navbar";
 import "@/scss/Admin/index.scss";
 import { ToastContainer } from 'react-toastify';
 
-// export default function RootLayout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode;
-// }>) {
-
-//     const [showMenu, setShowMenu] = useState(true);
-//     const ToggleMenu = () => {
-//       return setShowMenu(!showMenu);
-//     };
-//   return (
-//     <html lang="en">
-//       <body className={inter.className}> <div id="db-wrapper" className={`${showMenu ? "" : "toggled"}`}>
-//         <div className="navbar-vertical navbar">
-//           <SideMenu />
-//         </div>
-//         <div id="page-content">
-//           <div className="header">
-//             <NavbarTop
-//               data={{
-//                 showMenu: showMenu,
-//                 SidebarToggleMenu: ToggleMenu,
-//               }}
-//             />
-//           </div>
-//           {children}
-//         </div>
-//           </div>
-//           <ToastContainer />
-//       <Footer /></body>
-//     </html>
-//   );
-// }
-
 export default function AdminLayout({
   children,
 }: Readonly<{

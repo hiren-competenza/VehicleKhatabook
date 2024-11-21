@@ -31,7 +31,7 @@ function LoginComponent() {
   const handleLogin = async (e:any) => {
     e.preventDefault();
     try {
-      const res = await getAdminData({ mobileNumber, passwordHash});
+      const res = await getAdminData({ mobileNumber, passwordHash });
       if (!res?.data) {
         setLoginError(true);
         return;

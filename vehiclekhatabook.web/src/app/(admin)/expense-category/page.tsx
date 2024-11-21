@@ -1,186 +1,245 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Form, FormGroup, Label, Input, Button, Row, Col } from 'reactstrap';
-import { addExpenseCategory, getExpenseCategory, updateExpenseCategory , getLanguageType} from '@/service/admin.service';
+import { addExpenseCategory, getExpenseCategory, updateExpenseCategory, getLanguageType } from '@/service/admin.service';
 import { Switch } from '@mui/material';
 
 const Page = () => {
-    const [expenseCategoryData, setExpenseCategoryData] = useState({
+  const [expenseCategoryData, setExpenseCategoryData] = useState({
+    expenseCategoryID: 0,
+    name: "",
+    RoleId: 1,
+    description: "",
+    isActive: true,
+    expenseCategoryLanguageJson: "",
+  });
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [expenseCategories, setExpenseCategories] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(5); // You can change this value for page size customization
+  const [languageData, setLanguageData] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [languageInputs, setLanguageInputs] = useState<Record<number, string>>(
+    {}
+  );
+  useEffect(() => {
+    fetchExpenseData();
+  }, []);
+
+  const fetchExpenseData = async () => {
+    try {
+      const languages = await getLanguageType();
+      const data = await getExpenseCategory();
+      setLanguageData(languages);
+      setExpenseCategories(data);
+    } catch (error) {
+      console.error("Error fetching expense categories:", error);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setExpenseCategoryData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleLanguageInputChange = (e: React.ChangeEvent<HTMLInputElement>, languageTypeId: number) => {
+    const { value } = e.target;
+    setLanguageInputs((prev) => ({
+      ...prev,
+      [languageTypeId]: value,
+    }));
+  };
+
+  const handleGenerateJSON = () => {
+    
+    const jsonData = languageData.map((language: any) => ({
+      languageTypeId: language.languageTypeId,
+      languageName: language.languageName,
+      TranslatedLanguage: languageInputs[language.languageTypeId] || "",
+    }));
+    return JSON.stringify(jsonData);
+  };
+
+  const handlePaginationChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    
+    e.preventDefault();
+    const incompleteFields = languageData.some(
+      (language: any) =>
+        !languageInputs[language.languageTypeId]?.trim()
+    );
+
+    if (incompleteFields) {
+      const confirmFillDefault = window.confirm(
+        `Some language fields are empty. If you proceed, the default language value will be the "${expenseCategoryData.name}". Do you want to continue?`
+      );
+
+      if (confirmFillDefault) {
+        const updatedLanguageInputs = { ...languageInputs };
+        languageData.forEach((language: any) => {
+          if (!updatedLanguageInputs[language.languageTypeId]?.trim()) {
+            updatedLanguageInputs[language.languageTypeId] =
+              expenseCategoryData.name;
+          }
+        });
+        setLanguageInputs(updatedLanguageInputs);
+        return;
+      } else {
+        return;
+      }
+    }
+    try {
+      const languageJson = handleGenerateJSON();
+      const updatedData = { ...expenseCategoryData, expenseCategoryLanguageJson: languageJson };
+
+      if (isEditMode) {
+        await updateExpenseCategory(updatedData);
+      } else {
+        await addExpenseCategory(updatedData);
+      }
+      setSuccessMessage(isEditMode ? "Expense Category Management updated successfully!" : "Expense Category Management added successfully!");
+
+      setExpenseCategoryData({
         expenseCategoryID: 0,
         name: "",
         RoleId: 1,
         description: "",
         isActive: true,
-        expenseCategoryLanguageJson:""
+        expenseCategoryLanguageJson: "",
+      });
+      setLanguageInputs({});
+      setIsEditMode(false);
+      fetchExpenseData();
+      setTimeout(() => setSuccessMessage(""), 3000);
+
+    } catch (error) {
+      console.error("Error submitting data:", error);
+    }
+  };
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setExpenseCategoryData((prevData) => ({
+        ...prevData,
+        RoleId: parseInt(e.target.value, 10),
+    }));
+};
+
+  const handleEdit = (category: any) => {debugger
+    
+    // Set the expense category data for editing
+    setExpenseCategoryData({
+      expenseCategoryID: category.expenseCategoryID,
+      RoleId: category.roleId,
+      name: category.name || "",
+      description: category.description || "",
+      isActive: category.isActive || true,
+      expenseCategoryLanguageJson: category.expenseCategoryLanguageJson || "",
     });
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [expenseCategories, setExpenseCategories] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize] = useState(5); // You can change this value for page size customization
-    const [languageData, setLanguageData] = useState([]);
-    const [languageInputs, setLanguageInputs] = useState<Record<number, string>>(
-      {}
-    );
-    useEffect(() => {
-        fetchExpenseData();
-    }, []);
+    setIsEditMode(true);
 
-    const fetchExpenseData = async () => {
-        try {
-            const languages = await getLanguageType();
-            const data = await getExpenseCategory();
-            setLanguageData(languages);
-            setExpenseCategories(data);
-        } catch (error) {
-            console.error("Error fetching expense categories:", error);
-        }
-    };
+    // Parse the JSON and update language inputs
+    try {
+      const parsedJson = JSON.parse(category.expenseCategoryLanguageJson);
 
-    const handleChange = (e: any) => {
-        const { name, value, type, checked } = e.target;
-        setExpenseCategoryData((prevData) => ({
-            ...prevData,
-            [name]: type === "checkbox" ? checked : value,
-        }));
-    };
-    const handleLanguageInputChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        languageTypeId: number
-      ) => {
-        const { value } = e.target;
-        setLanguageInputs((prev) => ({
-          ...prev,
-          [languageTypeId]: value,
-        }));
-      };
-      const handleGenerateJSON = () => {
-        debugger
-        const jsonData = languageData.map((language: any) => ({
-            languageTypeId: language.languageTypeId,
-            languageName: language.languageName,
-            TranslatedLanguage: languageInputs[language.languageTypeId] || "",
-        }));
-        return JSON.stringify(jsonData);
-    };
-    const handlePaginationChange = (newPage: number) => {
-        setCurrentPage(newPage);
-    };
+      if (Array.isArray(parsedJson)) {
+        // Map the parsed JSON to languageInputs
+        const updatedLanguageInputs = parsedJson.reduce((acc: any, language: any) => {
+          acc[language.languageTypeId] = language.TranslatedLanguage; // Assuming field name is 'translatedLanguage'
+          return acc;
+        }, {});           
+        setLanguageInputs(updatedLanguageInputs);
+      }
+    } catch (error) {
+      console.error("Error parsing JSON description:", error);
+      setLanguageInputs({});
+    }
+  };
 
-    const handleRadioChange = (e: any) => {
-        setExpenseCategoryData((prevData) => ({
-            ...prevData,
-            RoleId: parseInt(e.target.value, 10),
-        }));
-    };
 
-    const handleSubmit = async (e: any) => {debugger
-        e.preventDefault();
-        console.log("Submitting data:", expenseCategoryData); // Log data being sent
-        try {
-            if (isEditMode) {
-                await updateExpenseCategory(expenseCategoryData);
-            } else {
-                await addExpenseCategory(expenseCategoryData); // This is where the 500 error occurs
-            }
-            setIsEditMode(false);
-            setExpenseCategoryData({
-                expenseCategoryID: 0,
-                RoleId: 1,
-                name: "",
-                description: "",
-                isActive: false,
-                expenseCategoryLanguageJson:""
+  const handleCancel = () => {
+    setExpenseCategoryData({
+      expenseCategoryID: 0,
+      name: "",
+      RoleId: 1,
+      description: "",
+      isActive: true,
+      expenseCategoryLanguageJson: "",
+    });
+    setLanguageInputs({});
+    setIsEditMode(false);
+  };
 
-            });
-            fetchExpenseData();
-            handleGenerateJSON();
+  const totalPages = Math.ceil(expenseCategories.length / pageSize);
+  const currentPageData = expenseCategories.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-        } catch (error) {
-            console.error("Error adding/updating expense category data:", error);
-        }
-    };
 
-    const handleEdit = (category: any) => {
-        setExpenseCategoryData(category);
-        setIsEditMode(true);
-    };
-
-    const handleCancel = () => {
-        setExpenseCategoryData({ expenseCategoryID: 0, RoleId: 1, name: "", description: "", isActive: false, expenseCategoryLanguageJson:""
-        });
-        setIsEditMode(false);
-    };
-
-    const totalPages = Math.ceil(expenseCategories.length / pageSize);
-
-    const currentPageData = expenseCategories.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize
-    );
-
-    return (
-        <div className="mt-4 ml-4" style={{ textAlign: 'left', marginLeft: '10px' }}>
-            <h3>Expense Category Management</h3>
-
-            <Form onSubmit={handleSubmit} className="expense-category-form">
-                <Row>
-                    <Col xs={12} md={6}>
-                        <FormGroup>
-                            <Label for="name">Name</Label>
-                            <Input
-                                type="text"
-                                name="name"
-                                id="name"
-                                placeholder="Enter name"
-                                value={expenseCategoryData.name}
-                                onChange={handleChange}
-                                required
-                            />
-                        </FormGroup>
-                    </Col>
-                    <Col xs={12} md={6}>
-                        <FormGroup>
-                            <Label for="description">Description</Label>
-                            <Input
-                                type="text"
-                                name="description"
-                                id="description"
-                                placeholder="Enter description"
-                                value={expenseCategoryData.description}
-                                onChange={handleChange}
-                                required
-                            />
-                        </FormGroup>
-                    </Col>
-                    <Col xs={12} md={6}>
-                        <FormGroup>
-                            <Label>Is Active</Label>
-                            <Switch
-                                checked={expenseCategoryData.isActive}
-                                name="isActive"
-                                color="primary"
-                                onChange={handleChange}
-                            />
-                        </FormGroup>
-                    </Col>
-                    <Col md={6} sm={12}>
+  return (
+    <div className="mt-4 ml-4">
+      <h3>Expense Category Management</h3>
+      <Form onSubmit={handleSubmit}>
+        <Row>
+          <Col xs={12} md={6}>
+            <FormGroup>
+              <Label for="name">Name</Label>
+              <Input
+                type="text"
+                name="name"
+                id="name"
+                placeholder="Enter name"
+                value={expenseCategoryData.name}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+          </Col>
+          <Col xs={12} md={6}>
+            <FormGroup>
+              <Label for="description">Description</Label>
+              <Input
+                type="text"
+                name="description"
+                id="description"
+                placeholder="Enter description"
+                value={expenseCategoryData.description}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+          </Col>
+          <Col xs={12} md={6}>
+            <FormGroup>
+              <Label>Is Active</Label>
+              <Switch
+                checked={expenseCategoryData.isActive}
+                name="isActive"
+                color="primary"
+                onChange={handleChange}
+              />
+            </FormGroup>
+          </Col>
+          <Col md={6}>
                         <FormGroup>
                             <Label>Role Type</Label>
                             <div>
                                 <Label check>
                                     <Input
                                         type="radio"
-                                        name="Role"
+                                        name="RoleId"
                                         value="1"
                                         checked={expenseCategoryData.RoleId === 1}
                                         onChange={handleRadioChange}
                                     />
+
                                     Owner
                                 </Label>
                                 <Label check className="ms-3">
                                     <Input
                                         type="radio"
-                                        name="Role"
+                                        name="RoleId"
                                         value="2"
                                         checked={expenseCategoryData.RoleId === 2}
                                         onChange={handleRadioChange}
@@ -190,119 +249,95 @@ const Page = () => {
                             </div>
                         </FormGroup>
                     </Col>
-                </Row>                
-            </Form>
-            <h3>Language Management</h3>
-        <div className="language-data">
-          <table className="table table-bordered">
-            <thead>
-              <tr>
-                <th>Language Name</th>
-                <th>Input</th>
+        </Row>
+
+        <h3>Language Management</h3>
+        <table className="table table-bordered">
+          <thead>
+            <tr>
+              <th>Language Name</th>
+              <th>Input</th>
+            </tr>
+          </thead>
+          <tbody>
+            {languageData.map((language: any) => (
+              <tr key={language.languageTypeId}>
+                <td>{language.languageName}</td>
+                <td>
+                  <Input
+                    type="text"
+                    placeholder="Enter value"
+                    value={languageInputs[language.languageTypeId] || ""}
+                    onChange={(e) => handleLanguageInputChange(e, language.languageTypeId)}
+                  />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {languageData.map((language: any) => (
-                <tr key={language.languageTypeId}>
-                  <td>{language.languageName}</td>
-                  <td>
-                    <Input
-                      type="text"
-                      placeholder="Enter value"
-                      value={languageInputs[language.languageTypeId] || ""}
-                      onChange={(e) =>
-                        handleLanguageInputChange(e, language.languageTypeId)
-                      }
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>        
-        </div>
-        <div className="button-group d-flex flex-column flex-sm-row">
-                    <Button
-                        color="primary"
-                        type="submit"
-                        className="submit-button"
-                        style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
-                    >
-                        {isEditMode ? "Update" : "Submit"}
-                    </Button>
+            ))}
+          </tbody>
+        </table>
+        {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
 
-                    {isEditMode && (
-                        <Button
-                            color="secondary"
-                            type="button"
-                            onClick={handleCancel}
-                            className="ms-2 action-button"
-                            style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
-                        >
-                            Cancel
-                        </Button>
-                    )}
-                </div>
-            <Row className="mt-4">
-                <h4>Expense Category Data</h4>
-                <Col md={12}>
-                    <div>
-                        <table className="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Is Active</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {currentPageData.map((category: any) => (
-                                    <tr key={category.ExpenseCategoryID}>
-                                        <td>{category.name}</td>
-                                        <td>{category.description}</td>
-                                        <td>{category.isActive ? 'Yes' : 'No'}</td>
-                                        <td>
-                                            <Button
-                                                size="sm"
-                                                color="warning"
-                                                onClick={() => handleEdit(category)}
-                                            >
-                                                Edit
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </Col>
-            </Row>
+        <Button type="submit" color="primary" style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
+        >
+          {isEditMode ? "Update" : "Submit"}
+        </Button>
+        {isEditMode && (
+          <Button color="secondary" onClick={handleCancel} className="ms-2" style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
+>
+            Cancel
+          </Button>
+        )}
+      </Form>
 
-            <Row className="mt-4">
-                <Col md={12} className="pagination-controls">
-                    <Button
-                        color="secondary"
-                        onClick={() => handlePaginationChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
-                    >
-                        Previous
-                    </Button>
-                    <span className="mx-3">
-                        Page {currentPage} of {totalPages}
-                    </span>
-                    <Button
-                        color="secondary"
-                        onClick={() => handlePaginationChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
-                    >
-                        Next
-                    </Button>
-                </Col>
-            </Row>
+      <h4>Expense Category Data</h4>
+      <table className="table table-bordered">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Role Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentPageData.map((category: any) => (
+            <tr key={category.expenseCategoryID}>
+              <td>{category.name}</td>
+              <td>{category.description}</td>
+              <td>{category.roleId === 1 ? "Owner" : "Driver"}</td>
+              <td>
+                <Button size="sm" style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
+                  onClick={() => handleEdit(category)}>
+                  Edit
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-            <style jsx>{`
+      <div className="d-flex justify-content-between">
+      <div className="pagination">
+                            <Button
+                                disabled={currentPage === 1}
+                                onClick={() => handlePaginationChange(currentPage - 1)}
+                                style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
+
+                            >
+                                Previous
+                            </Button>
+                            <span>{`Page ${currentPage} of ${totalPages}`}</span>
+                            <Button
+                                disabled={currentPage === totalPages}
+                                onClick={() => handlePaginationChange(currentPage + 1)}
+                                style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
+
+                            >
+                                Next
+                            </Button>
+                        </div>
+
+        <style jsx>{`
                 .form-container {
                     max-width: 100%;
                     margin: 0 auto;
@@ -360,8 +395,10 @@ const Page = () => {
                     }
                 }
             `}</style>
-        </div>
-    );
+      </div>
+
+    </div>
+  );
 };
 
 export default Page;

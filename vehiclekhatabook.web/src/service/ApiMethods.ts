@@ -9,9 +9,8 @@ const apiClient = axios.create({
   },
 });
 
-
 const GET = async (url: string) => {
-  try {debugger
+  try {
     const response = await apiClient.get(url);
     return response.data;
   } catch (error: any) {
@@ -21,7 +20,7 @@ const GET = async (url: string) => {
   }
 };
 
-const POST = async (url: string, body: any) => {debugger
+const POST = async (url: string, body: any) => {
   try {
     const response = await apiClient.post(url, body);
     return response.data;
@@ -33,7 +32,7 @@ const POST = async (url: string, body: any) => {debugger
   }
 };
 
-const PUT = async (url: string, body: any) => {debugger
+const PUT = async (url: string, body: any) => {
   try {
     const response = await apiClient.put(url, body)
     return response.data;

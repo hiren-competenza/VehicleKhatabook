@@ -25,6 +25,7 @@ const Page = () => {
     const [pageSize] = useState(5);
     const [languageData, setLanguageData] = useState([]);
     const [languageInputs, setLanguageInputs] = useState<Record<number, string>>({});
+    const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
     useEffect(() => {
         fetchData();
@@ -50,7 +51,7 @@ const Page = () => {
     };
 
     const handleLanguageInputChange = (e: React.ChangeEvent<HTMLInputElement>, languageName: string) => {
-        debugger
+        
         setLanguageInputs({
             ...languageInputs,
             [languageName]: e.target.value, // Update the language input based on the name
@@ -58,7 +59,7 @@ const Page = () => {
     };
 
     const handleGenerateJSON = () => {
-        debugger
+        
         const jsonData = languageData.map((language: any) => ({
             languageTypeId: language.languageTypeId,
             languageName: language.languageName,
@@ -77,30 +78,55 @@ const Page = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const generatedJSON = handleGenerateJSON();
-        console.log("Generated JSON:", generatedJSON);
+        const incompleteFields = languageData.some(
+            (language: any) =>
+              !languageInputs[language.languageTypeId]?.trim()
+          );
+      
+          if (incompleteFields) {
+            const confirmFillDefault = window.confirm(
+              `Some language fields are empty. If you proceed, the default language value will be the "${incomeCategoryData.name}". Do you want to continue?`
+            );
+      
+            if (confirmFillDefault) {
+              const updatedLanguageInputs = { ...languageInputs };
+              languageData.forEach((language: any) => {
+                if (!updatedLanguageInputs[language.languageTypeId]?.trim()) {
+                  updatedLanguageInputs[language.languageTypeId] =
+                    incomeCategoryData.name;
+                }
+              });
+              setLanguageInputs(updatedLanguageInputs);
+              return;
+            } else {
+              return;
+            }
+          }
+          const generatedJSON = handleGenerateJSON();
 
-        const updatedData = {
+          const updatedData = {
             ...incomeCategoryData,
-            IncomeCategoryLanguageJson: generatedJSON,
-        };
-
-        console.log("Updated Data:", updatedData);
-
+            IncomeCategoryLanguageJson: generatedJSON, // Add the JSON string to the description field
+          };
         try {
             if (isEditMode) {
                 await updateIncomeCategory(updatedData);
             } else {
                 await addIncomeCategory(updatedData);
             }
-            handleCancel(); // Reset the form after success
+            setSuccessMessage(isEditMode ? "Income Category Management updated successfully!" : "Income Category Management added successfully!");
+
+            handleCancel(); 
+            fetchData();
+            setTimeout(() => setSuccessMessage(""), 3000);
+            // Reset the form after success
         } catch (error) {
             console.error("Error submitting data:", error);
         }
     };
 
 
-    const handleEdit = (category: any) => {debugger
+    const handleEdit = (category: any) => {
         getIncomeCategory();
 
         setIsEditMode(true);
@@ -262,6 +288,7 @@ const Page = () => {
                         </tbody>
                     </table>
                 </div>
+                {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
 
                 <div className="button-group d-flex flex-column flex-sm-row">
                     <Button
@@ -306,12 +333,13 @@ const Page = () => {
                                             <td>{category.name}</td>
                                             <td>{category.description}</td>
                                             <td>{category.isActive ? "Yes" : "No"}</td>
-                                            <td>{category.RoleId === 1 ? "Owner" : "Driver"}</td>
+                                            <td>{category.roleId === 1 ? "Owner" : "Driver"}</td>
                                             <td>
                                                 <Button
                                                     onClick={() => handleEdit(category)}
-                                                    color="info"
                                                     size="sm"
+                                                    style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
+
                                                 >
                                                     Edit
                                                 </Button>
@@ -329,6 +357,8 @@ const Page = () => {
                             <Button
                                 disabled={currentPage === 1}
                                 onClick={() => handlePaginationChange(currentPage - 1)}
+                                style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
+
                             >
                                 Previous
                             </Button>
@@ -336,6 +366,8 @@ const Page = () => {
                             <Button
                                 disabled={currentPage === totalPages}
                                 onClick={() => handlePaginationChange(currentPage + 1)}
+                                style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
+
                             >
                                 Next
                             </Button>

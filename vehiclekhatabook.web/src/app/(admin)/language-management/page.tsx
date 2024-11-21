@@ -17,6 +17,7 @@ const Page = () => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [languagesPerPage] = useState(5); // You can change this to adjust how many rows per page
+    const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
     const handleChange = (e: any) => {
         const { name, value, type, checked } = e.target;
@@ -34,14 +35,18 @@ const Page = () => {
             } else {
                 await addLanguageType(languageData);
             }
+            setSuccessMessage(isEditMode ? "Language Type Management updated successfully!" : "Language Type Management added successfully!");
             setIsEditMode(false);
             setLanguageData({
-                isActive: false,
+                isActive: true,
                 description: "",
                 languageName: "",
                 languageTypeId: 0,
             });
+            
             fetchLanguageData();
+            setTimeout(() => setSuccessMessage(""), 3000);
+
         } catch (error) {
             console.error("Error saving language data:", error);
         }
@@ -217,6 +222,8 @@ const Page = () => {
                         </Button>
                     </div>
                 </Col>
+                {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
+
             </Row>
 
             <style jsx>{`

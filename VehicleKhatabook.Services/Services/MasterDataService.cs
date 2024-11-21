@@ -72,7 +72,8 @@ namespace VehicleKhatabook.Services.Services
             {
                 VehicleTypeId = vt.VehicleTypeId,
                 TypeName = vt.TypeName,
-                IsActive = vt.IsActive
+                IsActive = vt.IsActive,
+                VehicleTypeLanguageJson = vt.VehicleTypeLanguageJson,
             }).ToList();
             return vehicleType;
         }
