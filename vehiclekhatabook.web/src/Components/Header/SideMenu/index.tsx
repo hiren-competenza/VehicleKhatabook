@@ -6,7 +6,7 @@ import React from "react";
 const menuData = [
   {
     title: "Dashboard",
-    href: "",
+    href: "/",
     submenu: [],
   },
   {
