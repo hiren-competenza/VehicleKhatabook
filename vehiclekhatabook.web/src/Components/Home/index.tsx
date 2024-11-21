@@ -1,7 +1,7 @@
 "use client";
-import { Container } from "reactstrap";
+import { Container, Navbar } from "reactstrap";
 import { useRouter } from "next/router";
-
+  
 const Admin = () => {
   const router = useRouter();
 
@@ -18,6 +18,7 @@ const Admin = () => {
         Logout
       </button>
     </Container>
+    
   );
 };
 
