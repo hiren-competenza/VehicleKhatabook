@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VehicleKhatabook.Entities;
 
@@ -11,9 +12,11 @@ using VehicleKhatabook.Entities;
 namespace VehicleKhatabook.SchemaBuilder.Migrations
 {
     [DbContext(typeof(VehicleKhatabookDbContext))]
-    partial class VehicleKhatabookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241121084024_LocaleAddedForLanguages")]
+    partial class LocaleAddedForLanguages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
