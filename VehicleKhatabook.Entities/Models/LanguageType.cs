@@ -13,6 +13,7 @@ namespace VehicleKhatabook.Entities.Models
 
         [MaxLength(250)]
         public string? Description { get; set; }
+        public string? Locale { get; set; }
 
         public bool IsActive { get; set; }
     }

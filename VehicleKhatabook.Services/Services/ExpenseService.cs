@@ -43,5 +43,9 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _expenseRepository.GetExpenseAsync(vehicleId, fromDate, toDate);
         }
+        public async Task<List<UserExpense>> GetExpenseAsync(Guid vehicleId)
+        {
+            return await _expenseRepository.GetExpenseAsync(vehicleId);
+        }
     }
 }

@@ -107,5 +107,17 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .ToListAsync();
             return result;
         }
+        public async Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId)
+        {
+            var result = await _context.UserIncomes
+                .Where(i => i.IncomeVehicleId == vehicleId)
+                .Include(i => i.IncomeCategory)
+                .Include(e => e.Vehicle)            // Include related Vehicle details
+                    .ThenInclude(v => v.VehicleType) // Include VehicleType through Vehicle
+                .Include(e => e.Vehicle)            // Include related Vehicle details
+                    .ThenInclude(v => v.User)
+                .ToListAsync();
+            return result;
+        }
     }
 }

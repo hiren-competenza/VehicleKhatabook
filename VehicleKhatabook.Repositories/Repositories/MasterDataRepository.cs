@@ -181,7 +181,6 @@ namespace VehicleKhatabook.Repositories.Repositories
             //};
         }
 
-
         public async Task<ApiResponse<VechileType>> UpdateVehicleTypeAsync(int vehicleTypeId, VechileTypeDTO vehicleTypeDTO)
         {
             var vehicleType = await _context.VehicleTypes.FindAsync(vehicleTypeId);
@@ -320,15 +319,15 @@ namespace VehicleKhatabook.Repositories.Repositories
                 if (!string.IsNullOrEmpty(vehicleType.VehicleTypeLanguageJson)) // Check if JSON is not null or empty
                 {
                     // Deserialize the JSON field into a dynamic list
-                    var languageData = JsonConvert.DeserializeObject<List<dynamic>>(vehicleType.VehicleTypeLanguageJson);
+                    var languageData = JsonConvert.DeserializeObject<List<MasterDataJsonLanguageDTO>>(vehicleType.VehicleTypeLanguageJson);
 
                     // Find the matched language by LanguageTypeId
-                    var matchedLanguage = languageData.FirstOrDefault(lang => lang.languageTypeId == languageTypeId);
+                    var matchedLanguage = languageData.FirstOrDefault(lang => lang.LanguageTypeId == languageTypeId);
 
                     if (matchedLanguage != null)
                     {
                         // Assign the translated language to the TypeName field
-                        vehicleType.TypeName = matchedLanguage.translatedLanguage;
+                        vehicleType.TypeName = matchedLanguage.TranslatedFieldValue;
                     }
 
                     // Optionally, set VehicleTypeLanguageJson to null to exclude it from the result
