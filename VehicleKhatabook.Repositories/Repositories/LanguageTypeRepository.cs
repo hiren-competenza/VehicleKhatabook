@@ -23,6 +23,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                                        Description = lt.Description,
                                        LanguageTypeId = lt.LanguageTypeId,
                                        LanguageName = lt.LanguageName,
+                                       Locale = lt.Locale,
                                        IsActive = lt.IsActive
                                    }).ToListAsync();
         }
@@ -33,6 +34,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 LanguageName = languageTypeDTO.LanguageName,
                 Description = languageTypeDTO.Description,
+                Locale = languageTypeDTO.Locale,
                 IsActive = true
             };
 
@@ -54,6 +56,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             languageType.LanguageName = languageTypeDTO.LanguageName;
             languageType.Description = languageTypeDTO.Description;
             languageType.IsActive = languageTypeDTO.IsActive;
+            languageType.Locale = languageTypeDTO.Locale;
 
             await _dbContext.SaveChangesAsync();
             return languageTypeDTO;

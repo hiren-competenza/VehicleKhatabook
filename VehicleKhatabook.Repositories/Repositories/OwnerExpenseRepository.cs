@@ -55,6 +55,16 @@ namespace VehicleKhatabook.Repositories.Repositories
             return result;
         }
 
+        public async Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId)
+        {
+            var result = await _context.OwnerKhataDebits
+                .Where(e => e.DriverOwnerId == driverOwnerUserId)
+                .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
+                    .ThenInclude(v => v.user) // Include VehicleType through Vehicle
+                .ToListAsync();
+            return result;
+        }
+
         public async Task<ApiResponse<OwnerKhataDebit>> GetOwnerExpenseDetailsAsync(Guid id)
         {
             var expense = await _context.OwnerKhataDebits.FindAsync(id);
