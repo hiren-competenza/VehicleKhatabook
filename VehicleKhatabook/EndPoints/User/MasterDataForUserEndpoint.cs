@@ -18,7 +18,6 @@ namespace VehicleKhatabook.EndPoints.User
             var userRoute = app.MapGroup("api/user/master").WithTags("Master Data for Users");//.RequireAuthorization("OwnerOrDriverPolicy");
             userRoute.MapGet("/getExpenseIncomeCategoriesById", GetExpenseIncomeCategoriesAsync).RequireAuthorization("OwnerOrDriverPolicy");
             userRoute.MapGet("/getAllCountry", GetCountryAsync);
-            userRoute.MapGet("/getAllSMSProvider", GetAllSMSProviders).RequireAuthorization("OwnerOrDriverPolicy");
             userRoute.MapGet("/GetAllLanguageTypes", GetAllLanguageTypes);
             userRoute.MapGet("/vehicletypes", GetVehicleTypesAsync).RequireAuthorization("OwnerOrDriverPolicy");
             userRoute.MapGet("/allVehicletypes", GetVehicleAllTypesAsync); //Additional
@@ -73,23 +72,6 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.FailureResponse("not found country list"));
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(countries));
-        }
-        internal async Task<IResult> GetAllSMSProviders(ISMSProviderService sMSProviderService)
-        {
-            var allProviders = await sMSProviderService.GetAllSMSProvidersAsync();
-
-            var activeProvider = allProviders.FirstOrDefault(provider => provider.IsActive == true);
-
-            var result = ApiResponse<List<SMSProviderDTO>>.SuccessResponse(activeProvider != null
-                ? new List<SMSProviderDTO> { activeProvider }
-                : new List<SMSProviderDTO>());
-
-            if (result == null)
-            {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Not found active provider"));
-            }
-
-            return Results.Ok(ApiResponse<object>.SuccessResponse(result));
         }
         public async Task<IResult> GetAllLanguageTypes(ILanguageTypeService languageTypeService)
         {

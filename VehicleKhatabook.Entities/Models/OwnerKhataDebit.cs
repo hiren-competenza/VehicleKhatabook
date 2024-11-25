@@ -9,8 +9,8 @@ namespace VehicleKhatabook.Entities.Models
         public Guid Id { get; set; }
         //public Guid UserId { get; set; }
         public Guid DriverOwnerId { get; set; }
-        public string? Name { get; set; }
-        public string? Mobile { get; set; }
+        //public string? Name { get; set; }
+        //public string? Mobile { get; set; }
         public DateTime? Date { get; set; }
         public decimal? Amount { get; set; }
         public string? Note { get; set; }

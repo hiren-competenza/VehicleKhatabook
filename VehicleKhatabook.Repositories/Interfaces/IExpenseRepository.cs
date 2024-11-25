@@ -13,5 +13,6 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<ApiResponse<List<UserExpense>>> GetAllExpensesAsync();
         Task<List<UserExpense>> GetExpenseAsync(Guid vehicleId, DateTime fromDate, DateTime toDate);
         Task<List<UserExpense>> GetExpenseAsync(Guid vehicleId);
+        Task<List<UserExpense>> GetExpensebyUserAsync(Guid userId);
     }
 }

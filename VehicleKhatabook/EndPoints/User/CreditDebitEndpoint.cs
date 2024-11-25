@@ -78,8 +78,7 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
             }
         }
-
-        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string? transactionType, string vehicleId, HttpContext httpContext, IIncomeService incomeService, IExpenseService expenseService, DateTime? fromDate, DateTime? toDate)
+        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string? transactionType, string? vehicleId, HttpContext httpContext, IIncomeService incomeService, IExpenseService expenseService, DateTime? fromDate, DateTime? toDate)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
@@ -87,12 +86,57 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
 
+            // Handle scenario when vehicleId is not provided
             if (string.IsNullOrEmpty(vehicleId))
             {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Vehicle ID is missing."));
+                if (string.IsNullOrEmpty(transactionType))
+                {
+                    // Fetch both income and expense records for the user
+                    var incomeResult = await incomeService.GetIncomebyUserAsync(Guid.Parse(userId));
+                    var expenseResult = await expenseService.GetExpensebyUserAsync(Guid.Parse(userId));
+
+                    var combinedResult = new
+                    {
+                        Income = incomeResult,
+                        Expense = expenseResult
+                    };
+
+                    if (incomeResult == null && expenseResult == null)
+                    {
+                        return Results.Ok(ApiResponse<object>.FailureResponse("No income or expense records found."));
+                    }
+
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(combinedResult));
+                }
+                else if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
+                {
+                    // Fetch income records for the user
+                    var incomeResult = await incomeService.GetIncomebyUserAsync(Guid.Parse(userId));
+                    if (incomeResult == null)
+                    {
+                        return Results.Ok(ApiResponse<object>.FailureResponse("No income records found."));
+                    }
+
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(incomeResult));
+                }
+                else if (transactionType.Equals(TransactionTypeEnum.Debit.ToLower(), StringComparison.OrdinalIgnoreCase))
+                {
+                    // Fetch expense records for the user
+                    var expenseResult = await expenseService.GetExpensebyUserAsync(Guid.Parse(userId));
+                    if (expenseResult == null)
+                    {
+                        return Results.Ok(ApiResponse<object>.FailureResponse("No expense records found."));
+                    }
+
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(expenseResult));
+                }
+                else
+                {
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Invalid transaction type."));
+                }
             }
 
-            // Handle scenario when transactionType is not provided
+            // Existing logic when vehicleId is provided
             if (string.IsNullOrEmpty(transactionType))
             {
                 if (fromDate.HasValue && toDate.HasValue)
@@ -132,7 +176,6 @@ namespace VehicleKhatabook.EndPoints.User
                 }
             }
 
-            // Handle scenario when transactionType is provided
             if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
                 if (fromDate.HasValue && toDate.HasValue)
@@ -148,7 +191,6 @@ namespace VehicleKhatabook.EndPoints.User
                 }
                 else
                 {
-                    // Fetch all income records when date range is not provided
                     var result = await incomeService.GetIncomeAsync(Guid.Parse(vehicleId));
                     if (result == null)
                         return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
@@ -171,7 +213,6 @@ namespace VehicleKhatabook.EndPoints.User
                 }
                 else
                 {
-                    // Fetch all expense records when date range is not provided
                     var result = await expenseService.GetExpenseAsync(Guid.Parse(vehicleId));
                     if (result == null)
                         return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));

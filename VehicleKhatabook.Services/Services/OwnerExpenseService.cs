@@ -35,6 +35,11 @@ namespace VehicleKhatabook.Services.Services
             return await _ownerExpenseRepository.GetOwnerExpenseAsync(driverOwnerUserId);
         }
 
+        public async Task<List<OwnerKhataDebit>> GetOwnerExpensebyUserAsync(Guid userId)
+        {
+            return await _ownerExpenseRepository.GetOwnerExpensebyUserAsync(userId);
+        }
+
         public async Task<ApiResponse<OwnerKhataDebit>> GetOwnerExpenseDetailsAsync(Guid id)
         {
             return await _ownerExpenseRepository.GetOwnerExpenseDetailsAsync(id);

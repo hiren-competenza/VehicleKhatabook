@@ -36,9 +36,9 @@ namespace VehicleKhatabook.EndPoints.User
             }
             var ownerDTO = new OwnerIncomeExpenseDTO
             {
-                Name = ownerIncomeExpenseDTO.Name,
+                //Name = ownerIncomeExpenseDTO.Name,
                 //UserId = Guid.Parse(userId),
-                Mobile = ownerIncomeExpenseDTO.Mobile,
+                //Mobile = ownerIncomeExpenseDTO.Mobile,
                 Date = ownerIncomeExpenseDTO.Date,
                 Amount = ownerIncomeExpenseDTO.Amount,
                 Note = ownerIncomeExpenseDTO.Note,
@@ -95,7 +95,7 @@ namespace VehicleKhatabook.EndPoints.User
         //} 
         #endregion
 
-        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string? transactionType, string driverOwnerUserId, HttpContext httpContext, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService, DateTime? fromDate, DateTime? toDate)
+        internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string? transactionType, string? driverOwnerUserId, HttpContext httpContext, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService, DateTime? fromDate, DateTime? toDate)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
@@ -105,17 +105,12 @@ namespace VehicleKhatabook.EndPoints.User
 
             if (string.IsNullOrEmpty(driverOwnerUserId))
             {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Driver/Owner User ID is missing."));
-            }
-
-            if (string.IsNullOrEmpty(transactionType))
-            {
-                // Handle both income and expense when transactionType is not provided
-                if (!fromDate.HasValue && !toDate.HasValue)
+                // Handle scenario when DriverOwnerId is not provided
+                if (string.IsNullOrEmpty(transactionType))
                 {
-                    // Fetch all records if date range is not provided
-                    var incomeResult = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId));
-                    var expenseResult = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(driverOwnerUserId));
+                    // Fetch both income and expense records for the user
+                    var incomeResult = await ownerIncomeService.GetOwnerIncomebyUserAsync(Guid.Parse(userId));
+                    var expenseResult = await ownerExpenseService.GetOwnerExpensebyUserAsync(Guid.Parse(userId));
 
                     var combinedResult = new
                     {
@@ -130,11 +125,41 @@ namespace VehicleKhatabook.EndPoints.User
 
                     return Results.Ok(ApiResponse<object>.SuccessResponse(combinedResult));
                 }
+                else if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
+                {
+                    // Fetch income records for the user
+                    var incomeResult = await ownerIncomeService.GetOwnerIncomebyUserAsync(Guid.Parse(userId));
+                    if (incomeResult == null)
+                    {
+                        return Results.Ok(ApiResponse<object>.FailureResponse("No income records found."));
+                    }
+
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(incomeResult));
+                }
+                else if (transactionType.Equals(TransactionTypeEnum.Debit.ToLower(), StringComparison.OrdinalIgnoreCase))
+                {
+                    // Fetch expense records for the user
+                    var expenseResult = await ownerExpenseService.GetOwnerExpensebyUserAsync(Guid.Parse(userId));
+                    if (expenseResult == null)
+                    {
+                        return Results.Ok(ApiResponse<object>.FailureResponse("No expense records found."));
+                    }
+
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(expenseResult));
+                }
                 else
                 {
-                    // Fetch records within the date range
-                    var start = fromDate ?? DateTime.UtcNow.Date;
-                    var end = toDate ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Invalid transaction type."));
+                }
+            }
+
+            // Logic when DriverOwnerId is provided
+            if (string.IsNullOrEmpty(transactionType))
+            {
+                if (fromDate.HasValue && toDate.HasValue)
+                {
+                    var start = fromDate.Value.Date;
+                    var end = toDate.Value.Date.AddDays(1).AddTicks(-1);
 
                     var incomeResult = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId), start, end);
                     var expenseResult = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(driverOwnerUserId), start, end);
@@ -146,67 +171,68 @@ namespace VehicleKhatabook.EndPoints.User
                     };
 
                     if (incomeResult == null && expenseResult == null)
-                    {
                         return Results.Ok(ApiResponse<object>.FailureResponse("No income or expense records found."));
-                    }
+
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(combinedResult));
+                }
+                else
+                {
+                    var incomeResult = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId));
+                    var expenseResult = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(driverOwnerUserId));
+
+                    var combinedResult = new
+                    {
+                        Income = incomeResult,
+                        Expense = expenseResult
+                    };
+
+                    if (incomeResult == null && expenseResult == null)
+                        return Results.Ok(ApiResponse<object>.FailureResponse("No income or expense records found."));
 
                     return Results.Ok(ApiResponse<object>.SuccessResponse(combinedResult));
                 }
             }
 
-            // Handle specific transaction type
             if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
-                if (!fromDate.HasValue && !toDate.HasValue)
+                if (fromDate.HasValue && toDate.HasValue)
                 {
-                    // Fetch all income records if no date range is provided
-                    var result = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId));
+                    var start = fromDate.Value.Date;
+                    var end = toDate.Value.Date.AddDays(1).AddTicks(-1);
+
+                    var result = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId), start, end);
                     if (result == null)
-                    {
                         return Results.Ok(ApiResponse<object>.FailureResponse("No income records found."));
-                    }
 
                     return Results.Ok(ApiResponse<object>.SuccessResponse(result));
                 }
                 else
                 {
-                    // Fetch income records within the date range
-                    var start = fromDate ?? DateTime.UtcNow.Date;
-                    var end = toDate ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
-
-                    var result = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId), start, end);
+                    var result = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId));
                     if (result == null)
-                    {
                         return Results.Ok(ApiResponse<object>.FailureResponse("No income records found."));
-                    }
 
                     return Results.Ok(ApiResponse<object>.SuccessResponse(result));
                 }
             }
             else if (transactionType.Equals(TransactionTypeEnum.Debit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
-                if (!fromDate.HasValue && !toDate.HasValue)
+                if (fromDate.HasValue && toDate.HasValue)
                 {
-                    // Fetch all expense records if no date range is provided
-                    var result = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(driverOwnerUserId));
+                    var start = fromDate.Value.Date;
+                    var end = toDate.Value.Date.AddDays(1).AddTicks(-1);
+
+                    var result = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(driverOwnerUserId), start, end);
                     if (result == null)
-                    {
                         return Results.Ok(ApiResponse<object>.FailureResponse("No expense records found."));
-                    }
 
                     return Results.Ok(ApiResponse<object>.SuccessResponse(result));
                 }
                 else
                 {
-                    // Fetch expense records within the date range
-                    var start = fromDate ?? DateTime.UtcNow.Date;
-                    var end = toDate ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
-
-                    var result = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(driverOwnerUserId), start, end);
+                    var result = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(driverOwnerUserId));
                     if (result == null)
-                    {
                         return Results.Ok(ApiResponse<object>.FailureResponse("No expense records found."));
-                    }
 
                     return Results.Ok(ApiResponse<object>.SuccessResponse(result));
                 }

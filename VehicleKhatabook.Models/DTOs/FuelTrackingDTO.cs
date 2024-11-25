@@ -1,23 +1,27 @@
 ﻿using System.Text.Json.Serialization;
+using VehicleKhatabook.Models.Common;
 
 namespace VehicleKhatabook.Models.DTOs
 {
     public class FuelTrackingDTO
     {
+        [JsonPropertyName("userId")]
+        public Guid UserId { get; set; }
+
         [JsonPropertyName("startVehicleMeterReading")]
         public int StartVehicleMeterReading { get; set; }
 
         [JsonPropertyName("endVehicleMeterReading")]
-        public int EndVehicleMeterReading { get; set; }
+        public int? EndVehicleMeterReading { get; set; }
 
         [JsonPropertyName("startFuelLevelInLiters")]
-        public double StartFuelLevelInLiters { get; set; }
+        public decimal StartFuelLevelInLiters { get; set; }
 
         [JsonPropertyName("endFuelLevelInLiters")]
-        public double EndFuelLevelInLiters { get; set; }
+        public decimal? EndFuelLevelInLiters { get; set; }
 
         [JsonPropertyName("fuelAddedInLiters")]
-        public List<double> FuelAddedInLiters { get; set; }
+        public List<decimal>? FuelAddedInLiters { get; set; }
 
     }
 }
