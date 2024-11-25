@@ -15,10 +15,10 @@ namespace VehicleKhatabook.Models.DTOs
         public Guid? Id { get; set; }
         //public Guid UserId { get; set; }
         public Guid DriverOwnerUserId { get; set; }
-        [JsonConverter(typeof(NullableStringConverter))]
-        public string? Name { get; set; }
-        [JsonConverter(typeof(NullableStringConverter))]
-        public string? Mobile { get; set; }
+        //[JsonConverter(typeof(NullableStringConverter))]
+        //public string? Name { get; set; }
+        //[JsonConverter(typeof(NullableStringConverter))]
+        //public string? Mobile { get; set; }
         public DateTime? Date { get; set; }
         public decimal? Amount { get; set; }
         [JsonConverter(typeof(NullableStringConverter))]

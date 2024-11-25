@@ -12,8 +12,8 @@ using VehicleKhatabook.Entities;
 namespace VehicleKhatabook.SchemaBuilder.Migrations
 {
     [DbContext(typeof(VehicleKhatabookDbContext))]
-    [Migration("20241117091606_VehicleandOwnerDriver_CreditDebitFixed")]
-    partial class VehicleandOwnerDriver_CreditDebitFixed
+    [Migration("20241125101159_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,6 +102,101 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.HasIndex("ModifiedByAdminAdminID");
 
                     b.ToTable("AdminUsers");
+                });
+
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.ApplicationConfiguration", b =>
+                {
+                    b.Property<Guid>("ApplicationConfigurationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FacebookPageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstagramHandle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsRenewable")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentGatewayApiKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentGatewayCurrency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentGatewayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentGatewayPublicKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("PaymentGatewayStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PaymentGatewayWebhookSecret")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PinterestUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RenewalReminderDaysBefore")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SMSApiKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SMSApiUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SMSSenderId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("SubscriptionAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("SubscriptionDurationDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SubscriptionName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupportEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupportWhatsAppNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TrialPeriodDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TwitterHandle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YouTubeChannelUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ApplicationConfigurationId");
+
+                    b.ToTable("ApplicationConfigurations");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Backup", b =>
@@ -232,6 +327,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ExpenseCategoryLanguageJson")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
@@ -272,15 +370,17 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("EndFuelLevelInLiters")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("EndFuelLevelInLiters")
+                        .HasColumnType("decimal(18, 0)")
+                        .HasColumnName("EndFuelLevelInLiters");
 
-                    b.Property<int>("EndVehicleMeterReading")
-                        .HasColumnType("int");
+                    b.Property<int?>("EndVehicleMeterReading")
+                        .HasColumnType("int")
+                        .HasColumnName("EndVehicleMeterReading");
 
                     b.Property<string>("FuelAddedInLitersJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("FuelAddedInLitersJson");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -288,13 +388,21 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
-                    b.Property<double>("StartFuelLevelInLiters")
-                        .HasColumnType("float");
+                    b.Property<decimal>("StartFuelLevelInLiters")
+                        .HasColumnType("decimal(18, 0)")
+                        .HasColumnName("StartFuelLevelInLiters");
 
                     b.Property<int>("StartVehicleMeterReading")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("StartVehicleMeterReading");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("FuelTrackings");
                 });
@@ -314,6 +422,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IncomeCategoryLanguageJson")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsActive")
@@ -370,6 +481,9 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Locale")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
@@ -474,12 +588,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<Guid>("DriverOwnerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Mobile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -505,12 +613,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<Guid>("DriverOwnerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Mobile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -519,61 +621,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.HasIndex("DriverOwnerId");
 
                     b.ToTable("OwnerKhataDebits");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.SMSProviderConfig", b =>
-                {
-                    b.Property<int>("ProviderID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProviderID"));
-
-                    b.Property<string>("APIUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("AuthKey")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("ClientID")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool?>("IsActive")
-                        .IsRequired()
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ProviderName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SenderID")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("Timeout")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("UserID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserID1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProviderID");
-
-                    b.HasIndex("UserID");
-
-                    b.HasIndex("UserID1");
-
-                    b.ToTable("SMSProviderConfigs");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.ScreenContent", b =>
@@ -709,8 +756,17 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("PremiumExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PremiumStartDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ReferCode")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ReferCodeCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -838,11 +894,30 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehicleTypeId"));
 
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
                     b.Property<string>("TypeName")
                         .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("VehicleTypeLanguageJson")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("VehicleTypeId");
@@ -956,6 +1031,17 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("VehicleKhatabook.Entities.Models.FuelTracking", b =>
+                {
+                    b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Notification", b =>
                 {
                     b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
@@ -987,17 +1073,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                         .IsRequired();
 
                     b.Navigation("DriverOwnerUser");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.SMSProviderConfig", b =>
-                {
-                    b.HasOne("VehicleKhatabook.Entities.Models.User", null)
-                        .WithMany("CreatedSMSProviderConfigs")
-                        .HasForeignKey("UserID");
-
-                    b.HasOne("VehicleKhatabook.Entities.Models.User", null)
-                        .WithMany("ModifiedSMSProviderConfigs")
-                        .HasForeignKey("UserID1");
                 });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.Subscription", b =>
@@ -1076,13 +1151,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Navigation("User");
 
                     b.Navigation("VehicleType");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.User", b =>
-                {
-                    b.Navigation("CreatedSMSProviderConfigs");
-
-                    b.Navigation("ModifiedSMSProviderConfigs");
                 });
 #pragma warning restore 612, 618
         }

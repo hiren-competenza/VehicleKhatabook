@@ -15,5 +15,6 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<ApiResponse<OwnerKhataDebit>> GetOwnerExpenseDetailsAsync(Guid id);
         Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate);
         Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId);
+        Task<List<OwnerKhataDebit>> GetOwnerExpensebyUserAsync(Guid userId);
     }
 }

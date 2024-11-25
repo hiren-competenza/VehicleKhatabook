@@ -6,7 +6,6 @@ namespace VehicleKhatabook.Entities
     public class VehicleKhatabookDbContext : DbContext
     {
         public VehicleKhatabookDbContext(DbContextOptions<VehicleKhatabookDbContext> options) : base(options) { }
-
         public DbSet<OtpRequest> OtpRequests { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
@@ -23,10 +22,10 @@ namespace VehicleKhatabook.Entities
         public DbSet<Country> Countries { get; set; }
         public DbSet<LanguageType> LanguageTypes { get; set; }
         public DbSet<AdminUser> AdminUsers { get; set; }
-        public DbSet<SMSProviderConfig> SMSProviderConfigs { get; set; }
         public DbSet<OwnerKhataCredit> OwnerKhataCredits { get; set; }
         public DbSet<OwnerKhataDebit> OwnerKhataDebits { get; set; }
         public DbSet<DriverOwnerUser> DriverOwnerUsers { get; set; }
+        public DbSet<ApplicationConfiguration> ApplicationConfigurations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,10 +44,10 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<OtpRequest>().HasKey(o => o.OtpRequestId);
             modelBuilder.Entity<LanguageType>().HasKey(v => v.LanguageTypeId);
             modelBuilder.Entity<AdminUser>().HasKey(v => v.AdminID);
-            modelBuilder.Entity<SMSProviderConfig>().HasKey(s => s.ProviderID);
             modelBuilder.Entity<OwnerKhataCredit>().HasKey(s => s.Id);
             modelBuilder.Entity<OwnerKhataDebit>().HasKey(s => s.Id);
             modelBuilder.Entity<DriverOwnerUser>().HasKey(s => s.DriverOwnerUserId);
+            modelBuilder.Entity<ApplicationConfiguration>().HasKey(s => s.ApplicationConfigurationId);
             modelBuilder.Entity<AdminUser>()
                 .HasOne(s => s.CreatedByAdmin)
                 .WithMany()
@@ -144,11 +143,28 @@ namespace VehicleKhatabook.Entities
             //  .OnDelete(DeleteBehavior.NoAction)
             //  .HasConstraintName("FK_OwnerKhataCredit_DriverOwner");
 
+            modelBuilder.Entity<FuelTracking>()
+            .Property(f => f.StartFuelLevelInLiters)
+            .HasColumnType("decimal(18, 0)");
 
-            modelBuilder.Entity<DriverOwnerUser>()
-               .HasOne(f => f.user)
-               .WithMany()
-               .HasForeignKey(f => f.UserID);
+            modelBuilder.Entity<FuelTracking>()
+                .Property(f => f.EndFuelLevelInLiters)
+                .HasColumnType("decimal(18, 0)")
+                .IsRequired(false); // nullable
+
+            modelBuilder.Entity<FuelTracking>()
+                .Property(f => f.FuelAddedInLitersJson)
+                .HasColumnType("nvarchar(max)");
+
+            modelBuilder.Entity<FuelTracking>()
+                .Property(f => f.UserId)
+                .HasColumnType("uniqueidentifier");
+
+            modelBuilder.Entity<FuelTracking>()
+                .HasOne(f => f.User)
+                .WithMany()  // Assuming the User class is set up properly
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -24,9 +24,9 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             var income = new OwnerKhataCredit
             {
-                Name = incomeDTO.Name,
+                //Name = incomeDTO.Name,
                 //UserId = incomeDTO.UserId,
-                Mobile = incomeDTO.Mobile,
+                //Mobile = incomeDTO.Mobile,
                 Date = incomeDTO.Date,
                 Amount = incomeDTO.Amount,
                 Note = incomeDTO.Note,
@@ -58,6 +58,16 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             var result = await _context.OwnerKhataCredits
                 .Where(e => e.DriverOwnerId == driverOwnerUserId)
+                .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
+                    .ThenInclude(v => v.user)
+                .ToListAsync();
+            return result;
+        }
+
+        public async Task<List<OwnerKhataCredit>> GetOwnerIncomebyUserAsync(Guid userId)
+        {
+            var result = await _context.OwnerKhataCredits
+                .Where(e => e.DriverOwnerUser.UserID == userId)
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user)
                 .ToListAsync();

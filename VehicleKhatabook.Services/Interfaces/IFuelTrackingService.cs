@@ -11,7 +11,9 @@ namespace VehicleKhatabook.Services.Interfaces
     {
         Task<FuelTrackingDTO> AddFuelTrackingAsync(FuelTrackingDTO fuelTrackingDTO);
         Task<FuelTrackingDTO> UpdateFuelTrackingAsync(FuelTrackingDTO fuelTrackingDTO);
-        Task<FuelTrackingDTO> GetFuelTrackingAsync();
+        Task<FuelTrackingDTO?> GetFuelTrackingAsync(Guid userId);
+        Task<FuelTrackingDTO> StartTripAsync(FuelTrackingDTO fuelTrackingDTO, Guid userId);
+        Task<(FuelTrackingDTO?, decimal?)> EndTripAsync(Guid userId);
+        Task DeleteAllFuelTrackingAsync(Guid userId);
     }
-
 }

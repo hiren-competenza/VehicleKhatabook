@@ -13,5 +13,7 @@ namespace VehicleKhatabook.Services.Interfaces
         //Task<ApiResponse<List<Income>>> GetAllIncomesAsync();
         Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId, DateTime fromDate, DateTime toDate);
         Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId);
+        Task<List<UserIncome>> GetIncomebyUserAsync(Guid userId);
+
     }
 }
