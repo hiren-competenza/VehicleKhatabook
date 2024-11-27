@@ -40,7 +40,7 @@ namespace VehicleKhatabook.Services.Services
         {
             var user = new User
             {
-                UserID = Guid.NewGuid(),
+                UserID = userDTO.UserId,
                 FirstName = userDTO.FirstName,
                 LastName = userDTO.LastName,
                 MobileNumber = userDTO.MobileNumber,
@@ -54,7 +54,10 @@ namespace VehicleKhatabook.Services.Services
                 LanguageTypeId = userDTO.languageTypeId,
                 CreatedOn = DateTime.UtcNow,
                 UserTypeId = userDTO.UserTypeId,
-                //Email = userDTO.Email,
+                PremiumExpiryDate = userDTO.PremiumExpiryDate,
+                PremiumStartDate = userDTO.PremiumStartDate,
+                ReferCodeCount = userDTO.ReferCodeCount,
+                Email = userDTO.Email,
                 //CreatedBy = Guid.NewGuid(),
                 IsActive = true
             };

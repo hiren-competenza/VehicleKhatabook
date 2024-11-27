@@ -62,6 +62,7 @@ namespace VehicleKhatabook.EndPoints.User
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
+            userDTO.UserId = Guid.Parse(userId);
             var result = await userService.UpdateUserAsync(userDTO);
             if (result == null)
             {
@@ -155,6 +156,6 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<object>.FailureResponse("Failed to change user language. Please try again."));
         }
-        
+
     }
 }
