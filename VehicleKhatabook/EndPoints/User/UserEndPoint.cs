@@ -155,5 +155,6 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<object>.FailureResponse("Failed to change user language. Please try again."));
         }
+        
     }
 }

@@ -134,7 +134,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
         public async Task<User?> GetUserByIdAsync(Guid id)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserID == id && u.IsActive == true);
+            var user = await _dbContext.Users.Include(u => u.LanguageType).FirstOrDefaultAsync(u => u.UserID == id && u.IsActive == true);
             if (user == null) return null;
             else return user;
         }

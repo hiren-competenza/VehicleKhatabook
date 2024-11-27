@@ -104,6 +104,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     .ThenInclude(v => v.VehicleType) // Include VehicleType through Vehicle
                 .Include(e => e.Vehicle)            // Include related Vehicle details
                     .ThenInclude(v => v.User)
+                .OrderByDescending(i => i.IncomeDate)
                 .ToListAsync();
             return result;
         }
@@ -116,6 +117,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     .ThenInclude(v => v.VehicleType) // Include VehicleType through Vehicle
                 .Include(e => e.Vehicle)            // Include related Vehicle details
                     .ThenInclude(v => v.User)
+                .OrderByDescending(i => i.IncomeDate)
                 .ToListAsync();
             return result;
         }
@@ -128,6 +130,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     .ThenInclude(v => v.VehicleType) // Include VehicleType through Vehicle
                 .Include(e => e.Vehicle)            // Include related Vehicle details
                     .ThenInclude(v => v.User)
+                .OrderByDescending(i => i.IncomeDate)
                 .ToListAsync();
             return result;
         }
