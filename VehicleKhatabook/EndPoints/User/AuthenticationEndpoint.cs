@@ -22,6 +22,7 @@ namespace VehicleKhatabook.EndPoints.User
             userRoute.MapPost("/sendOTPforAnonymousUser", SendOTPforAnonymousUser);
             userRoute.MapPost("/verifyOtpForAnonymousUser", VerifyOtpForAnonymousUser);
             userRoute.MapPost("/forgetmPin", ForgetmPin);
+            userRoute.MapGet("/verifympin", VerifyMpin);
         }
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -63,7 +64,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<UserDetailsDTO>.FailureResponse("Invalid mobile number or mPIN."));
         }
-        internal async Task<IResult> LoginwithOTP(string mobileNumber, string otpCode, string otpRequestId, IAuthService authService)
+        internal async Task<IResult> LoginwithOTP(string mobileNumber, string otpCode, string? otpRequestId, IAuthService authService)
         {
             if (!string.IsNullOrEmpty(mobileNumber))
             {
@@ -83,6 +84,13 @@ namespace VehicleKhatabook.EndPoints.User
 
                         return Results.Ok(ApiResponse<object>.SuccessResponse(responseData, "Login successful."));
                     }
+                    else
+                    {
+                        return Results.Ok(ApiResponse<UserDetailsDTO>.FailureResponse("User is not registered. Please sign up to access application."));
+                    }
+                }
+                else
+                {
                     return Results.Ok(ApiResponse<UserDetailsDTO>.FailureResponse("Invalid mobile number or OTP."));
                 }
             }
@@ -134,6 +142,21 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "mPIN reset successfully."));
             }
             return Results.Ok(ApiResponse<object>.FailureResponse("Failed to reset mPIN. Please try again."));
+        }
+        private async Task<IResult> VerifyMpin(string mpin, HttpContext httpContext, IAuthService authService)
+        {
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+
+            var result = await authService.VerifyMpinAsync(Guid.Parse(userId), mpin);
+            if (result)
+            {
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "mPin Verified successfully"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Incorrect mPin"));
         }
     }
 }

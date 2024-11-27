@@ -126,6 +126,16 @@ namespace VehicleKhatabook.Services.Services
             return false;
         }
 
+        public async Task<bool> VerifyMpinAsync(Guid userId, string mPin)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user != null)
+            {
+                return BCrypt.Net.BCrypt.Verify(mPin, user.mPIN);
+            }
+            return false;
+        }
+
         public async Task<bool> VerifyOtpbyUserIdAsync(Guid userId, string otpCode, string otpRequestId)
         {
             var otpRequest = await _otpRepository.GetOtpByUserIdAndCodeAsync(userId, otpCode, otpRequestId);
@@ -141,13 +151,13 @@ namespace VehicleKhatabook.Services.Services
 
         public async Task<bool> VerifyOtpbyMobilePhoneAsync(string mobileNumber, string otpCode, string otpRequestId)
         {
-            var otpRequest = await _otpRepository.GetOtpByMobileAndCodeAsync(mobileNumber, otpCode, otpRequestId);
             if (otpCode == "111111")
             {
                 //otpRequest.IsVerified = true;
                 //await _otpRepository.UpdateOtpAsync(otpRequest);
                 return true;
             }
+            var otpRequest = await _otpRepository.GetOtpByMobileAndCodeAsync(mobileNumber, otpCode, otpRequestId);
             if (otpRequest == null || otpRequest.ExpirationTime < DateTime.UtcNow || otpRequest.IsVerified)
             {
                 return false;

@@ -61,7 +61,7 @@ namespace VehicleKhatabook.EndPoints.Admin
         {
             var result = await adminUserService.GetAdminByIdAsync(adminId);
             return result != null ? Results.Ok(ApiResponse<object>.SuccessResponse(result)) :
-                Results.NotFound(ApiResponse<object>.FailureResponse("Failed to get admin"));
+                Results.Ok(ApiResponse<object>.FailureResponse("Failed to get admin"));
         }
         internal async Task<IResult> GetAllAdmins(IAdminUserService adminUserService)
         {

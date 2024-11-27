@@ -13,6 +13,7 @@ namespace VehicleKhatabook.Services.Interfaces
         Task<(bool Success, OtpRequest Otp)> SendOTPforAnonymousUser(string mobileNumber);
         Task<bool> ResetMpinAsync(ResetMpinDTO resetMpinDTO, string userId);
         Task<bool> ForgetMpinAsync(string mobileNumber, string newMpin);
+        Task<bool> VerifyMpinAsync(Guid userId, string mPin);
         string GenerateToken(UserDetailsDTO userDetailsDTO);
         Task<bool> VerifyOtpbyUserIdAsync(Guid userId, string otpCode, string otpRequestId);
         Task<bool> VerifyOtpbyMobilePhoneAsync(string mobileNumber, string otpCode, string otpRequestId);

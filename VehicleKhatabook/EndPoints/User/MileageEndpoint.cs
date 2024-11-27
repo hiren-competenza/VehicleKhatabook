@@ -188,7 +188,7 @@ namespace VehicleKhatabook.EndPoints.User
             var fuelTrackingData = await fuelTrackingService.GetFuelTrackingAsync(Guid.Parse(userId));
             if (fuelTrackingData == null)
             {
-                return Results.NotFound(ApiResponse<object>.FailureResponse("No fuel tracking data found for this user."));
+                return Results.Ok(ApiResponse<object>.FailureResponse("No fuel tracking data found for this user."));
             }
             // Return the result
             return Results.Ok(ApiResponse<object>.SuccessResponse(fuelTrackingData, "Fuel tracking data retrieved successfully."));
