@@ -10,7 +10,6 @@ namespace VehicleKhatabook.Models.DTOs
         public string LastName { get; set; }
         public string MobileNumber { get; set; }
         public string ReferCode { get; set; }
-        [JsonConverter(typeof(NullableIntConverter))]
         public int? ReferCodeCount { get; set; }
         public string UserReferCode { get; set; }
         public string Role { get; set; }
