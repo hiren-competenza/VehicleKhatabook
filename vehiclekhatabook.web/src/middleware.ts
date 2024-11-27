@@ -30,7 +30,7 @@ export const config = {
     "/vehicle-type-management",
     "/income-category-management",
     "/expense-category",
-    "/sms-configuration",
+    "/application-configuration",
     "/",
 
   ],

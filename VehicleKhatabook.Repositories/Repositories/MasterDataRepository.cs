@@ -338,5 +338,105 @@ namespace VehicleKhatabook.Repositories.Repositories
             return result;
         }
 
+        public async Task<List<ApplicationConfiguration>> GetApplicationConfiguration()
+        {
+            return await _context.ApplicationConfigurations.ToListAsync();
+        }
+
+
+
+        public async Task<ApiResponse<ApplicationConfiguration>> AddApplicationConfiguration(ApplicationConfiguration configurationDTO)
+        {
+            
+                var configuration = new ApplicationConfiguration
+                {
+                    SMSApiKey = configurationDTO.SMSApiKey,
+                    SMSApiUrl = configurationDTO.SMSApiUrl,
+                    SMSSenderId = configurationDTO.SMSSenderId,
+                    SupportEmail = configurationDTO.SupportEmail,
+                    SupportWhatsAppNumber = configurationDTO.SupportWhatsAppNumber,
+                    PaymentGatewayApiKey = configurationDTO.PaymentGatewayApiKey,
+                    PaymentGatewayPublicKey = configurationDTO.PaymentGatewayPublicKey,
+                    PaymentGatewayWebhookSecret = configurationDTO.PaymentGatewayWebhookSecret,
+                    PaymentGatewayCurrency = configurationDTO.PaymentGatewayCurrency,
+                    PaymentGatewayName = configurationDTO.PaymentGatewayName,
+                    PaymentGatewayStatus = configurationDTO.PaymentGatewayStatus,
+                    SubscriptionName = configurationDTO.SubscriptionName,
+                    SubscriptionAmount = configurationDTO.SubscriptionAmount,
+                    SubscriptionDurationDays = configurationDTO.SubscriptionDurationDays,
+                    IsRenewable = configurationDTO.IsRenewable,
+                    RenewalReminderDaysBefore = configurationDTO.RenewalReminderDaysBefore,
+                    TrialPeriodDays = configurationDTO.TrialPeriodDays,
+                    FacebookPageUrl = configurationDTO.FacebookPageUrl,
+                    TwitterHandle = configurationDTO.TwitterHandle,
+                    InstagramHandle = configurationDTO.InstagramHandle,
+                    LinkedInUrl = configurationDTO.LinkedInUrl,
+                    YouTubeChannelUrl = configurationDTO.YouTubeChannelUrl,
+                    PinterestUrl = configurationDTO.PinterestUrl,
+                    IsActive = configurationDTO.IsActive,
+
+                    CreatedBy = configurationDTO.CreatedBy,
+                    CreatedOn = DateTime.UtcNow
+                };
+
+                _context.ApplicationConfigurations.Add(configuration);
+                await _context.SaveChangesAsync();
+
+                return ApiResponse<ApplicationConfiguration>.SuccessResponse(configuration, "Configuration added successfully.");
+            
+            
+        }
+
+
+        public async Task<ApiResponse<ApplicationConfiguration>> UpdateApplicationConfiguration(Guid configurationId, ApplicationConfiguration configurationDTO)
+        {
+            try
+            {
+                var existingConfig = await _context.ApplicationConfigurations.FirstOrDefaultAsync(c => c.ApplicationConfigurationId == configurationId);
+
+                if (existingConfig == null)
+                {
+                    return ApiResponse<ApplicationConfiguration>.FailureResponse("Configuration not found.");
+                }
+
+                // Update properties
+                existingConfig.SMSApiKey = configurationDTO.SMSApiKey;
+                existingConfig.SMSApiUrl = configurationDTO.SMSApiUrl;
+                existingConfig.SMSSenderId = configurationDTO.SMSSenderId;
+                existingConfig.SupportEmail = configurationDTO.SupportEmail;
+                existingConfig.SupportWhatsAppNumber = configurationDTO.SupportWhatsAppNumber;
+                existingConfig.PaymentGatewayApiKey = configurationDTO.PaymentGatewayApiKey;
+                existingConfig.PaymentGatewayPublicKey = configurationDTO.PaymentGatewayPublicKey;
+                existingConfig.PaymentGatewayWebhookSecret = configurationDTO.PaymentGatewayWebhookSecret;
+                existingConfig.PaymentGatewayCurrency = configurationDTO.PaymentGatewayCurrency;
+                existingConfig.PaymentGatewayName = configurationDTO.PaymentGatewayName;
+                existingConfig.PaymentGatewayStatus = configurationDTO.PaymentGatewayStatus;
+                existingConfig.SubscriptionName = configurationDTO.SubscriptionName;
+                existingConfig.SubscriptionAmount = configurationDTO.SubscriptionAmount;
+                existingConfig.SubscriptionDurationDays = configurationDTO.SubscriptionDurationDays;
+                existingConfig.IsRenewable = configurationDTO.IsRenewable;
+                existingConfig.RenewalReminderDaysBefore = configurationDTO.RenewalReminderDaysBefore;
+                existingConfig.TrialPeriodDays = configurationDTO.TrialPeriodDays;
+                existingConfig.FacebookPageUrl = configurationDTO.FacebookPageUrl;
+                existingConfig.TwitterHandle = configurationDTO.TwitterHandle;
+                existingConfig.InstagramHandle = configurationDTO.InstagramHandle;
+                existingConfig.LinkedInUrl = configurationDTO.LinkedInUrl;
+                existingConfig.YouTubeChannelUrl = configurationDTO.YouTubeChannelUrl;
+                existingConfig.PinterestUrl = configurationDTO.PinterestUrl;
+                existingConfig.IsActive = configurationDTO.IsActive;
+
+                existingConfig.LastModifiedOn = DateTime.UtcNow;
+
+                _context.ApplicationConfigurations.Update(existingConfig);
+                await _context.SaveChangesAsync();
+
+                return ApiResponse<ApplicationConfiguration>.SuccessResponse(existingConfig, "Configuration updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<ApplicationConfiguration>.FailureResponse($"An error occurred while updating the configuration: {ex.Message}");
+            }
+        }
+
     }
 }

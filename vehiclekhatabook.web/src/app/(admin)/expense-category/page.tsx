@@ -279,8 +279,8 @@ const Page = () => {
 
         <Button type="submit" color="primary" style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
         >
-          {isEditMode ? "Update" : "Submit"}
-        </Button>
+                            {isEditMode ? 'Update Expense Category' : 'Add Expense Category'}
+                            </Button>
         {isEditMode && (
           <Button color="secondary" onClick={handleCancel} className="ms-2" style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
 >

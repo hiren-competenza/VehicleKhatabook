@@ -139,7 +139,7 @@ const Page = () => {
                         </FormGroup>
                     </Col>
                 </Row>
-
+                {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
                 <div className="button-group d-flex flex-column flex-sm-row">
                     <Button
                         color="primary"
@@ -147,8 +147,8 @@ const Page = () => {
                         className="submit-button"
                         style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
                     >
-                        {isEditMode ? "Update" : "Submit"}
-                    </Button>
+                            {isEditMode ? 'Update Language Type' : 'Add Language Type'}
+                            </Button>
 
                     {isEditMode && (
                         <Button
@@ -222,7 +222,6 @@ const Page = () => {
                         </Button>
                     </div>
                 </Col>
-                {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
 
             </Row>
 

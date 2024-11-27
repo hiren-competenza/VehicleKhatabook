@@ -254,8 +254,8 @@ const Page = () => {
                         className="submit-button"
                         style={{ backgroundColor: '#F3AB3C', borderColor: '#F3AB3C' }}
                     >
-                        {isEditMode ? "Update" : "Submit"}
-                    </Button>
+                            {isEditMode ? 'Update Vehicle Type' : 'Add Vehicle Type'}
+                            </Button>
 
                     {isEditMode && (
                         <Button
