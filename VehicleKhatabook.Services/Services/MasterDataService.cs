@@ -103,5 +103,19 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _masterDataRepository.GetVehicleTypeForuserlanguageAsync(languageTypeId);
         }
+        public async Task<List<ApplicationConfiguration>> GetApplicationConfiguration()
+        {
+            return await _masterDataRepository.GetApplicationConfiguration();
+        }
+
+        public async Task<ApiResponse<ApplicationConfiguration>> AddApplicationConfiguration(ApplicationConfiguration ConfigurationDTO)
+        {
+            return await _masterDataRepository.AddApplicationConfiguration(ConfigurationDTO);
+        }
+
+        public async Task<ApiResponse<ApplicationConfiguration>> UpdateApplicationConfiguration(Guid userId, ApplicationConfiguration ConfigurationDTO)
+        {
+            return await _masterDataRepository.UpdateApplicationConfiguration(userId, ConfigurationDTO);
+        }
     }
 }

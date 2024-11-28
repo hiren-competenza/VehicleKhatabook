@@ -18,7 +18,7 @@ export const addVehicleType = async (body:any) => {
 };
 
 
-export const addIncomeCategory = async (body:any) => {
+export const addIncomeCategory = async (body:any) => {debugger
   
   return await POST(`${API_URL}/api/master/addIncomeCategory`, body);
 };
@@ -28,9 +28,9 @@ export const addExpenseCategory = async (body: any) => {
 };
 
 
-export const addSmsConfiguration = async (body:any) => {
+export const addApplicationConfiguration = async (body:any) => {debugger
   
-  return await POST(`${API_URL}/api/master/addSMSProvider`, body);
+  return await POST(`${API_URL}/api/master/addApplicationConfiguration`, body);
 };
 export const updateLanguageType = async (body: any) => {
   const { languageTypeId } = body; 
@@ -40,9 +40,9 @@ export const updateVehicleType = async (body: any) => {
   const { vehicleTypeId } = body; 
   return await PUT(`${API_URL}/api/master/updateVehicleType/${vehicleTypeId}`, body);
 };
-export const updateSmsConfiguration = async (body: any) => {
-  const { providerID } = body; 
-  return await PUT(`${API_URL}/api/master/updateSMSProvider${providerID}`, body);
+export const updateApplicationConfiguration = async (body: any) => {debugger
+  const { applicationConfigurationId } = body; 
+  return await PUT(`${API_URL}/api/master/updateApplicationConfiguration/${applicationConfigurationId}`, body);
 };
 export const updateIncomeCategory = async (body: any) => {
   const { IncomeCategoryID } = body; 
@@ -102,9 +102,9 @@ export const getIncomeCategory = async () => {
 };
 
 
-export const getSmsConfiguration = async () => {
+export const getApplicationConfiguration = async () => {debugger
   try {
-    const fullUrl = `${API_URL}/api/master/getAllSMSProvider`;
+    const fullUrl = `${API_URL}/api/master/getApplicationConfiguration`;
 
     const response = await GET(fullUrl);
     if (response && Array.isArray(response)) {

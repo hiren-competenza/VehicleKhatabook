@@ -75,7 +75,7 @@ const Page = () => {
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {debugger
         e.preventDefault();
 
         const incompleteFields = languageData.some(
@@ -131,7 +131,7 @@ const Page = () => {
 
         setIsEditMode(true);
         setIncomeCategoryData({
-            IncomeCategoryID: category.incomeCategoryID,
+            IncomeCategoryID: category.incomeCategoryID ,
             RoleId: category.roleId,
             name: category.name || "",
             isActive: category.isActive || true,
@@ -296,8 +296,8 @@ const Page = () => {
                         type="submit"
                         style={{ backgroundColor: "#F3AB3C", borderColor: "#F3AB3C" }}
                     >
-                        {isEditMode ? "Update" : "Submit"}
-                    </Button>
+                            {isEditMode ? 'Update Income Category' : 'Add Income Category'}
+                            </Button>
 
                     {isEditMode && (
                         <Button

@@ -30,8 +30,8 @@ const menuData = [
     submenu: [],
   },
   {
-    title: "SMS Configuration",
-    href: "/sms-configuration",
+    title: "Application Configuration",
+    href: "/application-configuration",
     submenu: [],
   },
 ];

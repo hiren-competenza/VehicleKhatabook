@@ -25,5 +25,8 @@ namespace VehicleKhatabook.Services.Interfaces
         Task<List<ExpenseCategory>> GetExpenseCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId);
         Task<List<IncomeCategory>> GetIncomeCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId);
         Task<List<VechileType>> GetVehicleTypeForuserlanguageAsync(int languageTypeId);
+        Task<List<ApplicationConfiguration>> GetApplicationConfiguration();
+        Task<ApiResponse<ApplicationConfiguration>> AddApplicationConfiguration(ApplicationConfiguration ConfigurationDTO);
+        Task<ApiResponse<ApplicationConfiguration>> UpdateApplicationConfiguration(Guid userId, ApplicationConfiguration ConfigurationDTO);
     }
 }
