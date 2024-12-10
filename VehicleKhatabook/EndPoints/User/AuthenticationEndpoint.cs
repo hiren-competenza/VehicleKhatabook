@@ -45,7 +45,43 @@ namespace VehicleKhatabook.EndPoints.User
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("Mobile number already exists."));
             }
-            return Results.Ok(ApiResponse<object>.SuccessResponse(result, "New user register successful."));
+            var userDTOResponse = new UserDTO
+            {
+                UserId = result.UserID,
+                FirstName = result.FirstName ?? string.Empty,  // Handle null value
+                LastName = result.LastName ?? string.Empty,    // Handle null value
+                MobileNumber = result.MobileNumber,
+                Email = result.Email,
+                mPIN = result.mPIN,
+                ReferCode = result.ReferCode ?? string.Empty,
+                ReferCodeCount = result.ReferCodeCount ?? 0,   // Handle null ReferCodeCount
+                UserReferCode = result.UserReferCode ?? string.Empty,
+                UserTypeId = result.UserTypeId,
+                Role = result.Role,
+                IsPremiumUser = result.IsPremiumUser ?? false, // Handle null IsPremiumUser
+                PremiumStartDate = result.PremiumStartDate,
+                PremiumExpiryDate = result.PremiumExpiryDate,
+                State = result.State ?? string.Empty,           // Handle null value
+                District = result.District ?? string.Empty,     // Handle null value
+                LanguageTypeId = result.LanguageTypeId ?? 0,   // Handle null value
+                IsActive = result.IsActive ?? false,            // Handle null IsActive
+
+                // If DeviceInfos exists, get the first one (or null if none exists)
+                DeviceInfo = result.DeviceInfos?.FirstOrDefault() is DeviceInfo deviceInfo
+                        ? new DeviceInfoDTO
+                        {
+                            DeviceInfoID = deviceInfo.DeviceInfoID,
+                            DeviceModel = deviceInfo.DeviceModel,
+                            DeviceNumber = deviceInfo.DeviceNumber,
+                            Location = deviceInfo.Location,
+                            OS = deviceInfo.OS,
+                            AppVersion = deviceInfo.AppVersion,
+                            RegisteredOn = deviceInfo.RegisteredOn
+                        }
+                        : null
+            };
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(userDTOResponse, "New user register successful."));
         }
         internal async Task<IResult> Login(UserLoginDTO userLoginDTO, IAuthService authService)
         {

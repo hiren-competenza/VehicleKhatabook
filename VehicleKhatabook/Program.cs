@@ -11,6 +11,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using VehicleKhatabook.Services.Services;
 using VehicleKhatabook.Models.Common;
+using System.Text.Json.Serialization;
 
 var baseDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 var configuration = new ConfigurationBuilder()
@@ -18,7 +19,12 @@ var configuration = new ConfigurationBuilder()
    .Build();
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+builder.Services.AddHostedService<NotificationBackgroundService>();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
 // Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
@@ -78,6 +79,7 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
             }
         }
+
         internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string? transactionType, string? vehicleId, HttpContext httpContext, IIncomeService incomeService, IExpenseService expenseService, DateTime? fromDate, DateTime? toDate)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -86,144 +88,117 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
             }
 
-            // Handle scenario when vehicleId is not provided
+            // Fetch data based on vehicleId and transactionType
             if (string.IsNullOrEmpty(vehicleId))
             {
                 if (string.IsNullOrEmpty(transactionType))
                 {
-                    // Fetch both income and expense records for the user
                     var incomeResult = await incomeService.GetIncomebyUserAsync(Guid.Parse(userId));
                     var expenseResult = await expenseService.GetExpensebyUserAsync(Guid.Parse(userId));
 
-                    var combinedResult = new
-                    {
-                        Income = incomeResult,
-                        Expense = expenseResult
-                    };
+                    var filteredIncome = FilterByDate(incomeResult, fromDate, toDate);
+                    var filteredExpense = FilterByDate(expenseResult, fromDate, toDate);
 
-                    if (incomeResult == null && expenseResult == null)
+                    if (!filteredIncome.Any() && !filteredExpense.Any())
                     {
                         return Results.Ok(ApiResponse<object>.FailureResponse("No income or expense records found."));
                     }
 
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(combinedResult));
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(new
+                    {
+                        Income = filteredIncome,
+                        Expense = filteredExpense
+                    }));
                 }
                 else if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
                 {
-                    // Fetch income records for the user
                     var incomeResult = await incomeService.GetIncomebyUserAsync(Guid.Parse(userId));
-                    if (incomeResult == null)
+                    var filteredIncome = FilterByDate(incomeResult, fromDate, toDate);
+
+                    if (!filteredIncome.Any())
                     {
                         return Results.Ok(ApiResponse<object>.FailureResponse("No income records found."));
                     }
 
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(incomeResult));
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(filteredIncome));
                 }
                 else if (transactionType.Equals(TransactionTypeEnum.Debit.ToLower(), StringComparison.OrdinalIgnoreCase))
                 {
-                    // Fetch expense records for the user
                     var expenseResult = await expenseService.GetExpensebyUserAsync(Guid.Parse(userId));
-                    if (expenseResult == null)
+                    var filteredExpense = FilterByDate(expenseResult, fromDate, toDate);
+
+                    if (!filteredExpense.Any())
                     {
                         return Results.Ok(ApiResponse<object>.FailureResponse("No expense records found."));
                     }
 
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(expenseResult));
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(filteredExpense));
                 }
-                else
-                {
-                    return Results.Ok(ApiResponse<object>.FailureResponse("Invalid transaction type."));
-                }
+
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid transaction type."));
             }
 
-            // Existing logic when vehicleId is provided
             if (string.IsNullOrEmpty(transactionType))
             {
-                if (fromDate.HasValue && toDate.HasValue)
+                var incomeResult = await incomeService.GetIncomeAsync(Guid.Parse(vehicleId));
+                var expenseResult = await expenseService.GetExpenseAsync(Guid.Parse(vehicleId));
+
+                var filteredIncome = FilterByDate(incomeResult, fromDate, toDate);
+                var filteredExpense = FilterByDate(expenseResult, fromDate, toDate);
+
+                if (!filteredIncome.Any() && !filteredExpense.Any())
                 {
-                    var start = fromDate.Value.Date;
-                    var end = toDate.Value.Date.AddDays(1).AddTicks(-1);
-
-                    var incomeResult = await incomeService.GetIncomeAsync(Guid.Parse(vehicleId), start, end);
-                    var expenseResult = await expenseService.GetExpenseAsync(Guid.Parse(vehicleId), start, end);
-
-                    var combinedResult = new
-                    {
-                        Income = incomeResult,
-                        Expense = expenseResult
-                    };
-
-                    if (incomeResult == null && expenseResult == null)
-                        return Results.Ok(ApiResponse<object>.FailureResponse($"No income or expense records found for user ID {userId}."));
-
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(combinedResult));
+                    return Results.Ok(ApiResponse<object>.FailureResponse($"No income or expense records found."));
                 }
-                else
+
+                return Results.Ok(ApiResponse<object>.SuccessResponse(new
                 {
-                    var incomeResult = await incomeService.GetIncomeAsync(Guid.Parse(vehicleId));
-                    var expenseResult = await expenseService.GetExpenseAsync(Guid.Parse(vehicleId));
-
-                    var combinedResult = new
-                    {
-                        Income = incomeResult,
-                        Expense = expenseResult
-                    };
-
-                    if (incomeResult == null && expenseResult == null)
-                        return Results.Ok(ApiResponse<object>.FailureResponse($"No income or expense records found for user ID {userId}."));
-
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(combinedResult));
-                }
+                    Income = filteredIncome,
+                    Expense = filteredExpense
+                }));
             }
-
-            if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
+            else if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
-                if (fromDate.HasValue && toDate.HasValue)
+                var incomeResult = await incomeService.GetIncomeAsync(Guid.Parse(vehicleId));
+                var filteredIncome = FilterByDate(incomeResult, fromDate, toDate);
+
+                if (!filteredIncome.Any())
                 {
-                    var start = fromDate.Value.Date;
-                    var end = toDate.Value.Date.AddDays(1).AddTicks(-1);
-
-                    var result = await incomeService.GetIncomeAsync(Guid.Parse(vehicleId), start, end);
-                    if (result == null)
-                        return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
-
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(result));
+                    return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found."));
                 }
-                else
-                {
-                    var result = await incomeService.GetIncomeAsync(Guid.Parse(vehicleId));
-                    if (result == null)
-                        return Results.Ok(ApiResponse<object>.FailureResponse($"No income records found for user ID {userId}."));
 
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(result));
-                }
+                return Results.Ok(ApiResponse<object>.SuccessResponse(filteredIncome));
             }
             else if (transactionType.Equals(TransactionTypeEnum.Debit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
-                if (fromDate.HasValue && toDate.HasValue)
+                var expenseResult = await expenseService.GetExpenseAsync(Guid.Parse(vehicleId));
+                var filteredExpense = FilterByDate(expenseResult, fromDate, toDate);
+
+                if (!filteredExpense.Any())
                 {
-                    var start = fromDate.Value.Date;
-                    var end = toDate.Value.Date.AddDays(1).AddTicks(-1);
-
-                    var result = await expenseService.GetExpenseAsync(Guid.Parse(vehicleId), start, end);
-                    if (result == null)
-                        return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
-
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(result));
+                    return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found."));
                 }
-                else
-                {
-                    var result = await expenseService.GetExpenseAsync(Guid.Parse(vehicleId));
-                    if (result == null)
-                        return Results.Ok(ApiResponse<object>.FailureResponse($"No expense records found for user ID {userId}."));
 
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(result));
-                }
+                return Results.Ok(ApiResponse<object>.SuccessResponse(filteredExpense));
             }
-            else
+
+            return Results.Ok(ApiResponse<object>.FailureResponse("Invalid transaction type."));
+        }
+
+        // Helper method to filter records by date range
+        private IEnumerable<T> FilterByDate<T>(IEnumerable<T> records, DateTime? fromDate, DateTime? toDate) where T : IHasTransactionDate
+        {
+            if (records == null)
             {
-                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid transaction type."));
+                return Enumerable.Empty<T>();
             }
+
+            if (fromDate.HasValue && toDate.HasValue)
+            {
+                return records.Where(r => r.TransactionDate >= fromDate.Value && r.TransactionDate <= toDate.Value);
+            }
+
+            return records;
         }
     }
 }
