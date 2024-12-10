@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Globalization;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
@@ -49,18 +50,182 @@ namespace VehicleKhatabook.Repositories.Repositories
 
         //    return user;
         //}
+        #region Working without device Info
+        //public async Task<User> AddUserAsync(UserDTO userDTO)
+        //{
+        //    // Map Role to UserTypeId directly within the logic
+        //    if (!string.IsNullOrEmpty(userDTO.Role))
+        //    {
+        //        if (userDTO.Role.Equals("Owner", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            userDTO.UserTypeId = 1; // Set UserTypeId for "Owner"
+        //        }
+        //        else if (userDTO.Role.Equals("Driver", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            userDTO.UserTypeId = 2; // Set UserTypeId for "Driver"
+        //        }
+        //        else
+        //        {
+        //            userDTO.Role = "Driver"; // Default Role
+        //            userDTO.UserTypeId = 2;  // Default UserTypeId
+        //        }
+        //    }
+        //    else if (userDTO.UserTypeId != 0) // If Role is null but UserTypeId is passed
+        //    {
+        //        if (userDTO.UserTypeId == 1)
+        //        {
+        //            userDTO.Role = "Owner"; // Set Role for UserTypeId = 1
+        //        }
+        //        else if (userDTO.UserTypeId == 2)
+        //        {
+        //            userDTO.Role = "Driver"; // Set Role for UserTypeId = 2
+        //        }
+        //        else
+        //        {
+        //            userDTO.Role = "Driver"; // Default Role
+        //            userDTO.UserTypeId = 2;  // Default UserTypeId
+        //        }
+        //    }
+        //    else // If neither Role nor UserTypeId is provided
+        //    {
+        //        userDTO.Role = "Driver"; // Default Role
+        //        userDTO.UserTypeId = 2;  // Default UserTypeId
+        //    }
+        //    TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+        //    // If UserTypeId is provided but Role is missing or mismatched, set Role based on UserTypeId
+        //    // Generate a unique referral code for the new user
+        //    var userReferCode = GenerateReferCode();
+        //    var user = new User
+        //    {
+        //        UserID = Guid.NewGuid(),
+        //        FirstName = textInfo.ToTitleCase(userDTO.FirstName.ToLower()),
+        //        LastName = textInfo.ToTitleCase(userDTO.LastName.ToLower()),
+        //        MobileNumber = userDTO.MobileNumber,
+        //        mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN),
+        //        ReferCode = userDTO.ReferCode?.ToUpper(),
+        //        ReferCodeCount = 0,
+        //        PremiumStartDate = null,
+        //        PremiumExpiryDate = null,
+        //        UserReferCode = userReferCode,
+        //        Role = userDTO.Role,
+        //        IsPremiumUser = userDTO.IsPremiumUser,
+        //        State = userDTO.State,
+        //        District = userDTO.District,
+        //        LanguageTypeId = userDTO.LanguageTypeId,
+        //        CreatedOn = DateTime.UtcNow,
+        //        UserTypeId = userDTO.UserTypeId, // Default to 2 if not provided
+        //        IsActive = true
+        //    };
+
+
+        //    // Add the new user to the database
+        //    await _dbContext.Users.AddAsync(user);
+
+        //    // Check if the new user has provided a referral code
+        //    if (!string.IsNullOrEmpty(userDTO.ReferCode))
+        //    {
+        //        // Find the user associated with the provided referral code
+        //        var referringUser = await _dbContext.Users
+        //            .FirstOrDefaultAsync(u => u.UserReferCode == userDTO.ReferCode);
+
+        //        if (referringUser != null)
+        //        {
+        //            // Increment the referral count for the referring user
+        //            referringUser.ReferCodeCount++;
+
+        //            // Check if the referral count reaches 30
+        //            if (referringUser.ReferCodeCount >= 30)
+        //            {
+        //                // Upgrade referring user's account to Premium
+        //                referringUser.IsPremiumUser = true;
+
+        //                // Set PremiumStartDate only if it doesn't exist
+        //                if (!referringUser.PremiumStartDate.HasValue)
+        //                {
+        //                    referringUser.PremiumStartDate = DateTime.UtcNow;
+        //                }
+
+        //                // Update PremiumExpiryDate
+        //                if (referringUser.PremiumExpiryDate.HasValue && referringUser.PremiumExpiryDate.Value > DateTime.UtcNow)
+        //                {
+        //                    // If PremiumExpiryDate exists and is in the future, extend it by 365 days
+        //                    referringUser.PremiumExpiryDate = referringUser.PremiumExpiryDate.Value.AddDays(365);
+        //                }
+        //                else
+        //                {
+        //                    // If PremiumExpiryDate does not exist or is in the past, set it from the current date
+        //                    referringUser.PremiumExpiryDate = DateTime.UtcNow.AddDays(365);
+        //                }
+
+        //                // Reset the referral count to zero
+        //                referringUser.ReferCodeCount = 0;
+        //            }
+
+
+        //            // Update the referring user in the database
+        //            _dbContext.Users.Update(referringUser);
+        //        }
+        //    }
+
+        //    // Save all changes to the database
+        //    await _dbContext.SaveChangesAsync();
+
+        //    // Return the newly created user
+        //    return user;
+        //} 
+        #endregion
         public async Task<User> AddUserAsync(UserDTO userDTO)
         {
+            // Map Role to UserTypeId directly within the logic
+            if (!string.IsNullOrEmpty(userDTO.Role))
+            {
+                if (userDTO.Role.Equals("Owner", StringComparison.OrdinalIgnoreCase))
+                {
+                    userDTO.UserTypeId = 1; // Set UserTypeId for "Owner"
+                }
+                else if (userDTO.Role.Equals("Driver", StringComparison.OrdinalIgnoreCase))
+                {
+                    userDTO.UserTypeId = 2; // Set UserTypeId for "Driver"
+                }
+                else
+                {
+                    userDTO.Role = "Driver"; // Default Role
+                    userDTO.UserTypeId = 2;  // Default UserTypeId
+                }
+            }
+            else if (userDTO.UserTypeId != 0) // If Role is null but UserTypeId is passed
+            {
+                if (userDTO.UserTypeId == 1)
+                {
+                    userDTO.Role = "Owner"; // Set Role for UserTypeId = 1
+                }
+                else if (userDTO.UserTypeId == 2)
+                {
+                    userDTO.Role = "Driver"; // Set Role for UserTypeId = 2
+                }
+                else
+                {
+                    userDTO.Role = "Driver"; // Default Role
+                    userDTO.UserTypeId = 2;  // Default UserTypeId
+                }
+            }
+            else // If neither Role nor UserTypeId is provided
+            {
+                userDTO.Role = "Driver"; // Default Role
+                userDTO.UserTypeId = 2;  // Default UserTypeId
+            }
+
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             // Generate a unique referral code for the new user
             var userReferCode = GenerateReferCode();
             var user = new User
             {
                 UserID = Guid.NewGuid(),
-                FirstName = userDTO.FirstName,
-                LastName = userDTO.LastName,
+                FirstName = textInfo.ToTitleCase(userDTO.FirstName.ToLower()),
+                LastName = userDTO.LastName != null ? textInfo.ToTitleCase(userDTO.LastName.ToLower()) : "",
                 MobileNumber = userDTO.MobileNumber,
                 mPIN = BCrypt.Net.BCrypt.HashPassword(userDTO.mPIN),
-                ReferCode = userDTO.ReferCode,
+                ReferCode = userDTO.ReferCode?.ToUpper(),
                 ReferCodeCount = 0,
                 PremiumStartDate = null,
                 PremiumExpiryDate = null,
@@ -69,14 +234,29 @@ namespace VehicleKhatabook.Repositories.Repositories
                 IsPremiumUser = userDTO.IsPremiumUser,
                 State = userDTO.State,
                 District = userDTO.District,
-                LanguageTypeId = userDTO.languageTypeId,
+                LanguageTypeId = userDTO.LanguageTypeId,
                 CreatedOn = DateTime.UtcNow,
-                UserTypeId = userDTO.UserTypeId,
+                UserTypeId = userDTO.UserTypeId, // Default to 2 if not provided
                 IsActive = true
             };
 
             // Add the new user to the database
             await _dbContext.Users.AddAsync(user);
+
+            // If DeviceInfo is provided, map and save it
+            if (userDTO.DeviceInfo != null)
+            {
+                var deviceInfo = new DeviceInfo
+                {
+                    UserID = user.UserID,  // Link to the User
+                    DeviceModel = userDTO.DeviceInfo.DeviceModel,
+                    DeviceNumber = userDTO.DeviceInfo.DeviceNumber,
+                    Location = userDTO.DeviceInfo.Location,
+                    OS = userDTO.DeviceInfo.OS,
+                    AppVersion = userDTO.DeviceInfo.AppVersion
+                };
+                await _dbContext.DeviceInfos.AddAsync(deviceInfo);
+            }
 
             // Check if the new user has provided a referral code
             if (!string.IsNullOrEmpty(userDTO.ReferCode))
@@ -117,7 +297,6 @@ namespace VehicleKhatabook.Repositories.Repositories
                         // Reset the referral count to zero
                         referringUser.ReferCodeCount = 0;
                     }
-
 
                     // Update the referring user in the database
                     _dbContext.Users.Update(referringUser);
@@ -193,12 +372,12 @@ namespace VehicleKhatabook.Repositories.Repositories
                 LastName = user.LastName,
                 MobileNumber = user.MobileNumber,
                 mPIN = user.mPIN,
-                ReferCode = user.ReferCode,
+                ReferCode = user.ReferCode?.ToUpper(),
                 Role = user.Role,
                 IsPremiumUser = user.IsPremiumUser,
                 State = user.State,
                 District = user.District,
-                languageTypeId = user.LanguageTypeId,
+                LanguageTypeId = user.LanguageTypeId,
                 IsActive = user.IsActive
             });
         }
@@ -218,7 +397,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     Mpin = user.mPIN,
                     //Email = user.Email,
                     RoleId = user.UserTypeId,
-                    RoleName = user.Role,
+                    RoleName = user.Role?.ToUpper(),
                     IsPremiumUser = user.IsPremiumUser,
                     PremiumExpiryDate = user.PremiumExpiryDate,
                     PremiumStartDate = user.PremiumStartDate,

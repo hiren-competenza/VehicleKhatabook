@@ -560,21 +560,10 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExpenseCategories_Name",
-                table: "ExpenseCategories",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_FuelTrackings_UserId",
                 table: "FuelTrackings",
                 column: "UserId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_IncomeCategories_Name",
-                table: "IncomeCategories",
-                column: "Name",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserID",

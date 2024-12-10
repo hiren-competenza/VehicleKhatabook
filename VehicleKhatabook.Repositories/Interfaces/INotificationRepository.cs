@@ -6,5 +6,8 @@ namespace VehicleKhatabook.Repositories.Interfaces
     {
         Task<IEnumerable<Notification>> GetAllNotificationsAsync(Guid userId);
         Task<Notification> MarkNotificationAsReadAsync(Guid notificationId);
+        Task AddNotificationsAsync(IEnumerable<Notification> notifications);
+        Task DeleteAllNotificationsAsync();
+        Task DeleteAllNotificationsForUserAsync(Guid userId);
     }
 }

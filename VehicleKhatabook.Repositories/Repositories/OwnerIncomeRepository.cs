@@ -50,6 +50,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Where(e => e.DriverOwnerId == driverOwnerUserId && e.Date >= fromDate && e.Date <= toDate)
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user)
+                .OrderByDescending(i => i.Date)
                 .ToListAsync();
             return result;
         }
@@ -60,6 +61,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Where(e => e.DriverOwnerId == driverOwnerUserId)
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user)
+                .OrderByDescending(i => i.Date)
                 .ToListAsync();
             return result;
         }
@@ -70,6 +72,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Where(e => e.DriverOwnerUser.UserID == userId)
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user)
+                .OrderByDescending(i => i.Date)
                 .ToListAsync();
             return result;
         }
@@ -79,6 +82,20 @@ namespace VehicleKhatabook.Repositories.Repositories
             var income = await _context.OwnerKhataCredits.FindAsync(id);
             return income != null ? ApiResponse<OwnerKhataCredit>.SuccessResponse(income, "Income details retrieved successfully.") : ApiResponse<OwnerKhataCredit>.FailureResponse("Income not found");
 
+        }
+
+        public async Task<bool> AccountSettlementIncomeAsync(Guid driverOwnerUserId, Guid userId)
+        {
+            var dataToDelete = _context.OwnerKhataCredits.Where(debit => debit.DriverOwnerId == driverOwnerUserId && debit.DriverOwnerUser.UserID == userId);
+            // Remove all records that match the condition
+            if (!dataToDelete.Any())
+            {
+                return false; // No data found to delete
+            }
+            _context.OwnerKhataCredits.RemoveRange(dataToDelete);
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

@@ -44,5 +44,9 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _ownerExpenseRepository.GetOwnerExpenseDetailsAsync(id);
         }
+        public async Task<bool> AccountSettlementExpenseAsync(Guid driverOwnerUserId, Guid userId)
+        {
+            return await _ownerExpenseRepository.AccountSettlementExpenseAsync(driverOwnerUserId, userId);
+        }
     }
 }

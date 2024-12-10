@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VehicleKhatabook.Entities.Models
 {
-    public class UserExpense : EntityBase
+    public class UserExpense : EntityBase, IHasTransactionDate
     {
         [Key]
         public int ExpenseID { get; set; }
@@ -20,5 +20,7 @@ namespace VehicleKhatabook.Entities.Models
         [ForeignKey("ExpenseCategoryID")]
         public ExpenseCategory ExpenseCategory { get; set; }
         public Vehicle Vehicle { get; set; }
+
+        DateTime IHasTransactionDate.TransactionDate => ExpenseDate;
     }
 }

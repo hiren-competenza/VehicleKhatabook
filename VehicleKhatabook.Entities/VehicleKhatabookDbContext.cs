@@ -8,6 +8,7 @@ namespace VehicleKhatabook.Entities
         public VehicleKhatabookDbContext(DbContextOptions<VehicleKhatabookDbContext> options) : base(options) { }
         public DbSet<OtpRequest> OtpRequests { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<DeviceInfo> DeviceInfos { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<IncomeCategory> IncomeCategories { get; set; }
@@ -57,7 +58,8 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<User>()
                 .HasOne(s => s.LanguageType)
                 .WithMany()
-                .HasForeignKey(s => s.LanguageTypeId);
+                .HasForeignKey(s => s.LanguageTypeId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Subscription>()
                 .HasOne(s => s.User)
@@ -120,7 +122,7 @@ namespace VehicleKhatabook.Entities
                 .HasOne(f => f.DriverOwnerUser)
                 .WithMany()
                 .HasForeignKey(f => f.DriverOwnerId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             //modelBuilder.Entity<OwnerKhataDebit>()
             //   .HasOne(f => f.DriverOwnerUser)
@@ -129,12 +131,16 @@ namespace VehicleKhatabook.Entities
             //   .OnDelete(DeleteBehavior.NoAction)
             //  .HasConstraintName("FK_OwnerKhataDebit_DriverOwner");
 
+            modelBuilder.Entity<DeviceInfo>()
+            .HasOne(d => d.User)
+            .WithMany(u => u.DeviceInfos)
+            .HasForeignKey(d => d.UserID);
 
             modelBuilder.Entity<OwnerKhataCredit>()
                .HasOne(f => f.DriverOwnerUser)
                .WithMany()
                .HasForeignKey(f => f.DriverOwnerId)
-               .OnDelete(DeleteBehavior.NoAction);
+               .OnDelete(DeleteBehavior.Cascade);
 
             //modelBuilder.Entity<OwnerKhataCredit>()
             //  .HasOne(f => f.DriverOwnerUser)

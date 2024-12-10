@@ -75,14 +75,25 @@ namespace VehicleKhatabook.Repositories.Repositories
         public async Task DeleteAsync(Guid id, Guid userId)
         {
             var entity = await _context.DriverOwnerUsers
-                .FirstOrDefaultAsync(du => du.DriverOwnerUserId == id && du.UserID == userId);
+                                .FirstOrDefaultAsync(du => du.DriverOwnerUserId == id && du.UserID == userId);
 
-            if (entity == null) return;
+            if (entity == null) return; // If the entity is not found, exit
 
-            entity.IsActive = false; // Soft delete
+            // Fetch related records
+            var creditsToDelete = _context.OwnerKhataCredits
+                .Where(credit => credit.DriverOwnerId == id);
+            var debitsToDelete = _context.OwnerKhataDebits
+                .Where(debit => debit.DriverOwnerId == id);
+
+            // Remove related records
+            _context.OwnerKhataCredits.RemoveRange(creditsToDelete);
+            _context.OwnerKhataDebits.RemoveRange(debitsToDelete);
+
+            //Remove the DriverOwnerUser entity itself
+            _context.DriverOwnerUsers.Remove(entity);
+
+            // Save changes to persist deletions
             await _context.SaveChangesAsync();
         }
     }
-
-
 }

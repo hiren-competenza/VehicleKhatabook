@@ -43,5 +43,7 @@ namespace VehicleKhatabook.Entities.Models
         public int? LanguageTypeId { get; set; }
 
         public bool? IsActive { get; set; }
+
+        public ICollection<DeviceInfo>? DeviceInfos { get; set; }
     }
 }

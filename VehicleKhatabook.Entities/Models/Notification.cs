@@ -13,7 +13,8 @@ namespace VehicleKhatabook.Entities.Models
 
         [MaxLength(255)]
         public string? Message { get; set; }
-
+        [MaxLength(50)]
+        public string? NotificationType { get; set; }
         public DateTime? NotificationDate { get; set; }
         public bool? IsRead { get; set; }
 

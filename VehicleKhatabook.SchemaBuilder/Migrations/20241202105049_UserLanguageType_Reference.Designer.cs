@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VehicleKhatabook.Entities;
 
@@ -11,9 +12,11 @@ using VehicleKhatabook.Entities;
 namespace VehicleKhatabook.SchemaBuilder.Migrations
 {
     [DbContext(typeof(VehicleKhatabookDbContext))]
-    partial class VehicleKhatabookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241202105049_UserLanguageType_Reference")]
+    partial class UserLanguageType_Reference
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,43 +24,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("DeviceInfo", b =>
-                {
-                    b.Property<Guid>("DeviceInfoID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AppVersion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeviceModel")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("DeviceNumber")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Location")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("OS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RegisteredOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("DeviceInfoID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("DeviceInfos");
-                });
 
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.AdminUser", b =>
                 {
@@ -555,10 +521,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<DateTime?>("NotificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NotificationType")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
 
@@ -620,7 +582,7 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("DriverOwnerId")
@@ -645,7 +607,7 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("DriverOwnerId")
@@ -1032,17 +994,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.ToTable("Vehicles");
                 });
 
-            modelBuilder.Entity("DeviceInfo", b =>
-                {
-                    b.HasOne("VehicleKhatabook.Entities.Models.User", "User")
-                        .WithMany("DeviceInfos")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("VehicleKhatabook.Entities.Models.AdminUser", b =>
                 {
                     b.HasOne("VehicleKhatabook.Entities.Models.AdminUser", "CreatedByAdmin")
@@ -1201,11 +1152,6 @@ namespace VehicleKhatabook.SchemaBuilder.Migrations
                     b.Navigation("User");
 
                     b.Navigation("VehicleType");
-                });
-
-            modelBuilder.Entity("VehicleKhatabook.Entities.Models.User", b =>
-                {
-                    b.Navigation("DeviceInfos");
                 });
 #pragma warning restore 612, 618
         }
