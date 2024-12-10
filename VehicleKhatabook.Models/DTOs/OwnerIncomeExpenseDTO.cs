@@ -19,7 +19,7 @@ namespace VehicleKhatabook.Models.DTOs
         //public string? Name { get; set; }
         //[JsonConverter(typeof(NullableStringConverter))]
         //public string? Mobile { get; set; }
-        public DateTime? Date { get; set; }
+        public DateTime Date { get; set; }
         public decimal? Amount { get; set; }
         [JsonConverter(typeof(NullableStringConverter))]
         public string? Note { get; set; }

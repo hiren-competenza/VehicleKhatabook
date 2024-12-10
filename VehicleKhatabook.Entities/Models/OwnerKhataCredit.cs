@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using VehicleKhatabook.Models.DTOs;
 
 namespace VehicleKhatabook.Entities.Models
 {
-    public class OwnerKhataCredit
+    public class OwnerKhataCredit : IHasTransactionDate
     {
         [Key]
         public Guid Id { get; set; }
@@ -11,13 +12,15 @@ namespace VehicleKhatabook.Entities.Models
         public Guid DriverOwnerId { get; set; }      
         //public string? Name { get; set; }
         //public string? Mobile { get; set; }
-        public DateTime? Date { get; set; }
+        public DateTime Date { get; set; }
         public decimal? Amount { get; set; }
         public string? Note { get; set; }
 
         //[ForeignKey("UserId")]
         //public User User { get; set; }
         public DriverOwnerUser DriverOwnerUser { get; set; }
+
+        DateTime IHasTransactionDate.TransactionDate => Date;
 
     }
 }

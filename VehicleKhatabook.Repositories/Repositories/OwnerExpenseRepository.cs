@@ -61,6 +61,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Where(e => e.DriverOwnerId == driverOwnerUserId)
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user) // Include VehicleType through Vehicle
+                .OrderByDescending(i => i.Date)
                 .ToListAsync();
             return result;
         }
@@ -71,6 +72,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Where(e => e.DriverOwnerUser.UserID == userId)
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user) // Include VehicleType through Vehicle
+                .OrderByDescending(i => i.Date)
                 .ToListAsync();
             return result;
         }
@@ -80,6 +82,20 @@ namespace VehicleKhatabook.Repositories.Repositories
             var expense = await _context.OwnerKhataDebits.FindAsync(id);
             return expense != null ? ApiResponse<OwnerKhataDebit>.SuccessResponse(expense, "Expense details retrieved successfully.") : ApiResponse<OwnerKhataDebit>.FailureResponse("Expense not found");
 
+        }
+
+        public async Task<bool> AccountSettlementExpenseAsync(Guid driverOwnerUserId, Guid userId)
+        {
+            var dataToDelete = _context.OwnerKhataDebits.Where(debit => debit.DriverOwnerId == driverOwnerUserId && debit.DriverOwnerUser.UserID == userId);
+            // Remove all records that match the condition
+            if (!dataToDelete.Any())
+            {
+                return false; // No data found to delete
+            }
+            _context.OwnerKhataDebits.RemoveRange(dataToDelete);
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

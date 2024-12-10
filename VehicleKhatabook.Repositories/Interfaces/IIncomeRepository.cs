@@ -14,5 +14,7 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId, DateTime fromDate, DateTime toDate);
         Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId);
         Task<List<UserIncome>> GetIncomebyUserAsync(Guid userId);
+        //Task<List<UserIncome>> GetIncomebyUserAsync(Guid userId, int languageTypeId);
+
     }
 }

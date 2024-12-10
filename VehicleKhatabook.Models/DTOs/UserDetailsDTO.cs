@@ -11,7 +11,7 @@ namespace VehicleKhatabook.Models.DTOs
         public int RoleId { get; set; }
         public string RoleName { get; set; }
         public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
         public string UserReferCode { get; set; }
         public int? ReferCodeCount { get; set; }
 

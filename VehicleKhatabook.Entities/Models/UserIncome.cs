@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using VehicleKhatabook.Models.DTOs;
 
 namespace VehicleKhatabook.Entities.Models
 {
-    public class UserIncome : EntityBase
+    public class UserIncome : EntityBase, IHasTransactionDate
     {
         [Key]
         public int IncomeID { get; set; }
@@ -18,5 +19,7 @@ namespace VehicleKhatabook.Entities.Models
         [ForeignKey("IncomeCategoryID")]
         public IncomeCategory IncomeCategory { get; set; }
         public Vehicle Vehicle { get; set; }
+        DateTime IHasTransactionDate.TransactionDate => IncomeDate;
+
     }
 }

@@ -51,7 +51,7 @@ namespace VehicleKhatabook.Services.Services
                 IsPremiumUser = userDTO.IsPremiumUser,
                 State = userDTO.State,
                 District = userDTO.District,
-                LanguageTypeId = userDTO.languageTypeId,
+                LanguageTypeId = userDTO.LanguageTypeId,
                 CreatedOn = DateTime.UtcNow,
                 UserTypeId = userDTO.UserTypeId,
                 PremiumExpiryDate = userDTO.PremiumExpiryDate,

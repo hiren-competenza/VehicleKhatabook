@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
@@ -10,10 +11,14 @@ namespace VehicleKhatabook.Repositories.Repositories
     public class IncomeRepository : IIncomeRepository
     {
         private readonly VehicleKhatabookDbContext _context;
+        private readonly IUserRepository _userRepository;
+        private readonly IVehicleRepository _vehicleRepository;
 
-        public IncomeRepository(VehicleKhatabookDbContext context)
+        public IncomeRepository(VehicleKhatabookDbContext context, IUserRepository userRepository, IVehicleRepository vehicleRepository)
         {
             _context = context;
+            _userRepository = userRepository;
+            _vehicleRepository = vehicleRepository;
         }
 
         public async Task<UserIncome> AddIncomeAsync(IncomeDTO incomeDTO)
@@ -97,6 +102,14 @@ namespace VehicleKhatabook.Repositories.Repositories
         //}
         public async Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId, DateTime fromDate, DateTime toDate)
         {
+            Vehicle vehicle = await _vehicleRepository.GetVehicleByVehicleIdAsync(vehicleId);
+            var user = await _userRepository.GetUserByIdAsync(vehicle.User.UserID);
+            if (user == null)
+            {
+                return new List<UserIncome>(); // Return empty list if user is not found
+            }
+
+            int languageTypeId = user.LanguageType.LanguageTypeId;
             var result = await _context.UserIncomes
                 .Where(i => i.IncomeVehicleId == vehicleId && i.IncomeDate >= fromDate && i.IncomeDate <= toDate)
                 .Include(i => i.IncomeCategory)
@@ -106,10 +119,36 @@ namespace VehicleKhatabook.Repositories.Repositories
                     .ThenInclude(v => v.User)
                 .OrderByDescending(i => i.IncomeDate)
                 .ToListAsync();
+            foreach (var userIncome in result)
+            {
+                if (userIncome.IncomeCategory != null &&
+                    !string.IsNullOrEmpty(userIncome.IncomeCategory.IncomeCategoryLanguageJson)) // Check JSON is not null or empty
+                {
+                    var languageData = JsonConvert.DeserializeObject<List<MasterDataJsonLanguageDTO>>(userIncome.IncomeCategory.IncomeCategoryLanguageJson);
+
+                    var matchedLanguage = languageData.FirstOrDefault(lang => lang.LanguageTypeId == languageTypeId);
+
+                    if (matchedLanguage != null)
+                    {
+                        userIncome.IncomeCategory.Name = matchedLanguage.TranslatedFieldValue; // Assign translated value to Name
+                    }
+
+                    // Optionally clear the JSON after processing
+                    userIncome.IncomeCategory.IncomeCategoryLanguageJson = null;
+                }
+            }
             return result;
         }
         public async Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId)
         {
+            Vehicle vehicle = await _vehicleRepository.GetVehicleByVehicleIdAsync(vehicleId);
+            var user = await _userRepository.GetUserByIdAsync(vehicle.User.UserID);
+            if (user == null)
+            {
+                return new List<UserIncome>(); // Return empty list if user is not found
+            }
+
+            int languageTypeId = user.LanguageType.LanguageTypeId;
             var result = await _context.UserIncomes
                 .Where(i => i.IncomeVehicleId == vehicleId)
                 .Include(i => i.IncomeCategory)
@@ -119,10 +158,48 @@ namespace VehicleKhatabook.Repositories.Repositories
                     .ThenInclude(v => v.User)
                 .OrderByDescending(i => i.IncomeDate)
                 .ToListAsync();
+            foreach (var userIncome in result)
+            {
+                if (userIncome.IncomeCategory != null &&
+                    !string.IsNullOrEmpty(userIncome.IncomeCategory.IncomeCategoryLanguageJson)) // Check JSON is not null or empty
+                {
+                    var languageData = JsonConvert.DeserializeObject<List<MasterDataJsonLanguageDTO>>(userIncome.IncomeCategory.IncomeCategoryLanguageJson);
+
+                    var matchedLanguage = languageData.FirstOrDefault(lang => lang.LanguageTypeId == languageTypeId);
+
+                    if (matchedLanguage != null)
+                    {
+                        userIncome.IncomeCategory.Name = matchedLanguage.TranslatedFieldValue; // Assign translated value to Name
+                    }
+
+                    // Optionally clear the JSON after processing
+                    userIncome.IncomeCategory.IncomeCategoryLanguageJson = null;
+                }
+            }
             return result;
         }
+        //public async Task<List<UserIncome>> GetIncomebyUserAsync(Guid userId)
+        //{
+        //    var result = await _context.UserIncomes
+        //        .Where(i => i.Vehicle.UserID == userId)
+        //        .Include(i => i.IncomeCategory)
+        //        .Include(e => e.Vehicle)            // Include related Vehicle details
+        //            .ThenInclude(v => v.VehicleType) // Include VehicleType through Vehicle
+        //        .Include(e => e.Vehicle)            // Include related Vehicle details
+        //            .ThenInclude(v => v.User)
+        //        .OrderByDescending(i => i.IncomeDate)
+        //        .ToListAsync();
+        //    return result;
+        //}
         public async Task<List<UserIncome>> GetIncomebyUserAsync(Guid userId)
         {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return new List<UserIncome>(); // Return empty list if user is not found
+            }
+
+            int languageTypeId = user.LanguageType.LanguageTypeId;
             var result = await _context.UserIncomes
                 .Where(i => i.Vehicle.UserID == userId)
                 .Include(i => i.IncomeCategory)
@@ -132,6 +209,26 @@ namespace VehicleKhatabook.Repositories.Repositories
                     .ThenInclude(v => v.User)
                 .OrderByDescending(i => i.IncomeDate)
                 .ToListAsync();
+
+            foreach (var userIncome in result)
+            {
+                if (userIncome.IncomeCategory != null &&
+                    !string.IsNullOrEmpty(userIncome.IncomeCategory.IncomeCategoryLanguageJson)) // Check JSON is not null or empty
+                {
+                    var languageData = JsonConvert.DeserializeObject<List<MasterDataJsonLanguageDTO>>(userIncome.IncomeCategory.IncomeCategoryLanguageJson);
+
+                    var matchedLanguage = languageData.FirstOrDefault(lang => lang.LanguageTypeId == languageTypeId);
+
+                    if (matchedLanguage != null)
+                    {
+                        userIncome.IncomeCategory.Name = matchedLanguage.TranslatedFieldValue; // Assign translated value to Name
+                    }
+
+                    // Optionally clear the JSON after processing
+                    userIncome.IncomeCategory.IncomeCategoryLanguageJson = null;
+                }
+            }
+
             return result;
         }
     }

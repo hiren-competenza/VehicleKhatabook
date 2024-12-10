@@ -290,21 +290,21 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Where(ec => ec.RoleId == userTypeId)  // Filter by RoleId
                 .ToListAsync();
 
-            foreach (var expenseCategory in result)
+            foreach (var incomeCategory in result)
             {
-                if (!string.IsNullOrEmpty(expenseCategory.IncomeCategoryLanguageJson))  // Check if the JSON is not null or empty
+                if (!string.IsNullOrEmpty(incomeCategory.IncomeCategoryLanguageJson))  // Check if the JSON is not null or empty
                 {
-                    var languageData = JsonConvert.DeserializeObject<List<MasterDataJsonLanguageDTO>>(expenseCategory.IncomeCategoryLanguageJson);
+                    var languageData = JsonConvert.DeserializeObject<List<MasterDataJsonLanguageDTO>>(incomeCategory.IncomeCategoryLanguageJson);
 
                     var matchedLanguage = languageData.FirstOrDefault(lang => lang.LanguageTypeId == languageTypeId);
 
                     if (matchedLanguage != null)
                     {
-                        expenseCategory.Name = matchedLanguage.TranslatedFieldValue;  // Assign the translated language to the Name field
+                        incomeCategory.Name = matchedLanguage.TranslatedFieldValue;  // Assign the translated language to the Name field
                     }
 
                     // Optionally, clear the JSON field after processing
-                    expenseCategory.IncomeCategoryLanguageJson = null;
+                    incomeCategory.IncomeCategoryLanguageJson = null;
                 }
             }
 

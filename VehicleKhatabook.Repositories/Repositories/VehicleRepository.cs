@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.DTOs;
@@ -16,20 +17,21 @@ namespace VehicleKhatabook.Repositories.Repositories
         }
         public async Task<Vehicle> AddVehicleAsync(VehicleDTO vehicleDTO)
         {
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             var vehicle = new Vehicle
             {
                 UserID = vehicleDTO.UserId,
                 VehicleTypeId = vehicleDTO.VehicleTypeId,
-                RegistrationNumber = vehicleDTO.RegistrationNumber,
-                NickName = vehicleDTO.NickName,
+                RegistrationNumber = vehicleDTO.RegistrationNumber?.ToUpper(),
+                NickName = vehicleDTO.NickName != null ? textInfo.ToTitleCase(vehicleDTO.NickName.ToLower()) : "",
                 InsuranceExpiry = vehicleDTO.InsuranceExpiry,
                 PollutionExpiry = vehicleDTO.PollutionExpiry,
                 FitnessExpiry = vehicleDTO.FitnessExpiry,
                 RoadTaxExpiry = vehicleDTO.RoadTaxExpiry,
                 RCPermitExpiry = vehicleDTO.RCPermitExpiry,
                 NationalPermitExpiry = vehicleDTO.NationalPermitExpiry,
-                ChassisNumber = vehicleDTO.ChassisNumber,
-                EngineNumber = vehicleDTO.EngineNumber,
+                ChassisNumber = vehicleDTO.ChassisNumber?.ToUpper(),
+                EngineNumber = vehicleDTO.EngineNumber?.ToUpper(),
             };
             vehicle.CreatedOn = DateTime.UtcNow;
             vehicle.IsActive = true;
@@ -85,19 +87,19 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 return null;
             }
-
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             //vehicleExist.UserID = vehicleDTO.UserId;
             vehicleExist.VehicleTypeId = vehicleDTO.VehicleTypeId;
-            vehicleExist.RegistrationNumber = vehicleDTO.RegistrationNumber;
-            vehicleExist.NickName = vehicleDTO.NickName;
+            vehicleExist.RegistrationNumber = vehicleDTO.RegistrationNumber?.ToUpper();
+            vehicleExist.NickName = vehicleDTO.NickName != null ? textInfo.ToTitleCase(vehicleDTO.NickName.ToLower()) : "";
             vehicleExist.InsuranceExpiry = vehicleDTO.InsuranceExpiry;
             vehicleExist.PollutionExpiry = vehicleDTO.PollutionExpiry;
             vehicleExist.FitnessExpiry = vehicleDTO.FitnessExpiry;
             vehicleExist.RoadTaxExpiry = vehicleDTO.RoadTaxExpiry;
             vehicleExist.RCPermitExpiry = vehicleDTO.RCPermitExpiry;
             vehicleExist.NationalPermitExpiry = vehicleDTO.NationalPermitExpiry;
-            vehicleExist.ChassisNumber = vehicleDTO.ChassisNumber;
-            vehicleExist.EngineNumber = vehicleDTO.EngineNumber;
+            vehicleExist.ChassisNumber = vehicleDTO.ChassisNumber?.ToUpper();
+            vehicleExist.EngineNumber = vehicleDTO.EngineNumber?.ToUpper();
             vehicleExist.IsActive = true;
 
             _dbContext.Vehicles.Update(vehicleExist);

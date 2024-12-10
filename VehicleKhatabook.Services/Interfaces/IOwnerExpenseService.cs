@@ -16,5 +16,6 @@ namespace VehicleKhatabook.Services.Interfaces
         Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate);
         Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId);
         Task<List<OwnerKhataDebit>> GetOwnerExpensebyUserAsync(Guid userId);
+        Task<bool> AccountSettlementExpenseAsync(Guid driverOwnerUserId, Guid userId);
     }
 }
