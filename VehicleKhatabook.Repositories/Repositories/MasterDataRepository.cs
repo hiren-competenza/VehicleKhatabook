@@ -255,7 +255,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             return await _context.Countries.ToListAsync();
         }
-
+        
 
         public async Task<List<ExpenseCategory>> GetExpenseCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId)
         {
@@ -436,6 +436,22 @@ namespace VehicleKhatabook.Repositories.Repositories
             {
                 return ApiResponse<ApplicationConfiguration>.FailureResponse($"An error occurred while updating the configuration: {ex.Message}");
             }
+        }
+
+        public Task<List<State>> GetStateAsync(int id)
+        {
+            return _context.State.Include(x => x.Country)
+                .Where(s => s.CountryId == id)
+                .Select(s => new State
+                {
+                    Id = s.Id,
+                    CountryId = s.CountryId,
+                    StateName = s.StateName,
+                    IsActive = s.IsActive,
+                    CreatedOn = s.CreatedOn,
+                    Country = s.Country,
+                })
+                .ToListAsync();
         }
 
     }
