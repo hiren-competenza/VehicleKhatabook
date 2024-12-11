@@ -117,5 +117,9 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _masterDataRepository.UpdateApplicationConfiguration(userId, ConfigurationDTO);
         }
+        public async Task<List<State>> GetStateAsync(int Id)
+        {
+            return await _masterDataRepository.GetStateAsync(Id);
+        }
     }
 }

@@ -27,6 +27,7 @@ namespace VehicleKhatabook.Entities
         public DbSet<OwnerKhataDebit> OwnerKhataDebits { get; set; }
         public DbSet<DriverOwnerUser> DriverOwnerUsers { get; set; }
         public DbSet<ApplicationConfiguration> ApplicationConfigurations { get; set; }
+        public DbSet<State> State { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,6 +50,7 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<OwnerKhataDebit>().HasKey(s => s.Id);
             modelBuilder.Entity<DriverOwnerUser>().HasKey(s => s.DriverOwnerUserId);
             modelBuilder.Entity<ApplicationConfiguration>().HasKey(s => s.ApplicationConfigurationId);
+            modelBuilder.Entity<State>().HasKey(s => s.Id);
             modelBuilder.Entity<AdminUser>()
                 .HasOne(s => s.CreatedByAdmin)
                 .WithMany()
