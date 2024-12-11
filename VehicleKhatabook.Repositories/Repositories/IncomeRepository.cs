@@ -31,7 +31,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 //UserID = incomeDTO.UserId,
                 IncomeDescription = incomeDTO.IncomeDescription,
                 IncomeVehicleId = incomeDTO.IncomeVehicleId,
-                //CreatedBy = incomeDTO.CreatedBy,
+                CreatedBy = 1,
                 CreatedOn = DateTime.UtcNow,
                 IsActive = true
             };
@@ -118,6 +118,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Include(e => e.Vehicle)            // Include related Vehicle details
                     .ThenInclude(v => v.User)
                 .OrderByDescending(i => i.IncomeDate)
+                .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
             foreach (var userIncome in result)
             {
@@ -157,6 +158,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Include(e => e.Vehicle)            // Include related Vehicle details
                     .ThenInclude(v => v.User)
                 .OrderByDescending(i => i.IncomeDate)
+                .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
             foreach (var userIncome in result)
             {
@@ -208,6 +210,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Include(e => e.Vehicle)            // Include related Vehicle details
                     .ThenInclude(v => v.User)
                 .OrderByDescending(i => i.IncomeDate)
+                .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
 
             foreach (var userIncome in result)

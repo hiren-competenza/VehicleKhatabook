@@ -32,6 +32,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Amount = expenseDTO.Amount,
                 Note = expenseDTO.Note,
                 DriverOwnerId = expenseDTO.DriverOwnerUserId,
+                CreatedBy = 1,
+                CreatedOn = DateTime.UtcNow
             };
             _context.OwnerKhataDebits.Add(expense);
             await _context.SaveChangesAsync();
@@ -51,6 +53,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Where(e => e.DriverOwnerId == driverOwnerUserId && e.Date >= fromDate && e.Date <= toDate)
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user) // Include VehicleType through Vehicle
+                .OrderByDescending(i => i.Date)
+                .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
             return result;
         }
@@ -62,6 +66,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user) // Include VehicleType through Vehicle
                 .OrderByDescending(i => i.Date)
+                .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
             return result;
         }
@@ -73,6 +78,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user) // Include VehicleType through Vehicle
                 .OrderByDescending(i => i.Date)
+                .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
             return result;
         }
@@ -90,7 +96,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             // Remove all records that match the condition
             if (!dataToDelete.Any())
             {
-                return false; // No data found to delete
+                return true; // No data found to delete
             }
             _context.OwnerKhataDebits.RemoveRange(dataToDelete);
             // Save changes to the database

@@ -267,7 +267,7 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.SuccessResponse(true, "Account settlement completed successfully."));
             }
             // If either operation fails
-            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to settle account. Please try again later."));
+            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to settle account.  Please try again later."));
         }
 
         internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string? transactionType, string? driverOwnerUserId, HttpContext httpContext, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService, DateTime? fromDate, DateTime? toDate)
