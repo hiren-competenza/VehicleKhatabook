@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VehicleKhatabook.Entities.Models
 {
-    public class OwnerKhataDebit : IHasTransactionDate
+    public class OwnerKhataDebit : EntityBase, IHasTransactionDate
     {
         [Key]
         public Guid Id { get; set; }

@@ -4,7 +4,7 @@ using VehicleKhatabook.Models.DTOs;
 
 namespace VehicleKhatabook.Entities.Models
 {
-    public class OwnerKhataCredit : IHasTransactionDate
+    public class OwnerKhataCredit : EntityBase, IHasTransactionDate
     {
         [Key]
         public Guid Id { get; set; }

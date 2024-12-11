@@ -31,6 +31,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Amount = incomeDTO.Amount,
                 Note = incomeDTO.Note,
                 DriverOwnerId = incomeDTO.DriverOwnerUserId,
+                CreatedBy = 1,
+                CreatedOn = DateTime.UtcNow
             };
             _context.OwnerKhataCredits.Add(income);
             await _context.SaveChangesAsync();
@@ -51,6 +53,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user)
                 .OrderByDescending(i => i.Date)
+                .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
             return result;
         }
@@ -62,6 +65,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user)
                 .OrderByDescending(i => i.Date)
+                .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
             return result;
         }
@@ -73,6 +77,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
                     .ThenInclude(v => v.user)
                 .OrderByDescending(i => i.Date)
+                .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
             return result;
         }
@@ -90,7 +95,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             // Remove all records that match the condition
             if (!dataToDelete.Any())
             {
-                return false; // No data found to delete
+                return true; // No data found to delete
             }
             _context.OwnerKhataCredits.RemoveRange(dataToDelete);
             // Save changes to the database
