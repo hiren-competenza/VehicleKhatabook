@@ -140,13 +140,37 @@ namespace VehicleKhatabook.EndPoints.User
         private async Task<IResult> SendOTPforAnonymousUser(ForgotMpinDTO dto, IAuthService authService)
         {
             var (result, otp) = await authService.SendOTPforAnonymousUser(dto.MobileNumber);
-            if (result)
+
+            if (!result)
             {
-                return Results.Ok(ApiResponse<object>.SuccessResponse(otp, $"OTP sent successfully : {otp.OtpCode}"));
+                return Results.Ok(ApiResponse<object>.FailureResponse("Failed to generate OTP. Please try again."));
             }
-            return Results.Ok(ApiResponse<object>.FailureResponse("Failed to send OTP. Please try again."));
+            string smsApiUrl = $"https://bhashsms.com/api/sendmsg.php";
+            string apiUrlWithParams = $"{smsApiUrl}?user=BehraEnterprises&pass=123456&sender=VBEHRA&phone={dto.MobileNumber}&text=Dear User Your OTP For Login to Vehicle Khatabook is {otp.OtpCode} Valid for 10 minutes - BEHRA ENTERPRISES&priority=ndnd&stype=normal";
+
+            using (HttpClient httpClient = new HttpClient())
+            {
+                try
+                {
+                    var response = await httpClient.GetAsync(apiUrlWithParams);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return Results.Ok(ApiResponse<object>.SuccessResponse(otp, $"OTP sent successfully"));
+                    }
+                    else
+                    {
+                        string responseContent = await response.Content.ReadAsStringAsync();
+                        return Results.Ok(ApiResponse<object>.FailureResponse($"Failed to send OTP via SMS. Response: {responseContent}"));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Results.Ok(ApiResponse<object>.FailureResponse($"An error occurred while sending OTP: {ex.Message}"));
+                }
+            }
         }
-        internal async Task<IResult> VerifyOtpForAnonymousUser(IAuthService authService, string mobileNumber, string otpCode, string otpRequestId)
+            internal async Task<IResult> VerifyOtpForAnonymousUser(IAuthService authService, string mobileNumber, string otpCode, string otpRequestId)
         {
             if (otpCode == "111111")
             {
