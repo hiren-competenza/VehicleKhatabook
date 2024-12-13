@@ -13,9 +13,14 @@ namespace VehicleKhatabook.Entities.Models
         public Guid ApplicationConfigurationId { get; set; } = Guid.NewGuid();
 
         // SMS Configuration
-        public string? SMSApiKey { get; set; }
-        public string? SMSApiUrl { get; set; }
-        public string? SMSSenderId { get; set; }
+        
+        public string? SmsApiUrl { get; set; }// Sms API Url
+        public string? SmsUser { get; set; }
+        public string? SmsPassword { get; set; }
+        public string? SmsSender { get; set; }
+        public string? SmsPriority { get; set; }
+        public string? SmsStype { get; set; }
+        public string? SmsText { get; set; }
 
         // Contact Information
         public string? SupportEmail { get; set; }
@@ -33,9 +38,9 @@ namespace VehicleKhatabook.Entities.Models
         public string? SubscriptionName { get; set; }
         public decimal? SubscriptionAmount { get; set; }
         public int? SubscriptionDurationDays { get; set; }
-        public bool? IsRenewable { get; set; }
-        public int? RenewalReminderDaysBefore { get; set; }
-        public int? TrialPeriodDays { get; set; }
+        public bool? SubscriptionIsRenewable { get; set; }
+        public int? SubscriptionRenewalReminderDaysBefore { get; set; }
+        public int? SubscriptionTrialPeriodDays { get; set; }
 
         // Social Media Configuration
         public string? FacebookPageUrl { get; set; }
@@ -47,7 +52,5 @@ namespace VehicleKhatabook.Entities.Models
 
         // IsActive
         public bool? IsActive { get; set; }
-
     }
-
 }

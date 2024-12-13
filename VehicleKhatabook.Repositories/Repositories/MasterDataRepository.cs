@@ -255,7 +255,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             return await _context.Countries.ToListAsync();
         }
-        
+
 
         public async Task<List<ExpenseCategory>> GetExpenseCategoriesForuserlanguageAsync(int userTypeId, int languageTypeId)
         {
@@ -347,44 +347,48 @@ namespace VehicleKhatabook.Repositories.Repositories
 
         public async Task<ApiResponse<ApplicationConfiguration>> AddApplicationConfiguration(ApplicationConfiguration configurationDTO)
         {
-            
-                var configuration = new ApplicationConfiguration
-                {
-                    SMSApiKey = configurationDTO.SMSApiKey,
-                    SMSApiUrl = configurationDTO.SMSApiUrl,
-                    SMSSenderId = configurationDTO.SMSSenderId,
-                    SupportEmail = configurationDTO.SupportEmail,
-                    SupportWhatsAppNumber = configurationDTO.SupportWhatsAppNumber,
-                    PaymentGatewayApiKey = configurationDTO.PaymentGatewayApiKey,
-                    PaymentGatewayPublicKey = configurationDTO.PaymentGatewayPublicKey,
-                    PaymentGatewayWebhookSecret = configurationDTO.PaymentGatewayWebhookSecret,
-                    PaymentGatewayCurrency = configurationDTO.PaymentGatewayCurrency,
-                    PaymentGatewayName = configurationDTO.PaymentGatewayName,
-                    PaymentGatewayStatus = configurationDTO.PaymentGatewayStatus,
-                    SubscriptionName = configurationDTO.SubscriptionName,
-                    SubscriptionAmount = configurationDTO.SubscriptionAmount,
-                    SubscriptionDurationDays = configurationDTO.SubscriptionDurationDays,
-                    IsRenewable = configurationDTO.IsRenewable,
-                    RenewalReminderDaysBefore = configurationDTO.RenewalReminderDaysBefore,
-                    TrialPeriodDays = configurationDTO.TrialPeriodDays,
-                    FacebookPageUrl = configurationDTO.FacebookPageUrl,
-                    TwitterHandle = configurationDTO.TwitterHandle,
-                    InstagramHandle = configurationDTO.InstagramHandle,
-                    LinkedInUrl = configurationDTO.LinkedInUrl,
-                    YouTubeChannelUrl = configurationDTO.YouTubeChannelUrl,
-                    PinterestUrl = configurationDTO.PinterestUrl,
-                    IsActive = configurationDTO.IsActive,
 
-                    CreatedBy = configurationDTO.CreatedBy,
-                    CreatedOn = DateTime.UtcNow
-                };
+            var configuration = new ApplicationConfiguration
+            {
+                SmsApiUrl = configurationDTO.SmsApiUrl,
+                SmsUser = configurationDTO.SmsUser,
+                SmsPassword = configurationDTO.SmsPassword,
+                SmsSender = configurationDTO.SmsSender,
+                SmsPriority = configurationDTO.SmsPriority,
+                SmsStype = configurationDTO.SmsStype,
+                SmsText = configurationDTO.SmsText,
+                SupportEmail = configurationDTO.SupportEmail,
+                SupportWhatsAppNumber = configurationDTO.SupportWhatsAppNumber,
+                PaymentGatewayApiKey = configurationDTO.PaymentGatewayApiKey,
+                PaymentGatewayPublicKey = configurationDTO.PaymentGatewayPublicKey,
+                PaymentGatewayWebhookSecret = configurationDTO.PaymentGatewayWebhookSecret,
+                PaymentGatewayCurrency = configurationDTO.PaymentGatewayCurrency,
+                PaymentGatewayName = configurationDTO.PaymentGatewayName,
+                PaymentGatewayStatus = configurationDTO.PaymentGatewayStatus,
+                SubscriptionName = configurationDTO.SubscriptionName,
+                SubscriptionAmount = configurationDTO.SubscriptionAmount,
+                SubscriptionDurationDays = configurationDTO.SubscriptionDurationDays,
+                SubscriptionIsRenewable = configurationDTO.SubscriptionIsRenewable,
+                SubscriptionRenewalReminderDaysBefore = configurationDTO.SubscriptionRenewalReminderDaysBefore,
+                SubscriptionTrialPeriodDays = configurationDTO.SubscriptionTrialPeriodDays,
+                FacebookPageUrl = configurationDTO.FacebookPageUrl,
+                TwitterHandle = configurationDTO.TwitterHandle,
+                InstagramHandle = configurationDTO.InstagramHandle,
+                LinkedInUrl = configurationDTO.LinkedInUrl,
+                YouTubeChannelUrl = configurationDTO.YouTubeChannelUrl,
+                PinterestUrl = configurationDTO.PinterestUrl,
+                IsActive = configurationDTO.IsActive,
 
-                _context.ApplicationConfigurations.Add(configuration);
-                await _context.SaveChangesAsync();
+                CreatedBy = configurationDTO.CreatedBy,
+                CreatedOn = DateTime.UtcNow
+            };
 
-                return ApiResponse<ApplicationConfiguration>.SuccessResponse(configuration, "Configuration added successfully.");
-            
-            
+            _context.ApplicationConfigurations.Add(configuration);
+            await _context.SaveChangesAsync();
+
+            return ApiResponse<ApplicationConfiguration>.SuccessResponse(configuration, "Configuration added successfully.");
+
+
         }
 
 
@@ -400,9 +404,13 @@ namespace VehicleKhatabook.Repositories.Repositories
                 }
 
                 // Update properties
-                existingConfig.SMSApiKey = configurationDTO.SMSApiKey;
-                existingConfig.SMSApiUrl = configurationDTO.SMSApiUrl;
-                existingConfig.SMSSenderId = configurationDTO.SMSSenderId;
+                existingConfig.SmsApiUrl = configurationDTO.SmsApiUrl;
+                existingConfig.SmsUser = configurationDTO.SmsUser;
+                existingConfig.SmsPassword = configurationDTO.SmsPassword;
+                existingConfig.SmsSender = configurationDTO.SmsSender;
+                existingConfig.SmsPriority = configurationDTO.SmsPriority;
+                existingConfig.SmsStype = configurationDTO.SmsStype;
+                existingConfig.SmsText = configurationDTO.SmsText;
                 existingConfig.SupportEmail = configurationDTO.SupportEmail;
                 existingConfig.SupportWhatsAppNumber = configurationDTO.SupportWhatsAppNumber;
                 existingConfig.PaymentGatewayApiKey = configurationDTO.PaymentGatewayApiKey;
@@ -414,9 +422,9 @@ namespace VehicleKhatabook.Repositories.Repositories
                 existingConfig.SubscriptionName = configurationDTO.SubscriptionName;
                 existingConfig.SubscriptionAmount = configurationDTO.SubscriptionAmount;
                 existingConfig.SubscriptionDurationDays = configurationDTO.SubscriptionDurationDays;
-                existingConfig.IsRenewable = configurationDTO.IsRenewable;
-                existingConfig.RenewalReminderDaysBefore = configurationDTO.RenewalReminderDaysBefore;
-                existingConfig.TrialPeriodDays = configurationDTO.TrialPeriodDays;
+                existingConfig.SubscriptionIsRenewable = configurationDTO.SubscriptionIsRenewable;
+                existingConfig.SubscriptionRenewalReminderDaysBefore = configurationDTO.SubscriptionRenewalReminderDaysBefore;
+                existingConfig.SubscriptionTrialPeriodDays = configurationDTO.SubscriptionTrialPeriodDays;
                 existingConfig.FacebookPageUrl = configurationDTO.FacebookPageUrl;
                 existingConfig.TwitterHandle = configurationDTO.TwitterHandle;
                 existingConfig.InstagramHandle = configurationDTO.InstagramHandle;
