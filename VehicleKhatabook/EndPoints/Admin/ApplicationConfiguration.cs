@@ -16,7 +16,7 @@ namespace VehicleKhatabook.EndPoints.Admin
         {
             var staticRoute = app.MapGroup("/api/master").WithTags("Application Configuration Management");//.RequireAuthorization("AdminPolicy");
             staticRoute.MapPost("/addApplicationConfiguration", AddApplicationConfiguration);
-            staticRoute.MapPut("/updateApplicationConfiguration/{id}", UpdateApplicationConfiguration);
+            staticRoute.MapPatch("/updateApplicationConfiguration/{id}", UpdateApplicationConfiguration);
             staticRoute.MapGet("/GetApplicationConfiguration", GetApplicationConfiguration);
         }
 
@@ -38,14 +38,29 @@ namespace VehicleKhatabook.EndPoints.Admin
             return Results.Ok(result);
         }
 
-     
+
         internal async Task<IResult> GetApplicationConfiguration(IMasterDataService masterDataService)
         {
-
             var response = await masterDataService.GetApplicationConfiguration();
+            var config = response?.FirstOrDefault();
 
-            return Results.Ok(ApiResponse<object>.SuccessResponse(response));
+            if (config == null)
+            {
+                return Results.BadRequest("No configuration found.");
+            }
+            var configuration = config.GetConfigurationFields(config)
+                .Select(field => new
+                {
+                    FieldName = field.FieldName,
+                    Label = field.Label,
+                    Value = field.Value
+                });
+            var result = configuration;
 
+            return Results.Ok(ApiResponse<object>.SuccessResponse(result));
         }
+
+
+
     }
 }

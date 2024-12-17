@@ -60,7 +60,8 @@
     "sass": "^1.77.1",
     "sass-loader": "^14.2.1",
     "styled-components": "^6.1.11",
-    "swiper": "^11.1.4"
+    "swiper": "^11.1.4",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@types/cookie": "^0.6.0",

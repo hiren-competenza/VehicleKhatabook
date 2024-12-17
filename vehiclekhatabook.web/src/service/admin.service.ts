@@ -1,6 +1,7 @@
 // AdminAPI.ts
 
-import { GET, POST, PUT, DELETE } from "./ApiMethods";
+import { patch } from "@mui/material";
+import { GET, POST, PUT, DELETE,PATCH } from "./ApiMethods";
 import { API_URL } from "./WebUrl";
 export const getAdminData = async (body:any) => {
   
@@ -23,7 +24,7 @@ export const addIncomeCategory = async (body:any) => {debugger
   return await POST(`${API_URL}/api/master/addIncomeCategory`, body);
 };
 
-export const addExpenseCategory = async (body: any) => {
+export const addExpenseCategory = async (body: any) => {debugger
   return await POST(`${API_URL}/api/master/addExpenseCategory`, body);
 };
 
@@ -41,8 +42,8 @@ export const updateVehicleType = async (body: any) => {
   return await PUT(`${API_URL}/api/master/updateVehicleType/${vehicleTypeId}`, body);
 };
 export const updateApplicationConfiguration = async (body: any) => {debugger
-  const { applicationConfigurationId } = body; 
-  return await PUT(`${API_URL}/api/master/updateApplicationConfiguration/${applicationConfigurationId}`, body);
+  const { ApplicationConfigurationId } = body; 
+  return await PATCH(`${API_URL}/api/master/updateApplicationConfiguration/${ApplicationConfigurationId}`, body);
 };
 export const updateIncomeCategory = async (body: any) => {
   const { IncomeCategoryID } = body; 

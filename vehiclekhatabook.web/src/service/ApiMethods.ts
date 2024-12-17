@@ -41,6 +41,15 @@ const PUT = async (url: string, body: any) => {
     throw error;
   }
 };
+const PATCH = async (url: string, body: any) => {
+  try {
+    const response = await apiClient.patch(url, body);  // Use PATCH method
+    return response.data;  // Return the response data if successful
+  } catch (error: any) {
+    handleApiError(error);  // Handle any errors that occur
+    throw error;  // Re-throw the error after handling
+  }
+}
 
 const DELETE = async (url: string) => {
   try {
@@ -52,4 +61,4 @@ const DELETE = async (url: string) => {
   }
 };
 
-export { GET, POST, PUT, DELETE };
+export { GET, POST, PUT, DELETE,PATCH };
