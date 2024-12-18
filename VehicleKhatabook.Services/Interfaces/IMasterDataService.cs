@@ -29,6 +29,8 @@ namespace VehicleKhatabook.Services.Interfaces
         Task<ApiResponse<ApplicationConfiguration>> AddApplicationConfiguration(ApplicationConfiguration ConfigurationDTO);
         Task<ApiResponse<ApplicationConfiguration>> UpdateApplicationConfiguration(Guid userId, ApplicationConfiguration ConfigurationDTO);
         Task<List<State>> GetStateAsync(int Id);
+        Task<List<District>> GetDistrictAsync(int Id);
+
 
     }
 }

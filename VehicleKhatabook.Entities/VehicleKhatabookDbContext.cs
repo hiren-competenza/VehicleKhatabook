@@ -28,6 +28,7 @@ namespace VehicleKhatabook.Entities
         public DbSet<DriverOwnerUser> DriverOwnerUsers { get; set; }
         public DbSet<ApplicationConfiguration> ApplicationConfigurations { get; set; }
         public DbSet<State> State { get; set; }
+        public DbSet<District> District { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

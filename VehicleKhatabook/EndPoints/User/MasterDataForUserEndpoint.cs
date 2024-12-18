@@ -18,6 +18,7 @@ namespace VehicleKhatabook.EndPoints.User
             var userRoute = app.MapGroup("api/user/master").WithTags("Master Data for Users");//.RequireAuthorization("OwnerOrDriverPolicy");
             userRoute.MapGet("/getExpenseIncomeCategoriesById", GetExpenseIncomeCategoriesAsync).RequireAuthorization("OwnerOrDriverPolicy");
             userRoute.MapGet("/getAllCountry", GetCountryAsync);
+            userRoute.MapGet("/getDistrict", GetDistrictAsync);
             userRoute.MapGet("/getState", GetStateAsync);
             userRoute.MapGet("/GetAllLanguageTypes", GetAllLanguageTypes);
             userRoute.MapGet("/vehicletypes", GetVehicleTypesAsync).RequireAuthorization("OwnerOrDriverPolicy");
@@ -144,7 +145,7 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.FailureResponse("User Not Found"));
             }
         }
-        internal async Task<IResult> GetStateAsync(int Id , IMasterDataService masterDataService)
+        internal async Task<IResult> GetStateAsync(int Id, IMasterDataService masterDataService)
         {
             var state = await masterDataService.GetStateAsync(Id);
             if (state.Count == 0)
@@ -152,6 +153,15 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.FailureResponse("not found state list"));
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(state));
+        }
+        internal async Task<IResult> GetDistrictAsync(int Id, IMasterDataService masterDataService)
+        {
+            var district = await masterDataService.GetDistrictAsync(Id);
+            if (district.Count == 0)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("not found district list"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(district));
         }
     }
 }

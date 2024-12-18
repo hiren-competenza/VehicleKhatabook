@@ -121,5 +121,9 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _masterDataRepository.GetStateAsync(Id);
         }
+        public async Task<List<District>> GetDistrictAsync(int Id)
+        {
+            return await _masterDataRepository.GetDistrictAsync(Id);
+        }
     }
 }
