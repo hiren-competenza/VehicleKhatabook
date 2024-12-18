@@ -461,6 +461,21 @@ namespace VehicleKhatabook.Repositories.Repositories
                 })
                 .ToListAsync();
         }
+        public Task<List<District>> GetDistrictAsync(int id)
+        {
+            return _context.District.Include(x => x.State)
+                .Where(s => s.StateId == id)
+                .Select(s => new District
+                {
+                    Id = s.Id,
+                    StateId = s.StateId,
+                    DistrictName = s.DistrictName,
+                    IsActive = s.IsActive,
+                    CreatedOn = s.CreatedOn,
+                    State = s.State,
+                })
+                .ToListAsync();
+        }
 
     }
 }
