@@ -8,6 +8,6 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<OtpRequest> GetOtpByUserIdAndCodeAsync(Guid userId, string otpCode, string otpRequestId);
         Task<OtpRequest> GetOtpByMobileAndCodeAsync(string mobileNumber, string otpCode, string otpRequestId);
         Task UpdateOtpAsync(OtpRequest otpRequest);
-        Task SendOtpAsync(string mobileNumber, string otp);
+        Task SendOtpAsync(string mobileNumber, string otp, string SmsPurpose);
     }
 }

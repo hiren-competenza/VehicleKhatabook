@@ -62,7 +62,7 @@ namespace VehicleKhatabook.Services.Services
             return await _userRepository.GetUserDetailsbyMobileAsync(mobileNumber);
         }
 
-        public async Task<(bool Success, OtpRequest Otp)> SendOTPforRegisteredUser(string mobileNumber)
+        public async Task<(bool Success, OtpRequest Otp)> SendOTPforRegisteredUser(string mobileNumber, string SmsPurpose)
         {
             var user = await _userRepository.GetUserByMobileAsync(mobileNumber);
             if (user != null)
@@ -77,7 +77,7 @@ namespace VehicleKhatabook.Services.Services
                 };
 
                 await _otpRepository.SaveOtpAsync(otpRequest);
-                await _otpRepository.SendOtpAsync(mobileNumber, otp);
+                await _otpRepository.SendOtpAsync(mobileNumber, otp , SmsPurpose);
 
                 return (true, otpRequest);
             }
@@ -85,7 +85,7 @@ namespace VehicleKhatabook.Services.Services
             return (false, new OtpRequest());
         }
 
-        public async Task<(bool Success, OtpRequest Otp)> SendOTPforAnonymousUser(string mobileNumber)
+        public async Task<(bool Success, OtpRequest Otp)> SendOTPforAnonymousUser(string mobileNumber, string SmsPurpose)
         {
 
             var otp = GenerateOTP();
@@ -97,7 +97,7 @@ namespace VehicleKhatabook.Services.Services
             };
 
             await _otpRepository.SaveOtpAsync(otpRequest);
-            await _otpRepository.SendOtpAsync(mobileNumber, otp);
+            await _otpRepository.SendOtpAsync(mobileNumber, otp, SmsPurpose);
 
             return (true, otpRequest);
         }

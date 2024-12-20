@@ -86,7 +86,7 @@ namespace VehicleKhatabook.EndPoints.User
         }
         private async Task<IResult> SendOTPforRegisteredUser(ForgotMpinDTO dto, IAuthService authService)
         {
-            var (result, otp) = await authService.SendOTPforRegisteredUser(dto.MobileNumber);
+            var (result, otp) = await authService.SendOTPforRegisteredUser(dto.MobileNumber,dto.SmsPurpose);
 
             if (!result)
             {
