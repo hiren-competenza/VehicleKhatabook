@@ -37,7 +37,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context.OtpRequests.Update(otpRequest);
             await _context.SaveChangesAsync();
         }
-        public async Task SendOtpAsync(string mobileNumber, string otp)
+        public async Task SendOtpAsync(string mobileNumber, string otp, string SmsPurpose)
         {
             // Retrieve SMS settings from the database
             var smsConfig = await _context.ApplicationConfigurations.FirstOrDefaultAsync();
@@ -46,6 +46,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 throw new InvalidOperationException("SMS configuration is not available.");
             }
             smsConfig.SmsText = smsConfig.SmsText.Replace("{otp}", otp);
+            smsConfig.SmsText = smsConfig.SmsText.Replace("Login", SmsPurpose);
             // Base URL
             var queryParams = new List<string>
              {

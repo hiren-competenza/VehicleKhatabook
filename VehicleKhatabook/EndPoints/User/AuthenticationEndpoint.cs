@@ -139,7 +139,7 @@ namespace VehicleKhatabook.EndPoints.User
         }
         private async Task<IResult> SendOTPforAnonymousUser(ForgotMpinDTO dto, IAuthService authService)
         {
-            var (result, otp) = await authService.SendOTPforAnonymousUser(dto.MobileNumber);
+            var (result, otp) = await authService.SendOTPforAnonymousUser(dto.MobileNumber, dto.SmsPurpose);
 
             if (!result)
             {
