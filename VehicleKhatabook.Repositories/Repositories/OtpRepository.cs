@@ -46,7 +46,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 throw new InvalidOperationException("SMS configuration is not available.");
             }
             smsConfig.SmsText = smsConfig.SmsText.Replace("{otp}", otp);
-            smsConfig.SmsText = smsConfig.SmsText.Replace("Login", SmsPurpose);
+            //smsConfig.SmsText = String.IsNullOrEmpty(SmsPurpose) ? smsConfig.SmsText = smsConfig.SmsText : smsConfig.SmsText.Replace("Login", SmsPurpose);
             // Base URL
             var queryParams = new List<string>
              {
