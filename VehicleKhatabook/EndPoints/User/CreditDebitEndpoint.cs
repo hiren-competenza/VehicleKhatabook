@@ -15,8 +15,10 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var expenseRoute = app.MapGroup("/api/incomeExpense").WithTags("IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy");
+            var expenseRoute = app.MapGroup("/api/incomeExpense").WithTags("IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy"); ;
             expenseRoute.MapPost("/", AddIncomeExpenseAsync);
+            expenseRoute.MapPut("/UpdateIncomeExpense", UpdateIncomeExpenseAsync);
+            expenseRoute.MapDelete("/DeleteIncomeExpenseAsync", DeleteIncomeExpenseAsync);
             expenseRoute.MapGet("/GetIncomeExpenseAsyncByUserId", GetIncomeExpenseAsyncByUserId);
         }
 
@@ -77,6 +79,93 @@ namespace VehicleKhatabook.EndPoints.User
                     return Results.Ok(ApiResponse<object>.FailureResponse("failed to add expense."));
 
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
+            }
+        }
+        internal async Task<IResult> UpdateIncomeExpenseAsync(HttpContext httpContext, int incomeExpenseId, string TransactionType, IncomeExpenseDTO incomeExpenseDTO, IIncomeService incomeService, IExpenseService expenseService)
+        {
+            var userId = incomeExpenseId;
+            if (userId <= 0)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
+            }
+
+            if (TransactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
+            {
+                // Handling income update
+                var incomeDTO = new IncomeDTO
+                {
+                    IncomeCategoryID = incomeExpenseDTO.CategoryID,
+                    IncomeAmount = incomeExpenseDTO.Amount,
+                    IncomeDate = incomeExpenseDTO.Date,
+                    IncomeDescription = incomeExpenseDTO.Description,
+                    IncomeVehicleId = incomeExpenseDTO.VehicleId,
+                    //DriverID = incomeExpenseDTO.DriverID,
+                    CreatedBy = incomeExpenseDTO.CreatedBy,
+                    ModifiedBy = incomeExpenseDTO.ModifiedBy
+                };
+
+                UserIncome result = await incomeService.UpdateIncomeAsync(incomeDTO, incomeExpenseId);
+                if (result == null)
+                {
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Failed to update income."));
+                }
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Income updated successfully."));
+            }
+            else
+            {
+                // Handling expense update
+                var expenseDTO = new ExpenseDTO
+                {
+                    ExpenseCategoryID = incomeExpenseDTO.CategoryID,
+                    ExpenseAmount = incomeExpenseDTO.Amount,
+                    ExpenseDate = incomeExpenseDTO.Date,
+                    ExpenseDescription = incomeExpenseDTO.Description,
+                    ExpenseVehicleId = incomeExpenseDTO.VehicleId,
+                    //DriverID = incomeExpenseDTO.DriverID,
+                    CreatedBy = incomeExpenseDTO.CreatedBy,
+                    ModifiedBy = incomeExpenseDTO.ModifiedBy
+                };
+
+                UserExpense result = await expenseService.UpdateExpenseAsync(expenseDTO, incomeExpenseId);
+                if (result == null)
+                {
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Failed to update expense."));
+                }
+
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense updated successfully."));
+            }
+        }
+
+        internal async Task<IResult> DeleteIncomeExpenseAsync(int incomeExpenseId, string transactionType, IIncomeService incomeService, IExpenseService expenseService)
+        {
+            if (incomeExpenseId <= 0)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid income/expense ID."));
+            }
+
+            if (transactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
+            {
+                // Delete income record
+                bool isDeleted = await incomeService.DeleteIncomeAsync(incomeExpenseId);
+                if (!isDeleted)
+                {
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Failed to delete income."));
+                }
+                return Results.Ok(ApiResponse<object>.SuccessResponse(null, "Income deleted successfully."));
+            }
+            else if (transactionType.ToLower() == TransactionTypeEnum.Debit.ToLower())
+            {
+                // Delete expense record
+                bool isDeleted = await expenseService.DeleteExpenseAsync(incomeExpenseId);
+                if (!isDeleted)
+                {
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Failed to delete expense."));
+                }
+                return Results.Ok(ApiResponse<object>.SuccessResponse(null, "Expense deleted successfully."));
+            }
+            else
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid transaction type."));
             }
         }
 

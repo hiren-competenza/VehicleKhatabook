@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
@@ -16,9 +17,11 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var expenseRoute = app.MapGroup("/api/driverOwnerIncomeExpense").WithTags("Owner IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy");
+            var expenseRoute = app.MapGroup("/api/driverOwnerIncomeExpense").WithTags("Owner IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy"); ;
             expenseRoute.MapPost("/add", AddIncomeExpenseAsync);
             expenseRoute.MapGet("/get", GetIncomeExpenseAsyncByUserId);
+            expenseRoute.MapPut("/update", UpdateIncomeExpenseAsync);
+            expenseRoute.MapDelete("/Delete", DeleteIncomeExpenseAsync);
             expenseRoute.MapPost("/settlement", AccountSettlement);
         }
 
@@ -64,6 +67,78 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense added  successful."));
             }
         }
+        internal async Task<IResult> UpdateIncomeExpenseAsync(Guid userId, string TransactionType, OwnerIncomeExpenseDTO ownerIncomeExpenseDTO, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService)
+        {
+            if (userId == Guid.Empty)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User ID is required."));
+            }
+
+            var ownerDTO = new OwnerIncomeExpenseDTO
+            {
+                Date = ownerIncomeExpenseDTO.Date,
+                Amount = ownerIncomeExpenseDTO.Amount,
+                Note = ownerIncomeExpenseDTO.Note,
+                DriverOwnerUserId = ownerIncomeExpenseDTO.DriverOwnerUserId,
+            };
+
+            if (TransactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
+            {
+                OwnerKhataCredit result = await ownerIncomeService.UpdateOwnerIncomeAsync(userId, ownerDTO);
+                if (result == null)
+                {
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Failed to update income."));
+                }
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Income updated successfully."));
+            }
+            else
+            {
+                OwnerKhataDebit result = await ownerExpenseService.UpdateOwnerExpenseAsync(userId, ownerDTO);
+                if (result == null)
+                {
+                    return Results.Ok(ApiResponse<object>.FailureResponse("Failed to update expense."));
+                }
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result, "Expense updated successfully."));
+            }
+        }
+
+
+        internal async Task<IResult> DeleteIncomeExpenseAsync(
+     [FromQuery] Guid userId,
+     [FromQuery] string TransactionType,
+     [FromServices] IOwnerIncomeService ownerIncomeService,
+     [FromServices] IOwnerExpenseService ownerExpenseService)
+        {
+            if (userId == Guid.Empty)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("User ID is required."));
+            }
+
+            if (string.IsNullOrEmpty(TransactionType))
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Transaction type is required."));
+            }
+
+            if (TransactionType.Equals(TransactionTypeEnum.Credit, StringComparison.OrdinalIgnoreCase))
+            {
+                var result = await ownerIncomeService.DeleteOwnerIncomeAsync(userId);
+                return result
+                    ? Results.Ok(ApiResponse<object>.SuccessResponse(null, "Income deleted successfully."))
+                    : Results.Ok(ApiResponse<object>.FailureResponse("Failed to delete income."));
+            }
+            else if (TransactionType.Equals(TransactionTypeEnum.Debit, StringComparison.OrdinalIgnoreCase))
+            {
+                var result = await ownerExpenseService.DeleteOwnerExpenseAsync(userId);
+                return result
+                    ? Results.Ok(ApiResponse<object>.SuccessResponse(null, "Expense deleted successfully."))
+                    : Results.Ok(ApiResponse<object>.FailureResponse("Failed to delete expense."));
+            }
+            else
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Invalid transaction type."));
+            }
+        }
+
         #region Working code with all parameter compulsory
         //internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string transactionType, string driverOwnerUserId, HttpContext httpContext, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService, DateTime? fromDate, DateTime? toDate)
         //{
@@ -272,6 +347,7 @@ namespace VehicleKhatabook.EndPoints.User
 
         internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string? transactionType, string? driverOwnerUserId, HttpContext httpContext, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService, DateTime? fromDate, DateTime? toDate)
         {
+
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {

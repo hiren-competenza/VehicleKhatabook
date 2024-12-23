@@ -2,6 +2,7 @@
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
+using VehicleKhatabook.Repositories.Repositories;
 using VehicleKhatabook.Services.Interfaces;
 
 namespace VehicleKhatabook.Services.Services
@@ -24,15 +25,14 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _expenseRepository.GetExpenseDetailsAsync(id);
         }
-
-        public async Task<ApiResponse<UserExpense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO)
+        public async Task<UserExpense> UpdateExpenseAsync(ExpenseDTO expenseDTO, int id)
         {
-            return await _expenseRepository.UpdateExpenseAsync(id, expenseDTO);
+            return await _expenseRepository.UpdateExpenseAsync(expenseDTO, id);
         }
 
-        public async Task<ApiResponse<bool>> DeleteExpenseAsync(int id)
+        public async Task<bool> DeleteExpenseAsync(int incomeExpenseId)
         {
-            return await _expenseRepository.DeleteExpenseAsync(id);
+            return await _expenseRepository.DeleteExpenseAsync(incomeExpenseId);
         }
 
         public async Task<ApiResponse<List<UserExpense>>> GetAllExpensesAsync()
@@ -50,6 +50,6 @@ namespace VehicleKhatabook.Services.Services
         public async Task<List<UserExpense>> GetExpensebyUserAsync(Guid userId)
         {
             return await _expenseRepository.GetExpensebyUserAsync(userId);
-        }
+        }       
     }
 }
