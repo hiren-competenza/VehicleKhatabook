@@ -4,5 +4,6 @@
     {
         public static string Credit = "Credit";
         public static string Debit = "Debit";
+        public static string Both = "Both";
     }
 }

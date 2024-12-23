@@ -15,7 +15,7 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var expenseRoute = app.MapGroup("/api/incomeExpense").WithTags("IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy"); ;
+            var expenseRoute = app.MapGroup("/api/incomeExpense").WithTags("IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy");
             expenseRoute.MapPost("/", AddIncomeExpenseAsync);
             expenseRoute.MapPut("/UpdateIncomeExpense", UpdateIncomeExpenseAsync);
             expenseRoute.MapDelete("/DeleteIncomeExpenseAsync", DeleteIncomeExpenseAsync);
@@ -180,7 +180,7 @@ namespace VehicleKhatabook.EndPoints.User
             // Fetch data based on vehicleId and transactionType
             if (string.IsNullOrEmpty(vehicleId))
             {
-                if (string.IsNullOrEmpty(transactionType))
+                if (string.IsNullOrEmpty(transactionType) || transactionType.Equals(TransactionTypeEnum.Both.ToLower(), StringComparison.OrdinalIgnoreCase))
                 {
                     var incomeResult = await incomeService.GetIncomebyUserAsync(Guid.Parse(userId));
                     var expenseResult = await expenseService.GetExpensebyUserAsync(Guid.Parse(userId));
@@ -227,7 +227,7 @@ namespace VehicleKhatabook.EndPoints.User
                 return Results.Ok(ApiResponse<object>.FailureResponse("Invalid transaction type."));
             }
 
-            if (string.IsNullOrEmpty(transactionType))
+            if (string.IsNullOrEmpty(transactionType) || transactionType.Equals(TransactionTypeEnum.Both.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
                 var incomeResult = await incomeService.GetIncomeAsync(Guid.Parse(vehicleId));
                 var expenseResult = await expenseService.GetExpenseAsync(Guid.Parse(vehicleId));
