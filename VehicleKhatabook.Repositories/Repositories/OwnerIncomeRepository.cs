@@ -102,5 +102,42 @@ namespace VehicleKhatabook.Repositories.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<OwnerKhataCredit> UpdateOwnerIncomeAsync(Guid userId, OwnerIncomeExpenseDTO incomeDTO)
+        {
+            var income = await _context.OwnerKhataCredits
+                .FirstOrDefaultAsync(i => i.Id == userId);
+
+            if (income == null)
+            {
+                throw new KeyNotFoundException("Income record not found.");
+            }
+            income.Amount = incomeDTO.Amount;
+            income.Note = incomeDTO.Note;
+
+            _context.OwnerKhataCredits.Update(income);
+            await _context.SaveChangesAsync();
+            if (income.DriverOwnerUser != null)
+            {
+                await _context.Entry(income.DriverOwnerUser).Reference(v => v.user).LoadAsync();
+            }
+            return income;
+        }
+
+        public async Task<bool> DeleteOwnerIncomeAsync(Guid userId)
+        {
+            var income = await _context.OwnerKhataCredits
+                .FirstOrDefaultAsync(i => i.Id == userId);
+
+            if (income == null)
+            {
+                return false; 
+            }
+            _context.OwnerKhataCredits.Remove(income);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
     }
 }

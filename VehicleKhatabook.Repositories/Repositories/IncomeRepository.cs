@@ -234,5 +234,40 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             return result;
         }
+
+        public async Task<UserIncome> UpdateIncomeAsync(IncomeDTO incomeDTO, int incomeExpenseId)
+        {
+            var income = await _context.UserIncomes
+                .FirstOrDefaultAsync(i => i.IncomeID == incomeExpenseId);
+
+            if (income == null)
+            {
+                throw new KeyNotFoundException("Income record not found.");
+            }
+
+            income.IncomeAmount = incomeDTO.IncomeAmount;
+            income.LastModifiedOn = DateTime.UtcNow;
+            income.IncomeDescription = incomeDTO.IncomeDescription;
+
+            _context.UserIncomes.Update(income);
+            await _context.SaveChangesAsync();
+
+            return income;
+        }
+
+        public async Task<bool> DeleteIncomeAsync(int incomeExpenseId)
+        {
+            var income = await _context.UserIncomes.FindAsync(incomeExpenseId);
+            if (income == null)
+            {
+                return false; 
+            }
+
+            _context.UserIncomes.Remove(income);
+            await _context.SaveChangesAsync();
+
+            return true; 
+        }
+
     }
 }

@@ -26,15 +26,15 @@ namespace VehicleKhatabook.Services.Services
             return await _incomeRepository.GetIncomeDetailsAsync(id);
         }
 
-        //public async Task<ApiResponse<Income>> UpdateIncomeAsync(int id, IncomeDTO incomeDTO)
-        //{
-        //    return await _incomeRepository.UpdateIncomeAsync(id, incomeDTO);
-        //}
+        public async Task<UserIncome> UpdateIncomeAsync(IncomeDTO incomeDTO, int incomeExpenseId)
+        {
+            return await _incomeRepository.UpdateIncomeAsync(incomeDTO, incomeExpenseId);
+        }
 
-        //public async Task<ApiResponse<bool>> DeleteIncomeAsync(int id)
-        //{
-        //    return await _incomeRepository.DeleteIncomeAsync(id);
-        //}
+        public async Task<bool> DeleteIncomeAsync(int incomeExpenseId)
+        {
+            return await _incomeRepository.DeleteIncomeAsync(incomeExpenseId);
+        }
 
         //public async Task<ApiResponse<List<Income>>> GetAllIncomesAsync()
         //{
@@ -52,6 +52,6 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _incomeRepository.GetIncomebyUserAsync(userId);
         }
-
+        
     }
 }

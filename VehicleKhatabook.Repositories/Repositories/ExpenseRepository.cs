@@ -52,40 +52,39 @@ namespace VehicleKhatabook.Repositories.Repositories
             return expense != null ? ApiResponse<UserExpense>.SuccessResponse(expense, "Expense details retrieved successfully.") : ApiResponse<UserExpense>.FailureResponse("Expense not found");
         }
 
-        public async Task<ApiResponse<UserExpense>> UpdateExpenseAsync(int id, ExpenseDTO expenseDTO)
+        public async Task<UserExpense> UpdateExpenseAsync(ExpenseDTO expenseDTO, int id)
         {
-            var expense = await _context.UserExpenses.FindAsync(id);
+            var expense = await _context.UserExpenses
+                            .FirstOrDefaultAsync(i => i.ExpenseID == id);
+
             if (expense == null)
             {
-                return ApiResponse<UserExpense>.FailureResponse($"Unable to update/expense for for id{id} Not Found");
-            }
-
+                throw new KeyNotFoundException("Income record not found.");
+            }           
             expense.ExpenseAmount = expenseDTO.ExpenseAmount;
-            expense.ExpenseCategoryID = expenseDTO.ExpenseCategoryID;
-            expense.ExpenseDate = expenseDTO.ExpenseDate;
             expense.ExpenseDescription = expenseDTO.ExpenseDescription;
-            expense.ExpenseVehicleId = expenseDTO.ExpenseVehicleId;
-            //expense.ModifiedBy = expenseDTO.ModifiedBy;
             expense.LastModifiedOn = DateTime.UtcNow;
 
             _context.UserExpenses.Update(expense);
             await _context.SaveChangesAsync();
-            return ApiResponse<UserExpense>.SuccessResponse(expense, "Update Successfull");
+
+            return expense;
         }
 
-        public async Task<ApiResponse<bool>> DeleteExpenseAsync(int id)
-        {
-            var expense = await _context.UserExpenses.FindAsync(id);
-            if (expense == null)
-            {
-                return ApiResponse<bool>.FailureResponse("Expense not found");
-            }
 
-            _context.UserExpenses.Remove(expense);
-            await _context.SaveChangesAsync();
-            return ApiResponse<bool>.SuccessResponse(true, "Delete successfully");
-        }
+        //public async Task<ApiResponse<bool>> DeleteExpenseAsync(int id)
+        //{
+        //    var expense = await _context.UserExpenses.FindAsync(id);
+        //    if (expense == null)
+        //    {
+        //        return ApiResponse<bool>.FailureResponse("Expense not found");
+        //    }
 
+        //    _context.UserExpenses.Remove(expense);
+        //    await _context.SaveChangesAsync();
+        //    return ApiResponse<bool>.SuccessResponse(true, "Delete successfully");
+        //}
+       
         public async Task<ApiResponse<List<UserExpense>>> GetAllExpensesAsync()
         {
             var expenses = await _context.UserExpenses.ToListAsync();
@@ -235,8 +234,20 @@ namespace VehicleKhatabook.Repositories.Repositories
             }
 
             return result;
+        }    
+        public async Task<bool> DeleteExpenseAsync(int incomeExpenseId)
+        {
+            // Retrieve the income record
+            var expense = await _context.UserExpenses.FindAsync(incomeExpenseId);
+            if (expense == null)
+            {
+                return false; // Return false if the income record doesn't exist
+            }
+
+            _context.UserExpenses.Remove(expense);
+            await _context.SaveChangesAsync();
+
+            return true; // Return true if the income record was successfully deleted
         }
-
-
     }
 }
