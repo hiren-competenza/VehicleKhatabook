@@ -17,7 +17,7 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var expenseRoute = app.MapGroup("/api/driverOwnerIncomeExpense").WithTags("Owner IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy"); ;
+            var expenseRoute = app.MapGroup("/api/driverOwnerIncomeExpense").WithTags("Owner IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy");
             expenseRoute.MapPost("/add", AddIncomeExpenseAsync);
             expenseRoute.MapGet("/get", GetIncomeExpenseAsyncByUserId);
             expenseRoute.MapPut("/update", UpdateIncomeExpenseAsync);
@@ -357,7 +357,7 @@ namespace VehicleKhatabook.EndPoints.User
             if (string.IsNullOrEmpty(driverOwnerUserId))
             {
                 // Handle scenario when DriverOwnerId is not provided
-                if (string.IsNullOrEmpty(transactionType))
+                if (string.IsNullOrEmpty(transactionType) || transactionType.Equals(TransactionTypeEnum.Both.ToLower(), StringComparison.OrdinalIgnoreCase))
                 {
                     // Fetch both income and expense records for the user
                     var incomeResult = await ownerIncomeService.GetOwnerIncomebyUserAsync(Guid.Parse(userId));
@@ -408,7 +408,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
 
             // Logic when DriverOwnerId is provided
-            if (string.IsNullOrEmpty(transactionType))
+            if (string.IsNullOrEmpty(transactionType) || transactionType.Equals(TransactionTypeEnum.Both.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
                 var incomeResult = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId));
                 var expenseResult = await ownerExpenseService.GetOwnerExpenseAsync(Guid.Parse(driverOwnerUserId));
@@ -427,7 +427,7 @@ namespace VehicleKhatabook.EndPoints.User
                     Expense = filteredExpense
                 }));
             }
-
+            
             if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
                 var incomeResult = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId));
