@@ -17,7 +17,7 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var expenseRoute = app.MapGroup("/api/driverOwnerIncomeExpense").WithTags("Owner IncomeExpense Management");
+            var expenseRoute = app.MapGroup("/api/driverOwnerIncomeExpense").WithTags("Owner IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy"); ;
             expenseRoute.MapPost("/add", AddIncomeExpenseAsync);
             expenseRoute.MapGet("/get", GetIncomeExpenseAsyncByUserId);
             expenseRoute.MapPut("/update", UpdateIncomeExpenseAsync);
@@ -348,7 +348,7 @@ namespace VehicleKhatabook.EndPoints.User
         internal async Task<IResult> GetIncomeExpenseAsyncByUserId(string? transactionType, string? driverOwnerUserId, HttpContext httpContext, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService, DateTime? fromDate, DateTime? toDate)
         {
 
-            var userId = driverOwnerUserId;
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
