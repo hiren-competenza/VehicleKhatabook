@@ -47,7 +47,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             return expense;
         }
 
-        public async Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
+        public async Task<List<OwnerIncomeExpenseDTO>> GetOwnerExpenseAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
         {
             var result = await _context.OwnerKhataDebits
                 .Where(e => e.DriverOwnerId == driverOwnerUserId && e.Date >= fromDate && e.Date <= toDate)
@@ -56,10 +56,10 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .OrderByDescending(i => i.Date)
                 .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
-            return result;
+            return result.Select(MapToDTO).ToList();
         }
 
-        public async Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId)
+        public async Task<List<OwnerIncomeExpenseDTO>> GetOwnerExpenseAsync(Guid driverOwnerUserId)
         {
             var result = await _context.OwnerKhataDebits
                 .Where(e => e.DriverOwnerId == driverOwnerUserId)
@@ -68,10 +68,10 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .OrderByDescending(i => i.Date)
                 .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
-            return result;
+            return result.Select(MapToDTO).ToList();
         }
 
-        public async Task<List<OwnerKhataDebit>> GetOwnerExpensebyUserAsync(Guid userId)
+        public async Task<List<OwnerIncomeExpenseDTO>> GetOwnerExpensebyUserAsync(Guid userId)
         {
             var result = await _context.OwnerKhataDebits
                 .Where(e => e.DriverOwnerUser.UserID == userId)
@@ -80,9 +80,19 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .OrderByDescending(i => i.Date)
                 .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
-            return result;
+            return result.Select(MapToDTO).ToList();
         }
-
+        private OwnerIncomeExpenseDTO MapToDTO(OwnerKhataDebit ownerKhataDebit)
+        {
+            return new OwnerIncomeExpenseDTO
+            {
+                Amount = ownerKhataDebit.Amount,
+                Date = ownerKhataDebit.Date,
+                Note = ownerKhataDebit.Note,
+                DriverOwnerUserId = ownerKhataDebit.DriverOwnerId,
+                TransactionType = "Debit"
+            };
+        }
         public async Task<ApiResponse<OwnerKhataDebit>> GetOwnerExpenseDetailsAsync(Guid id)
         {
             var expense = await _context.OwnerKhataDebits.FindAsync(id);

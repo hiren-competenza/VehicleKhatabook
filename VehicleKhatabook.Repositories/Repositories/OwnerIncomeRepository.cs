@@ -46,7 +46,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             return income;
         }
 
-        public async Task<List<OwnerKhataCredit>> GetOwnerIncomeAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
+        public async Task<List<OwnerIncomeExpenseDTO>> GetOwnerIncomeAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
         {
             var result = await _context.OwnerKhataCredits
                 .Where(e => e.DriverOwnerId == driverOwnerUserId && e.Date >= fromDate && e.Date <= toDate)
@@ -55,10 +55,10 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .OrderByDescending(i => i.Date)
                 .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
-            return result;
+            return result.Select(MapToDTO).ToList();
         }
 
-        public async Task<List<OwnerKhataCredit>> GetOwnerIncomeAsync(Guid driverOwnerUserId)
+        public async Task<List<OwnerIncomeExpenseDTO>> GetOwnerIncomeAsync(Guid driverOwnerUserId)
         {
             var result = await _context.OwnerKhataCredits
                 .Where(e => e.DriverOwnerId == driverOwnerUserId)
@@ -67,19 +67,31 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .OrderByDescending(i => i.Date)
                 .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
-            return result;
+            return result.Select(MapToDTO).ToList();
         }
 
-        public async Task<List<OwnerKhataCredit>> GetOwnerIncomebyUserAsync(Guid userId)
+        //public async Task<List<OwnerIncomeExpenseDTO)>> GetOwnerIncomebyUserAsync(Guid userId)
+        //{
+        //    var result = await _context.OwnerKhataCredits
+        //        .Where(e => e.DriverOwnerUser.UserID == userId)
+        //        .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
+        //            .ThenInclude(v => v.user)
+        //        .OrderByDescending(i => i.Date)
+        //        .ThenByDescending(i => i.CreatedOn)
+        //        .ToListAsync();
+        //    return MapToDTO(result);
+        //}
+        public async Task<List<OwnerIncomeExpenseDTO>> GetOwnerIncomebyUserAsync(Guid userId)
         {
             var result = await _context.OwnerKhataCredits
                 .Where(e => e.DriverOwnerUser.UserID == userId)
-                .Include(e => e.DriverOwnerUser)            // Include related Vehicle details
+                .Include(e => e.DriverOwnerUser) // Include related Vehicle details
                     .ThenInclude(v => v.user)
                 .OrderByDescending(i => i.Date)
                 .ThenByDescending(i => i.CreatedOn)
                 .ToListAsync();
-            return result;
+
+            return result.Select(MapToDTO).ToList();
         }
 
         public async Task<ApiResponse<OwnerKhataCredit>> GetOwnerIncomeDetailsAsync(Guid id)
@@ -131,12 +143,23 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             if (income == null)
             {
-                return false; 
+                return false;
             }
             _context.OwnerKhataCredits.Remove(income);
             await _context.SaveChangesAsync();
 
             return true;
+        }
+         private OwnerIncomeExpenseDTO MapToDTO(OwnerKhataCredit ownerKhataCredit)
+        {
+            return new OwnerIncomeExpenseDTO
+            {
+                Amount = ownerKhataCredit.Amount,
+                Date = ownerKhataCredit.Date,
+                Note = ownerKhataCredit.Note,
+                DriverOwnerUserId   = ownerKhataCredit.DriverOwnerId,
+                TransactionType = "credit"
+            };
         }
 
     }

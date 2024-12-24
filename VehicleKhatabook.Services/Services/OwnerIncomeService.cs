@@ -24,17 +24,17 @@ namespace VehicleKhatabook.Services.Services
             return await _ownerIncomeRepository.AddOwnerIncomeAsync(IncomeDTO);
         }
 
-        public async Task<List<OwnerKhataCredit>> GetOwnerIncomeAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
+        public async Task<List<OwnerIncomeExpenseDTO>> GetOwnerIncomeAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate)
         {
             return await _ownerIncomeRepository.GetOwnerIncomeAsync(driverOwnerUserId, fromDate, toDate);
         }
 
-        public async Task<List<OwnerKhataCredit>> GetOwnerIncomeAsync(Guid driverOwnerUserId)
+        public async Task<List<OwnerIncomeExpenseDTO>> GetOwnerIncomeAsync(Guid driverOwnerUserId)
         {
             return await _ownerIncomeRepository.GetOwnerIncomeAsync(driverOwnerUserId);
         }
 
-        public async Task<List<OwnerKhataCredit>> GetOwnerIncomebyUserAsync(Guid userId)
+        public async Task<List<OwnerIncomeExpenseDTO>> GetOwnerIncomebyUserAsync(Guid userId)
         {
             return await _ownerIncomeRepository.GetOwnerIncomebyUserAsync(userId);
         }
