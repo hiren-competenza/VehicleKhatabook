@@ -365,17 +365,15 @@ namespace VehicleKhatabook.EndPoints.User
 
                     var filteredIncome = FilterByDate(incomeResult, fromDate, toDate);
                     var filteredExpense = FilterByDate(expenseResult, fromDate, toDate);
+                    var combinedResults = filteredIncome.Cast<object>().Concat(filteredExpense.Cast<object>()).ToList();
 
                     if (!filteredIncome.Any() && !filteredExpense.Any())
                     {
                         return Results.Ok(ApiResponse<object>.FailureResponse("No income or expense records found."));
                     }
 
-                    return Results.Ok(ApiResponse<object>.SuccessResponse(new
-                    {
-                        Income = filteredIncome,
-                        Expense = filteredExpense
-                    }));
+                    return Results.Ok(ApiResponse<object>.SuccessResponse(combinedResults));
+
                 }
                 else if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
                 {
@@ -415,19 +413,17 @@ namespace VehicleKhatabook.EndPoints.User
 
                 var filteredIncome = FilterByDate(incomeResult, fromDate, toDate);
                 var filteredExpense = FilterByDate(expenseResult, fromDate, toDate);
+                var combinedResults = filteredIncome.Cast<object>().Concat(filteredExpense.Cast<object>()).ToList();
 
                 if (!filteredIncome.Any() && !filteredExpense.Any())
                 {
                     return Results.Ok(ApiResponse<object>.FailureResponse("No income or expense records found."));
                 }
 
-                return Results.Ok(ApiResponse<object>.SuccessResponse(new
-                {
-                    Income = filteredIncome,
-                    Expense = filteredExpense
-                }));
+                return Results.Ok(ApiResponse<object>.SuccessResponse(combinedResults));
+
             }
-            
+
             if (transactionType.Equals(TransactionTypeEnum.Credit.ToLower(), StringComparison.OrdinalIgnoreCase))
             {
                 var incomeResult = await ownerIncomeService.GetOwnerIncomeAsync(Guid.Parse(driverOwnerUserId));
@@ -459,19 +455,22 @@ namespace VehicleKhatabook.EndPoints.User
         }
 
         // Updated FilterByDate Method
-        private IEnumerable<T> FilterByDate<T>(IEnumerable<T> records, DateTime? fromDate, DateTime? toDate) where T : IHasTransactionDate
+        private IEnumerable<OwnerIncomeExpenseDTO> FilterByDate(IEnumerable<OwnerIncomeExpenseDTO> records, DateTime? fromDate, DateTime? toDate)
         {
             if (records == null)
             {
-                return Enumerable.Empty<T>();
+                return Enumerable.Empty<OwnerIncomeExpenseDTO>();
             }
 
             if (fromDate.HasValue && toDate.HasValue)
             {
-                return records.Where(r => r.TransactionDate >= fromDate.Value && r.TransactionDate <= toDate.Value);
+                return records.Where(r => r.TransactionDate.HasValue &&
+                                           r.TransactionDate.Value >= fromDate.Value &&
+                                           r.TransactionDate.Value <= toDate.Value);
             }
 
             return records;
         }
+
     }
 }

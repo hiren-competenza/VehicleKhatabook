@@ -13,9 +13,9 @@ namespace VehicleKhatabook.Services.Interfaces
     {
         Task<OwnerKhataDebit> AddOwnerExpenseAsync(OwnerIncomeExpenseDTO expenseDTO);
         Task<ApiResponse<OwnerKhataDebit>> GetOwnerExpenseDetailsAsync(Guid id);
-        Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate);
-        Task<List<OwnerKhataDebit>> GetOwnerExpenseAsync(Guid driverOwnerUserId);
-        Task<List<OwnerKhataDebit>> GetOwnerExpensebyUserAsync(Guid userId);
+        Task<List<OwnerIncomeExpenseDTO>> GetOwnerExpenseAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate);
+        Task<List<OwnerIncomeExpenseDTO>> GetOwnerExpenseAsync(Guid driverOwnerUserId);
+        Task<List<OwnerIncomeExpenseDTO>> GetOwnerExpensebyUserAsync(Guid userId);
         Task<bool> AccountSettlementExpenseAsync(Guid driverOwnerUserId, Guid userId);
         Task<OwnerKhataDebit> UpdateOwnerExpenseAsync(Guid userId, OwnerIncomeExpenseDTO ownerDTO);
         Task<bool> DeleteOwnerExpenseAsync(Guid userId);
