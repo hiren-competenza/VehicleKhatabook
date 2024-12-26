@@ -13,9 +13,9 @@ namespace VehicleKhatabook.Repositories.Interfaces
     {
         Task<OwnerKhataCredit> AddOwnerIncomeAsync(OwnerIncomeExpenseDTO incomeDTO);
         Task<ApiResponse<OwnerKhataCredit>> GetOwnerIncomeDetailsAsync(Guid id);
-        Task<List<OwnerKhataCredit>> GetOwnerIncomeAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate);
-        Task<List<OwnerKhataCredit>> GetOwnerIncomeAsync(Guid driverOwnerUserId);
-        Task<List<OwnerKhataCredit>> GetOwnerIncomebyUserAsync(Guid userId);
+        Task<List<OwnerIncomeExpenseDTO>> GetOwnerIncomeAsync(Guid driverOwnerUserId, DateTime fromDate, DateTime toDate);
+        Task<List<OwnerIncomeExpenseDTO>> GetOwnerIncomeAsync(Guid driverOwnerUserId);
+        Task<List<OwnerIncomeExpenseDTO>> GetOwnerIncomebyUserAsync(Guid userId);
         Task<bool> AccountSettlementIncomeAsync(Guid driverOwnerUserId, Guid userId);
         Task<OwnerKhataCredit> UpdateOwnerIncomeAsync(Guid userId, OwnerIncomeExpenseDTO incomeDTO);
         Task<bool> DeleteOwnerIncomeAsync(Guid userId);

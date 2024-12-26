@@ -10,19 +10,20 @@ using VehicleKhatabook.Models.Common;
 
 namespace VehicleKhatabook.Models.DTOs
 {
-    public class OwnerIncomeExpenseDTO
+    public interface IHasTransactionDates
+    {
+        DateTime? TransactionDate { get; set; }
+    }
+
+    public class OwnerIncomeExpenseDTO : IHasTransactionDates
     {
         public Guid? Id { get; set; }
-        //public Guid UserId { get; set; }
         public Guid DriverOwnerUserId { get; set; }
-        //[JsonConverter(typeof(NullableStringConverter))]
-        //public string? Name { get; set; }
-        //[JsonConverter(typeof(NullableStringConverter))]
-        //public string? Mobile { get; set; }
         public DateTime Date { get; set; }
+        public string TransactionType { get; set; } = "";
         public decimal? Amount { get; set; }
-        [JsonConverter(typeof(NullableStringConverter))]
         public string? Note { get; set; }
-
+        public DateTime? TransactionDate { get; set; }
     }
+
 }
