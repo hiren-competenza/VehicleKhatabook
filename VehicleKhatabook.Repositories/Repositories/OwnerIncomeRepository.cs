@@ -154,11 +154,13 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             return new OwnerIncomeExpenseDTO
             {
+                Id = ownerKhataCredit.Id,
                 Amount = ownerKhataCredit.Amount,
                 Date = ownerKhataCredit.Date,
                 Note = ownerKhataCredit.Note,
                 DriverOwnerUserId   = ownerKhataCredit.DriverOwnerId,
-                TransactionType = "credit"
+                TransactionType = "credit",
+                TransactionDate = ownerKhataCredit.Date
             };
         }
 
