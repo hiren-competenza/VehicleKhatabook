@@ -413,7 +413,7 @@ namespace VehicleKhatabook.EndPoints.User
 
                 var filteredIncome = FilterByDate(incomeResult, fromDate, toDate);
                 var filteredExpense = FilterByDate(expenseResult, fromDate, toDate);
-                var combinedResults = filteredIncome.Cast<object>().Concat(filteredExpense.Cast<object>()).ToList();
+                var combinedResults = filteredIncome.Cast<object>().Concat(filteredExpense.Cast<object>()).OrderByDescending(item => ((dynamic)item).TransactionDate).ToList();
 
                 if (!filteredIncome.Any() && !filteredExpense.Any())
                 {

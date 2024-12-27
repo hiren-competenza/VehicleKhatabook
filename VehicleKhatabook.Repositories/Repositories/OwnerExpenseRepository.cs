@@ -86,11 +86,13 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             return new OwnerIncomeExpenseDTO
             {
+                Id = ownerKhataDebit.Id,
                 Amount = ownerKhataDebit.Amount,
                 Date = ownerKhataDebit.Date,
                 Note = ownerKhataDebit.Note,
                 DriverOwnerUserId = ownerKhataDebit.DriverOwnerId,
-                TransactionType = "Debit"
+                TransactionType = "Debit",
+                TransactionDate = ownerKhataDebit.Date
             };
         }
         public async Task<ApiResponse<OwnerKhataDebit>> GetOwnerExpenseDetailsAsync(Guid id)
