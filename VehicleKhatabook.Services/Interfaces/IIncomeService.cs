@@ -13,8 +13,8 @@ namespace VehicleKhatabook.Services.Interfaces
         //Task<ApiResponse<bool>> DeleteIncomeAsync(int id);
         //Task<ApiResponse<List<Income>>> GetAllIncomesAsync();
         Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId, DateTime fromDate, DateTime toDate);
-        Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId);
-        Task<List<UserIncome>> GetIncomebyUserAsync(Guid userId);
+        Task<List<IncomeExpenseDTO>> GetIncomeAsync(Guid vehicleId);
+        Task<List<IncomeExpenseDTO>> GetIncomebyUserAsync(Guid userId);
         Task<bool> DeleteIncomeAsync(int incomeExpenseId);
     }
 }

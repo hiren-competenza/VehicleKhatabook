@@ -91,7 +91,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Date = ownerKhataDebit.Date,
                 Note = ownerKhataDebit.Note,
                 DriverOwnerUserId = ownerKhataDebit.DriverOwnerId,
-                TransactionType = "Debit",
+                TransactionType = "debit",
                 TransactionDate = ownerKhataDebit.Date
             };
         }

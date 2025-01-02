@@ -2,6 +2,7 @@
 
 namespace VehicleKhatabook.Models.DTOs
 {
+
     public class IncomeCategoryDTO
     {
         //public int? IncomeCategoryID { get; set; }
@@ -14,6 +15,6 @@ namespace VehicleKhatabook.Models.DTOs
         public bool? IsActive { get; set; }
 
         public int CreatedBy { get; set; }
-        public int ModifiedBy { get; set; }
+        public int? ModifiedBy { get; set; }
     }
 }
