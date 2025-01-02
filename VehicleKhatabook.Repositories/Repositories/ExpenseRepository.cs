@@ -60,7 +60,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             if (expense == null)
             {
                 throw new KeyNotFoundException("Income record not found.");
-            }           
+            }
             expense.ExpenseAmount = expenseDTO.ExpenseAmount;
             expense.ExpenseDescription = expenseDTO.ExpenseDescription;
             expense.LastModifiedOn = DateTime.UtcNow;
@@ -84,7 +84,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         //    await _context.SaveChangesAsync();
         //    return ApiResponse<bool>.SuccessResponse(true, "Delete successfully");
         //}
-       
+
         public async Task<ApiResponse<List<UserExpense>>> GetAllExpensesAsync()
         {
             var expenses = await _context.UserExpenses.ToListAsync();
@@ -134,13 +134,13 @@ namespace VehicleKhatabook.Repositories.Repositories
             return result;
         }
 
-        public async Task<List<UserExpense>> GetExpenseAsync(Guid vehicleId)
+        public async Task<List<IncomeExpenseDTO>> GetExpenseAsync(Guid vehicleId)
         {
             Vehicle vehicle = await _vehicleRepository.GetVehicleByVehicleIdAsync(vehicleId);
             var user = await _userRepository.GetUserByIdAsync(vehicle.User.UserID);
             if (user == null)
             {
-                return new List<UserExpense>(); // Return empty list if user is not found
+                return new List<IncomeExpenseDTO>(); // Return empty list if user is not found
             }
             int languageTypeId = user.LanguageType.LanguageTypeId;
 
@@ -174,7 +174,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 }
             }
 
-            return result;
+            return result.Select(MapToDTO).ToList();
         }
         //public async Task<List<UserExpense>> GetExpensebyUserAsync(Guid userId)
         //{
@@ -191,13 +191,13 @@ namespace VehicleKhatabook.Repositories.Repositories
         //    return result;
         //}
 
-        public async Task<List<UserExpense>> GetExpensebyUserAsync(Guid userId)
+        public async Task<List<IncomeExpenseDTO>> GetExpensebyUserAsync(Guid userId)
         {
             // Fetch the user's language type ID
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
-                return new List<UserExpense>(); // Return empty list if user is not found
+                return new List<IncomeExpenseDTO>(); // Return empty list if user is not found
             }
 
             int languageTypeId = user.LanguageType.LanguageTypeId;
@@ -233,8 +233,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 }
             }
 
-            return result;
-        }    
+            return result.Select(MapToDTO).ToList();
+        }
         public async Task<bool> DeleteExpenseAsync(int incomeExpenseId)
         {
             // Retrieve the income record
@@ -248,6 +248,50 @@ namespace VehicleKhatabook.Repositories.Repositories
             await _context.SaveChangesAsync();
 
             return true; // Return true if the income record was successfully deleted
+        }
+        private IncomeExpenseDTO MapToDTO(UserExpense userIncome)
+        {
+            return new IncomeExpenseDTO
+            {
+                CategoryID = userIncome.ExpenseCategoryID,
+                Amount = userIncome.ExpenseAmount,
+                Date = userIncome.ExpenseDate,
+                Description = userIncome.ExpenseDescription ?? string.Empty,
+                UserId = userIncome.Vehicle?.UserID ?? Guid.Empty,
+                VehicleId = userIncome.ExpenseVehicleId,
+                CreatedBy = userIncome.CreatedBy,
+                ModifiedBy = userIncome.ModifiedBy,
+                TransactionType = "debit", // Assuming this is for income transactions
+                TransactionDate = userIncome.ExpenseDate,
+                IncomeCategory = userIncome.ExpenseCategory != null
+                    ? new IncomeCategoryDTO
+                    {
+                        IncomeCategoryID = userIncome.ExpenseCategory.ExpenseCategoryID,
+                        Name = userIncome.ExpenseCategory.Name,
+                        RoleId = userIncome.ExpenseCategory.RoleId,
+                        Description = userIncome.ExpenseCategory.Description,
+                        IsActive = userIncome.ExpenseCategory.IsActive,
+                    }
+                    : null, // If IncomeCategory is null, set DTO to null
+                Vehicle = userIncome.Vehicle != null
+                    ? new VehicleDTO
+                    {
+                        UserId = userIncome.Vehicle.UserID,
+                        VehicleTypeId = userIncome.Vehicle.VehicleTypeId,
+                        RegistrationNumber = userIncome.Vehicle.RegistrationNumber,
+                        NickName = userIncome.Vehicle.NickName,
+                        InsuranceExpiry = userIncome.Vehicle.InsuranceExpiry,
+                        PollutionExpiry = userIncome.Vehicle.PollutionExpiry,
+                        FitnessExpiry = userIncome.Vehicle.FitnessExpiry,
+                        RoadTaxExpiry = userIncome.Vehicle.RoadTaxExpiry,
+                        RCPermitExpiry = userIncome.Vehicle.RCPermitExpiry,
+                        NationalPermitExpiry = userIncome.Vehicle.NationalPermitExpiry,
+                        ChassisNumber = userIncome.Vehicle.ChassisNumber,
+                        EngineNumber = userIncome.Vehicle.EngineNumber,
+                        IsActive = userIncome.Vehicle.IsActive
+                    }
+                    : null // If Vehicle is null, set DTO to null
+            };
         }
     }
 }

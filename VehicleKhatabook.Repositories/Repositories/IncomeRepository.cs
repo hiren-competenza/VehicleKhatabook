@@ -140,13 +140,13 @@ namespace VehicleKhatabook.Repositories.Repositories
             }
             return result;
         }
-        public async Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId)
+        public async Task<List<IncomeExpenseDTO>> GetIncomeAsync(Guid vehicleId)
         {
             Vehicle vehicle = await _vehicleRepository.GetVehicleByVehicleIdAsync(vehicleId);
             var user = await _userRepository.GetUserByIdAsync(vehicle.User.UserID);
             if (user == null)
             {
-                return new List<UserIncome>(); // Return empty list if user is not found
+                return new List<IncomeExpenseDTO>(); // Return empty list if user is not found
             }
 
             int languageTypeId = user.LanguageType.LanguageTypeId;
@@ -178,7 +178,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                     userIncome.IncomeCategory.IncomeCategoryLanguageJson = null;
                 }
             }
-            return result;
+            return result.Select(MapToDTO).ToList();
         }
         //public async Task<List<UserIncome>> GetIncomebyUserAsync(Guid userId)
         //{
@@ -193,12 +193,12 @@ namespace VehicleKhatabook.Repositories.Repositories
         //        .ToListAsync();
         //    return result;
         //}
-        public async Task<List<UserIncome>> GetIncomebyUserAsync(Guid userId)
+        public async Task<List<IncomeExpenseDTO>> GetIncomebyUserAsync(Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
-                return new List<UserIncome>(); // Return empty list if user is not found
+                return new List<IncomeExpenseDTO>(); // Return empty list if user is not found
             }
 
             int languageTypeId = user.LanguageType.LanguageTypeId;
@@ -232,7 +232,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 }
             }
 
-            return result;
+            return result.Select(MapToDTO).ToList();
         }
 
         public async Task<UserIncome> UpdateIncomeAsync(IncomeDTO incomeDTO, int incomeExpenseId)
@@ -260,14 +260,58 @@ namespace VehicleKhatabook.Repositories.Repositories
             var income = await _context.UserIncomes.FindAsync(incomeExpenseId);
             if (income == null)
             {
-                return false; 
+                return false;
             }
 
             _context.UserIncomes.Remove(income);
             await _context.SaveChangesAsync();
 
-            return true; 
+            return true;
         }
 
+        private IncomeExpenseDTO MapToDTO(UserIncome userIncome)
+        {
+            return new IncomeExpenseDTO
+            {
+                CategoryID = userIncome.IncomeCategoryID,
+                Amount = userIncome.IncomeAmount,
+                Date = userIncome.IncomeDate,
+                Description = userIncome.IncomeDescription ?? string.Empty,
+                UserId = userIncome.Vehicle?.UserID ?? Guid.Empty,
+                VehicleId = userIncome.IncomeVehicleId,
+                CreatedBy = userIncome.CreatedBy,
+                ModifiedBy = userIncome.ModifiedBy,
+                TransactionType = "credit", // Assuming this is for income transactions
+                TransactionDate = userIncome.IncomeDate,
+                IncomeCategory = userIncome.IncomeCategory != null
+                    ? new IncomeCategoryDTO
+                    {
+                        IncomeCategoryID = userIncome.IncomeCategory.IncomeCategoryID,
+                        Name = userIncome.IncomeCategory.Name,
+                        RoleId = userIncome.IncomeCategory.RoleId,
+                        Description = userIncome.IncomeCategory.Description,
+                        IsActive = userIncome.IncomeCategory.IsActive,
+                    }
+                    : null, // If IncomeCategory is null, set DTO to null
+                Vehicle = userIncome.Vehicle != null
+                    ? new VehicleDTO
+                    {
+                        UserId = userIncome.Vehicle.UserID,
+                        VehicleTypeId = userIncome.Vehicle.VehicleTypeId,
+                        RegistrationNumber = userIncome.Vehicle.RegistrationNumber,
+                        NickName = userIncome.Vehicle.NickName,
+                        InsuranceExpiry = userIncome.Vehicle.InsuranceExpiry,
+                        PollutionExpiry = userIncome.Vehicle.PollutionExpiry,
+                        FitnessExpiry = userIncome.Vehicle.FitnessExpiry,
+                        RoadTaxExpiry = userIncome.Vehicle.RoadTaxExpiry,
+                        RCPermitExpiry = userIncome.Vehicle.RCPermitExpiry,
+                        NationalPermitExpiry = userIncome.Vehicle.NationalPermitExpiry,
+                        ChassisNumber = userIncome.Vehicle.ChassisNumber,
+                        EngineNumber = userIncome.Vehicle.EngineNumber,
+                        IsActive = userIncome.Vehicle.IsActive
+                    }
+                    : null // If Vehicle is null, set DTO to null
+            };
+        }
     }
 }

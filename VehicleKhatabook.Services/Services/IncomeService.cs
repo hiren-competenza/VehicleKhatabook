@@ -44,11 +44,11 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _incomeRepository.GetIncomeAsync(vehicleId, fromDate, toDate);
         }
-        public async Task<List<UserIncome>> GetIncomeAsync(Guid vehicleId)
+        public async Task<List<IncomeExpenseDTO>> GetIncomeAsync(Guid vehicleId)
         {
             return await _incomeRepository.GetIncomeAsync(vehicleId);
         }
-        public async Task<List<UserIncome>> GetIncomebyUserAsync(Guid userId)
+        public async Task<List<IncomeExpenseDTO>> GetIncomebyUserAsync(Guid userId)
         {
             return await _incomeRepository.GetIncomebyUserAsync(userId);
         }

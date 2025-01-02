@@ -8,7 +8,7 @@
         public string ExpenseDescription { get; set; }
         //public Guid UserId { get; set; }
         public Guid ExpenseVehicleId { get; set; }
-        public string CreatedBy { get; set; }
-        public string? ModifiedBy { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? ModifiedBy { get; set; }
     }
 }
