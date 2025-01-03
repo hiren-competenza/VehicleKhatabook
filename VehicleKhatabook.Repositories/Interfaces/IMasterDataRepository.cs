@@ -30,5 +30,11 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<ApiResponse<ApplicationConfiguration>> UpdateApplicationConfiguration(Guid userId, ApplicationConfiguration ConfigurationDTO);
         Task<List<State>> GetStateAsync(int id);
         Task<List<District>> GetDistrictAsync(int id);
+        Task<ApiResponse<PaymentHistory>> AddPaymentRecord(PaymentHistory paymentHistory);
+        Task<List<PaymentHistory>> GetAllPaymentRecord();
+        Task<List<PaymentHistory>> GetAllPaymentRecordByUserId(string userId);
+        //Task<ApiResponse<bool>> DeletePaymentRecordById(string id);
+
+
     }
 }

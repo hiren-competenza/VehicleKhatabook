@@ -15,7 +15,8 @@ namespace VehicleKhatabook.EndPoints.User
         {
             var notifications = app.MapGroup("/api/notifications").WithTags("Notifications & Alerts")/*.RequireAuthorization("OwnerOrDriverPolicy")*/;
 
-            notifications.MapGet("/", GetAllNotifications);
+            notifications.MapGet("/", GetAllNotificationsUserId);
+            notifications.MapGet("/GetAllNotifications", GetAllNotifications);
             notifications.MapPost("/mark-read/{id}", MarkNotificationAsRead);
             notifications.MapDelete("/deleteall", DeleteAllNotifications);
             notifications.MapDelete("/delete", DeleteAllNotificationsForCurrentUser);
@@ -27,7 +28,7 @@ namespace VehicleKhatabook.EndPoints.User
             services.AddScoped<INotificationService, NotificationService>();
         }
 
-        private async Task<IResult> GetAllNotifications(HttpContext httpContext,INotificationService notificationService)
+        private async Task<IResult> GetAllNotificationsUserId(HttpContext httpContext,INotificationService notificationService)
         {
             var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
@@ -41,7 +42,16 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<object>.SuccessResponse(notifications, "Notification"));
         }
-
+        private async Task<IResult> GetAllNotifications(HttpContext httpContext, INotificationService notificationService)
+        {
+            
+            var notifications = await notificationService.GetAllNotifications();
+            if (notifications == null)
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("No notification found"));
+            }
+            return Results.Ok(ApiResponse<object>.SuccessResponse(notifications, "Notification"));
+        }
         private async Task<IResult> MarkNotificationAsRead(Guid id, INotificationService notificationService)
         {
             var notification = await notificationService.MarkNotificationAsReadAsync(id);

@@ -125,5 +125,21 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _masterDataRepository.GetDistrictAsync(Id);
         }
+        public async Task<ApiResponse<PaymentHistory>> AddPaymentRecord(PaymentHistory paymentHistory)
+        {
+            return await _masterDataRepository.AddPaymentRecord(paymentHistory);
+        }
+        public async Task<List<PaymentHistory>> GetAllPaymentRecord()
+        {
+            return await _masterDataRepository.GetAllPaymentRecord();
+        }
+        public async Task<List<PaymentHistory>> GetAllPaymentRecordByUserId(string UserId)
+        {
+            return await _masterDataRepository.GetAllPaymentRecordByUserId(UserId);
+        }
+        //public async Task<ApiResponse<bool>> DeletePaymentRecordById(string id)
+        //{
+        //    return await _masterDataRepository.DeletePaymentRecordById(id);
+        //}
     }
 }

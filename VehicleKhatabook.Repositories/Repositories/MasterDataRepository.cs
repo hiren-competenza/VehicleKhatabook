@@ -476,6 +476,126 @@ namespace VehicleKhatabook.Repositories.Repositories
                 })
                 .ToListAsync();
         }
+        public async Task<ApiResponse<PaymentHistory>> AddPaymentRecord(PaymentHistory paymentHistory)
+        {
+
+            var payment = new PaymentHistory
+            {
+                PaymentId = Guid.NewGuid().ToString(), // Generate unique PaymentId
+                UserId = paymentHistory.UserId,
+                TransactionId = paymentHistory.TransactionId,
+                PaymentDate = paymentHistory.PaymentDate,
+                PaymentMethod = paymentHistory.PaymentMethod,
+                Amount = paymentHistory.Amount,
+                Currency = paymentHistory.Currency,
+                Status = paymentHistory.Status,
+                CardNumberLast4 = paymentHistory.CardNumberLast4,
+                CardExpiry = paymentHistory.CardExpiry,
+                BillingAddress = paymentHistory.BillingAddress,
+                PayerEmail = paymentHistory.PayerEmail,
+                PayerName = paymentHistory.PayerName,
+                ReferenceNumber = paymentHistory.ReferenceNumber,
+                CreatedOn = DateTime.UtcNow, // Set the creation date to the current UTC time
+                GatewayResponse = paymentHistory.GatewayResponse,
+                GatewayId = paymentHistory.GatewayId,
+                SubscriptionId = paymentHistory.SubscriptionId,
+                SubscriptionType = paymentHistory.SubscriptionType,
+                FailureReason = paymentHistory.FailureReason,
+                Notes = paymentHistory.Notes
+            };
+
+            // Add the payment record to the database context
+            _context.PaymentHistory.Add(payment);
+            await _context.SaveChangesAsync();
+
+            return ApiResponse<PaymentHistory>.SuccessResponse(payment, "Payment record added successfully.");
+        }
+        public async Task<List<PaymentHistory>> GetAllPaymentRecord()
+        {
+            var paymentRecords = await _context.PaymentHistory.ToListAsync();
+
+            // Transform the PaymentHistory entities into a list of PaymentHistory DTOs or a different shape if necessary
+            var paymentHistoryList = paymentRecords.Select(ph => new PaymentHistory
+            {
+                PaymentId = ph.PaymentId,
+                UserId = ph.UserId,
+                TransactionId = ph.TransactionId,
+                PaymentDate = ph.PaymentDate,
+                PaymentMethod = ph.PaymentMethod,
+                Amount = ph.Amount,
+                Currency = ph.Currency,
+                Status = ph.Status,
+                CardNumberLast4 = ph.CardNumberLast4,
+                CardExpiry = ph.CardExpiry,
+                BillingAddress = ph.BillingAddress,
+                PayerEmail = ph.PayerEmail,
+                PayerName = ph.PayerName,
+                ReferenceNumber = ph.ReferenceNumber,
+                CreatedOn = ph.CreatedOn,
+                GatewayResponse = ph.GatewayResponse,
+                GatewayId = ph.GatewayId,
+                SubscriptionId = ph.SubscriptionId,
+                SubscriptionType = ph.SubscriptionType,
+                FailureReason = ph.FailureReason,
+                Notes = ph.Notes
+            }).ToList();
+
+            return paymentHistoryList;
+        }
+
+        public async Task<List<PaymentHistory>> GetAllPaymentRecordByUserId(string userId)
+        {
+            // Fetch all payment records for the given userId asynchronously
+            var paymentRecords = await _context.PaymentHistory
+                .Where(s => s.UserId == userId) 
+                .ToListAsync(); 
+
+            var paymentHistoryList = paymentRecords.Select(ph => new PaymentHistory
+            {
+                PaymentId = ph.PaymentId,
+                UserId = ph.UserId,
+                TransactionId = ph.TransactionId,
+                PaymentDate = ph.PaymentDate,
+                PaymentMethod = ph.PaymentMethod,
+                Amount = ph.Amount,
+                Currency = ph.Currency,
+                Status = ph.Status,
+                CardNumberLast4 = ph.CardNumberLast4,
+                CardExpiry = ph.CardExpiry,
+                BillingAddress = ph.BillingAddress,
+                PayerEmail = ph.PayerEmail,
+                PayerName = ph.PayerName,
+                ReferenceNumber = ph.ReferenceNumber,
+                CreatedOn = ph.CreatedOn,
+                GatewayResponse = ph.GatewayResponse,
+                GatewayId = ph.GatewayId,
+                SubscriptionId = ph.SubscriptionId,
+                SubscriptionType = ph.SubscriptionType,
+                FailureReason = ph.FailureReason,
+                Notes = ph.Notes
+            }).ToList();
+
+            return paymentHistoryList;
+        }
+        //public async Task<ApiResponse<bool>> DeletePaymentRecordById(string id)
+        //{
+        //    // Fetch the payment record with the given PaymentId
+        //    var paymentRecord = await _context.PaymentHistory
+        //        .FirstOrDefaultAsync(s => s.PaymentId == id);
+
+        //    // Check if the record exists
+        //    if (paymentRecord == null)
+        //    {
+        //        return ApiResponse<bool>.FailureResponse("Payment record not found.");
+        //    }
+
+        //    // Delete the record from the database
+        //    _context.PaymentHistory.Remove(paymentRecord);
+        //    await _context.SaveChangesAsync();
+
+        //    // Return success response
+        //    return ApiResponse<bool>.SuccessResponse(true, "Payment record deleted successfully.");
+        //}
 
     }
 }

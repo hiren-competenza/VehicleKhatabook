@@ -26,7 +26,11 @@ namespace VehicleKhatabook.Services.Services
             var notifications = await _notificationRepository.GetAllNotificationsAsync(userId);
             return _mapper.Map<IEnumerable<Notification>>(notifications);
         }
-
+        public async Task<IEnumerable<Notification>> GetAllNotifications()
+        {
+            var notifications = await _notificationRepository.GetAllNotifications();
+            return _mapper.Map<IEnumerable<Notification>>(notifications);
+        }
         public async Task<NotificationDTO> MarkNotificationAsReadAsync(Guid notificationId)
         {
             var notification = await _notificationRepository.MarkNotificationAsReadAsync(notificationId);

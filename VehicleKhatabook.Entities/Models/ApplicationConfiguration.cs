@@ -99,6 +99,9 @@ namespace VehicleKhatabook.Entities.Models
         [Display(Name = "Pinterest URL")]
         public string? PinterestUrl { get; set; }
 
+        [Display(Name = "Ad ShowOn Page")]
+        public string? AdShowOnPage { get; set; }
+
         // IsActive
         [Display(Name = "Is Active")]
         public string? IsActive { get; set; }

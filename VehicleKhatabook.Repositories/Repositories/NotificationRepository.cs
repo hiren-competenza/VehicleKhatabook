@@ -20,6 +20,13 @@ namespace VehicleKhatabook.Repositories.Repositories
                 .Where(n => n.UserID == userId) // Filter by UserID
                 .OrderByDescending(n => n.NotificationDate) // Optional: Order notifications by date
                 .ToListAsync(); // Convert to list asynchronously
+        } 
+        public async Task<IEnumerable<Notification>> GetAllNotifications()
+
+        {
+            return await _context.Notifications
+                .OrderByDescending(n => n.NotificationDate) // Optional: Order notifications by date
+                .ToListAsync(); // Convert to list asynchronously
         }
 
 
