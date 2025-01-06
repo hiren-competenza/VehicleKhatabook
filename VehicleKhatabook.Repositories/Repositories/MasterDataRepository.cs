@@ -504,12 +504,62 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Notes = paymentHistory.Notes
             };
 
-            // Add the payment record to the database context
+            // Add the payment record to the database
             _context.PaymentHistory.Add(payment);
+
+            if (!string.IsNullOrEmpty(payment.PaymentId))
+            {
+                // Find the user associated with the payment
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserID.ToString() == payment.UserId);
+
+                if (user != null)
+                {
+                    // Determine the additional days based on the subscription type
+                    int additionalDays;
+                    if (payment.SubscriptionType == "Monthly")
+                    {
+                        additionalDays = 30;
+                    }
+                    else if (payment.SubscriptionType == "Yearly")
+                    {
+                        additionalDays = 365;
+                    }
+                    else
+                    {
+                        return ApiResponse<PaymentHistory>.FailureResponse("Invalid subscription type");
+                    }
+
+                    // Calculate the new expiry date
+                    DateTime newExpiry;
+                    if (user.IsPremiumUser == true && user.PremiumExpiryDate.HasValue && user.PremiumExpiryDate > DateTime.UtcNow)
+                    {
+                        // Add additional days to the remaining subscription
+                        newExpiry = user.PremiumExpiryDate.Value.AddDays(additionalDays);
+                    }
+                    else
+                    {
+                        // Start a new subscription
+                        newExpiry = DateTime.UtcNow.AddDays(additionalDays);
+                    }
+
+                    // Update user's subscription data
+                    user.IsPremiumUser = true;
+                    user.PremiumStartDate = DateTime.UtcNow;
+                    user.PremiumExpiryDate = newExpiry;
+
+                    // Update the user in the context
+                    _context.Users.Update(user);
+                }
+            }
+
+            // Save all changes to the database
             await _context.SaveChangesAsync();
 
-            return ApiResponse<PaymentHistory>.SuccessResponse(payment, "Payment record added successfully.");
+            // Return success response
+            return ApiResponse<PaymentHistory>.SuccessResponse(payment, "Payment record added and subscription updated successfully.");
         }
+
         public async Task<List<PaymentHistory>> GetAllPaymentRecord()
         {
             var paymentRecords = await _context.PaymentHistory.ToListAsync();
