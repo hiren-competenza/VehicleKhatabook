@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using VehicleKhatabook.Entities;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
@@ -83,13 +85,22 @@ namespace VehicleKhatabook.EndPoints.User
 
             return Results.Ok(ApiResponse<object>.SuccessResponse(userDTOResponse, "New user register successful."));
         }
-        internal async Task<IResult> Login(UserLoginDTO userLoginDTO, IAuthService authService)
+        internal async Task<IResult> Login(UserLoginDTO userLoginDTO, IAuthService authService, VehicleKhatabookDbContext dbContext)
         {
             UserDetailsDTO result = await authService.AuthenticateUser(userLoginDTO);
             if (result != null)
             {
                 string token = authService.GenerateToken(result);
 
+                var user = await dbContext.Users.FindAsync(result.UserId);
+
+                if (user != null)
+                {
+                    user.deviceType = userLoginDTO.deviceType; // Assuming 'DeviceType' is equivalent to 'DeviceInfo'
+                    user.firebaseToken = userLoginDTO.firebaseToken;
+
+                    await dbContext.SaveChangesAsync();
+                }
                 var responseData = new
                 {
                     Token = token,
@@ -100,7 +111,7 @@ namespace VehicleKhatabook.EndPoints.User
             }
             return Results.Ok(ApiResponse<UserDetailsDTO>.FailureResponse("Invalid mobile number or mPIN."));
         }
-        internal async Task<IResult> LoginwithOTP(string mobileNumber, string otpCode, string? otpRequestId, IAuthService authService)
+        internal async Task<IResult> LoginwithOTP(string mobileNumber, string otpCode, string deviceType, string firebaseToken, string? otpRequestId, IAuthService authService, VehicleKhatabookDbContext dbContext)
         {
             if (!string.IsNullOrEmpty(mobileNumber))
             {
@@ -111,7 +122,15 @@ namespace VehicleKhatabook.EndPoints.User
                     if (result != null)
                     {
                         string token = authService.GenerateToken(result);
+                        var user = await dbContext.Users.FindAsync(result.UserId);
 
+                        if (user != null)
+                        {
+                            user.deviceType = deviceType; 
+                            user.firebaseToken = firebaseToken;
+
+                            await dbContext.SaveChangesAsync();
+                        }
                         var responseData = new
                         {
                             Token = token,
