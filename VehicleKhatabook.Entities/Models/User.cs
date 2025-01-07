@@ -35,6 +35,8 @@ namespace VehicleKhatabook.Entities.Models
         public DateTime? PremiumExpiryDate { get; set; }
         public string? State { get; set; }
         public string? District { get; set; }
+        public string? deviceType { get; set; }
+        public string? firebaseToken { get; set; }
 
         //public int LanguageTypeId { get; set; } 
 
