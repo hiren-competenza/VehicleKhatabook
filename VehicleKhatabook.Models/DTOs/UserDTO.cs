@@ -29,6 +29,8 @@ namespace VehicleKhatabook.Models.DTOs
         public Guid UserId { get; set; }
         public int UserTypeId { get; set; }
         public string? Email { get; set; }
+        public string? deviceType { get; set; }
+        public string? firebaseToken { get; set; }
 
         // Change this to a single DeviceInfo instead of a list
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

@@ -173,7 +173,7 @@ namespace VehicleKhatabook.Repositories.Repositories
         //    // Return the newly created user
         //    return user;
         //} 
-        #endregion
+        #endregion 
         public async Task<User> AddUserAsync(UserDTO userDTO)
         {
             // Map Role to UserTypeId directly within the logic
@@ -378,7 +378,9 @@ namespace VehicleKhatabook.Repositories.Repositories
                 State = user.State,
                 District = user.District,
                 LanguageTypeId = user.LanguageTypeId,
-                IsActive = user.IsActive
+                IsActive = user.IsActive,
+                deviceType= user.deviceType,
+                firebaseToken= user.firebaseToken,
             });
         }
         public async Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLogin)
