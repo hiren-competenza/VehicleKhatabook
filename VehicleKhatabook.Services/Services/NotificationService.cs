@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using System.Text;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
@@ -12,24 +15,79 @@ namespace VehicleKhatabook.Services.Services
         private readonly IUserRepository _userRepository;
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IMapper _mapper;
+        private readonly FirebaseSettings _firebaseSettings;
 
-        public NotificationService(INotificationRepository notificationRepository, IUserRepository userRepository, IVehicleRepository vehicleRepository, IMapper mapper)
+        public NotificationService(
+            INotificationRepository notificationRepository,
+            IUserRepository userRepository,
+            IVehicleRepository vehicleRepository,
+            IMapper mapper,
+            IOptions<FirebaseSettings> firebaseSettings)
         {
             _notificationRepository = notificationRepository;
             _userRepository = userRepository;
             _vehicleRepository = vehicleRepository;
             _mapper = mapper;
+            _firebaseSettings = firebaseSettings.Value;
         }
+
 
         public async Task<IEnumerable<Notification>> GetAllNotificationsAsync(Guid userId)
         {
             var notifications = await _notificationRepository.GetAllNotificationsAsync(userId);
             return _mapper.Map<IEnumerable<Notification>>(notifications);
         }
-        public async Task<IEnumerable<Notification>> GetAllNotifications()
+        public async Task<IEnumerable<NotificationDTO>> GetAllNotifications()
         {
+            var users = await _userRepository.GetAllUsersAsync();
             var notifications = await _notificationRepository.GetAllNotifications();
-            return _mapper.Map<IEnumerable<Notification>>(notifications);
+
+            var result = from notification in notifications
+                         join user in users on notification.UserID equals user.UserId
+                         select new NotificationDTO
+                         {
+                             NotificationID = notification.NotificationID,
+                             NotificationType = notification.NotificationType,
+                             Message = notification.Message,
+                             UserID = user.UserId,
+                             deviceType = user.deviceType,
+                             firebaseToken = user.firebaseToken,
+                             NotificationDate = notification.NotificationDate
+                         };
+
+            return result;
+        }
+
+        public async Task<bool> SendPushNotificationToDevice(string deviceToken, string notificationType, string message)
+        {
+            try
+            {
+                using var client = new HttpClient();
+                const string firebaseUrl = "https://fcm.googleapis.com/fcm/send";
+
+                client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "key=" + _firebaseSettings.ServerKey);
+
+                var data = new
+                {
+                    to = deviceToken,
+                    notification = new
+                    {
+                        title = notificationType,
+                        body = message
+                    },
+                    priority = "high"
+                };
+
+                var jsonData = JsonConvert.SerializeObject(data);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync(firebaseUrl, content);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
         public async Task<NotificationDTO> MarkNotificationAsReadAsync(Guid notificationId)
         {
