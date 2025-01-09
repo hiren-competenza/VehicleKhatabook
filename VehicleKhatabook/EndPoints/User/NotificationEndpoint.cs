@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System.Security.Claims;
+using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Infrastructure;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Repositories.Interfaces;
@@ -26,6 +27,7 @@ namespace VehicleKhatabook.EndPoints.User
         {
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.Configure<FirebaseSettings>(configuration.GetSection("Firebase"));
         }
 
         private async Task<IResult> GetAllNotificationsUserId(HttpContext httpContext,INotificationService notificationService)
@@ -44,13 +46,20 @@ namespace VehicleKhatabook.EndPoints.User
         }
         private async Task<IResult> GetAllNotifications(HttpContext httpContext, INotificationService notificationService)
         {
-            
             var notifications = await notificationService.GetAllNotifications();
             if (notifications == null)
             {
-                return Results.Ok(ApiResponse<object>.FailureResponse("No notification found"));
+                return Results.Ok(ApiResponse<object>.FailureResponse("No notifications found"));
             }
-            return Results.Ok(ApiResponse<object>.SuccessResponse(notifications, "Notification"));
+
+            var pushNotificationResults = new List<string>();
+            foreach (var notification in notifications)
+            {
+                var isSent = await notificationService.SendPushNotificationToDevice(notification.firebaseToken, notification.NotificationType, notification.Message);
+                pushNotificationResults.Add(isSent ? "Sent" : "Failed");
+            }
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(new { notifications, pushNotificationResults }, "Notifications"));
         }
         private async Task<IResult> MarkNotificationAsRead(Guid id, INotificationService notificationService)
         {
