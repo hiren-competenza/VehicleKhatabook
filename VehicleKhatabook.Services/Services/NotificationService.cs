@@ -128,6 +128,8 @@ namespace VehicleKhatabook.Services.Services
                             NotificationDate = DateTime.UtcNow,
                             IsRead = false
                         });
+
+                        await SendPushNotificationToDevice(user.firebaseToken, "Subscription Expiry", $"Your subscription will expire on {user.PremiumExpiryDate:dd-MM-yyyy}.");
                     }
                     else if (user.PremiumExpiryDate < today)
                     {
@@ -140,6 +142,8 @@ namespace VehicleKhatabook.Services.Services
                             NotificationDate = DateTime.UtcNow,
                             IsRead = false
                         });
+
+                        await SendPushNotificationToDevice(user.firebaseToken, "Subscription Expired", $"Your subscription expired on {user.PremiumExpiryDate:dd-MM-yyyy}.");
                     }
                 }
 
@@ -155,9 +159,14 @@ namespace VehicleKhatabook.Services.Services
                         AddVehicleExpirationNotification(vehicle.RoadTaxExpiry, "RoadTaxExpiry", "road tax", vehicle, user, notifications, today);
                         AddVehicleExpirationNotification(vehicle.RCPermitExpiry, "RCPermitExpiry", "RC permit", vehicle, user, notifications, today);
                         AddVehicleExpirationNotification(vehicle.NationalPermitExpiry, "NationalPermitExpiry", "national permit", vehicle, user, notifications, today);
+
+                        foreach (var notification in notifications)
+                        {
+                            await SendPushNotificationToDevice(user.firebaseToken, notification.NotificationType, notification.Message);
+                        }
                     }
                 }
-                // Add notifications to database
+                                // Add notifications to database
                 if (notifications.Any())
                 {
                     await _notificationRepository.AddNotificationsAsync(notifications);
@@ -165,10 +174,10 @@ namespace VehicleKhatabook.Services.Services
             }
         }
 
-        /// <summary>
-        /// Helper method to handle vehicle expiration notifications.
-        /// </summary>
-        private void AddVehicleExpirationNotification(DateTime? expiryDate, string notificationType, string description, Vehicle vehicle, UserDTO user, List<Notification> notifications, DateTime today)
+    /// <summary>
+    /// Helper method to handle vehicle expiration notifications.
+    /// </summary>
+    private void AddVehicleExpirationNotification(DateTime? expiryDate, string notificationType, string description, Vehicle vehicle, UserDTO user, List<Notification> notifications, DateTime today)
         {
             if (expiryDate != null)
             {
