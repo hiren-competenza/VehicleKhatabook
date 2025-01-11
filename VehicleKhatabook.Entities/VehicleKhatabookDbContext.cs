@@ -73,6 +73,11 @@ namespace VehicleKhatabook.Entities
                 .WithMany()
                 .HasForeignKey(s => s.UserID);
 
+            modelBuilder.Entity<PaymentHistory>()
+                .HasOne(ph => ph.Subscription)
+                .WithMany(sm => sm.PaymentHistories)
+                .HasForeignKey(ph => ph.PackageId);
+
             modelBuilder.Entity<Vehicle>()
                 .HasOne(v => v.User)
                 .WithMany()
