@@ -32,7 +32,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 //UserID = expenseDTO.UserId,
                 ExpenseVehicleId = expenseDTO.ExpenseVehicleId,
                 CreatedBy = 1,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow,
+                IsActive = true
             };
 
             _context.UserExpenses.Add(expense);
