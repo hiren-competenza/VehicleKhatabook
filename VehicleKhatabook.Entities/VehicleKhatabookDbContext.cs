@@ -30,6 +30,7 @@ namespace VehicleKhatabook.Entities
         public DbSet<State> State { get; set; }
         public DbSet<District> District { get; set; }
         public DbSet<PaymentHistory> PaymentHistory { get; set; }
+        public DbSet<SubscriptionMaster> subscriptionMaster { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +55,7 @@ namespace VehicleKhatabook.Entities
             modelBuilder.Entity<ApplicationConfiguration>().HasKey(s => s.ApplicationConfigurationId);
             modelBuilder.Entity<PaymentHistory>().HasKey(s => s.PaymentId);
             modelBuilder.Entity<State>().HasKey(s => s.Id);
+            modelBuilder.Entity<SubscriptionMaster>().HasKey(s => s.SubscriptionId);
             modelBuilder.Entity<AdminUser>()
                 .HasOne(s => s.CreatedByAdmin)
                 .WithMany()

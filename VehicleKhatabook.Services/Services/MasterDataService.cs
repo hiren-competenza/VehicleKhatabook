@@ -133,6 +133,10 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _masterDataRepository.GetAllPaymentRecord();
         }
+        public async Task<List<SubscriptionMaster>> GetSubscriptionMasterAsync()
+        {
+            return await _masterDataRepository.GetSubscriptionMasterAsync();
+        }
         public async Task<List<PaymentHistory>> GetAllPaymentRecordByUserId(string UserId)
         {
             return await _masterDataRepository.GetAllPaymentRecordByUserId(UserId);
