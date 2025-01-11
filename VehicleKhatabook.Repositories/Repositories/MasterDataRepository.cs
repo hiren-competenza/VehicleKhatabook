@@ -597,8 +597,8 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             // Fetch all payment records for the given userId asynchronously
             var paymentRecords = await _context.PaymentHistory
-                .Where(s => s.UserId == userId) 
-                .ToListAsync(); 
+                .Where(s => s.UserId == userId)
+                .ToListAsync();
 
             var paymentHistoryList = paymentRecords.Select(ph => new PaymentHistory
             {
@@ -626,6 +626,10 @@ namespace VehicleKhatabook.Repositories.Repositories
             }).ToList();
 
             return paymentHistoryList;
+        }
+        public async Task<List<SubscriptionMaster>> GetSubscriptionMasterAsync()
+        {
+            return await _context.subscriptionMaster.ToListAsync();
         }
         //public async Task<ApiResponse<bool>> DeletePaymentRecordById(string id)
         //{

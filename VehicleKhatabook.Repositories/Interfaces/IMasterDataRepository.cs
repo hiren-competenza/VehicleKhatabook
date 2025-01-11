@@ -32,6 +32,7 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<List<District>> GetDistrictAsync(int id);
         Task<ApiResponse<PaymentHistory>> AddPaymentRecord(PaymentHistory paymentHistory);
         Task<List<PaymentHistory>> GetAllPaymentRecord();
+        Task<List<SubscriptionMaster>> GetSubscriptionMasterAsync();
         Task<List<PaymentHistory>> GetAllPaymentRecordByUserId(string userId);
         //Task<ApiResponse<bool>> DeletePaymentRecordById(string id);
 
