@@ -631,6 +631,29 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             return await _context.subscriptionMaster.ToListAsync();
         }
+        public async Task<ApiResponse<PaymentHistory>> AddRecordsAsync(string? transactionId, string? status, decimal? amount, int? packageId, int? validity, Guid? userId)
+        {
+            var paymentRecord = new PaymentHistory
+            {
+                PackageId = packageId,
+                Status = status,
+                TransactionId = transactionId,
+                Amount = amount,
+                Validity = validity,
+                UserId = userId?.ToString(),
+                PaymentId = Guid.NewGuid().ToString()
+            };
+
+            _context.PaymentHistory.Add(paymentRecord);
+
+            await _context.SaveChangesAsync();
+
+            return ApiResponse<PaymentHistory>.SuccessResponse(paymentRecord, "Payment record added successfully.");
+        }
+
+
+
+
         //public async Task<ApiResponse<bool>> DeletePaymentRecordById(string id)
         //{
         //    // Fetch the payment record with the given PaymentId

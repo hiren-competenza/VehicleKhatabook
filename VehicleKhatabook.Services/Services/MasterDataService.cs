@@ -129,7 +129,11 @@ namespace VehicleKhatabook.Services.Services
         {
             return await _masterDataRepository.AddPaymentRecord(paymentHistory);
         }
-        public async Task<List<PaymentHistory>> GetAllPaymentRecord()
+        public async Task<ApiResponse<PaymentHistory>> AddRecordsAsync(string? transactionId,string? status, decimal? amount, int? packageId, int? validity, Guid? userId)
+        {
+            return await _masterDataRepository.AddRecordsAsync(transactionId, status, amount, packageId, validity, userId);
+    }
+    public async Task<List<PaymentHistory>> GetAllPaymentRecord()
         {
             return await _masterDataRepository.GetAllPaymentRecord();
         }

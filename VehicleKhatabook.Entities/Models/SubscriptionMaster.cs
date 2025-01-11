@@ -26,6 +26,7 @@ namespace VehicleKhatabook.Entities.Models
 
         [Display(Name = "Subscription Trial Period (Days)")]
         public string? SubscriptionTrialPeriodDays { get; set; }
+        public ICollection<PaymentHistory>? PaymentHistories { get; set; }
 
     }
 }
