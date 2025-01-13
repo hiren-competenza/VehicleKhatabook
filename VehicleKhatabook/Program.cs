@@ -12,6 +12,8 @@ using Microsoft.OpenApi.Models;
 using VehicleKhatabook.Services.Services;
 using VehicleKhatabook.Models.Common;
 using System.Text.Json.Serialization;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 var baseDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 var configuration = new ConfigurationBuilder()
@@ -123,6 +125,11 @@ builder.Logging.AddDebug();
 var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
 XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 builder.Services.AddSingleton(LogManager.GetLogger(typeof(Program)));
+FirebaseApp.Create(new AppOptions
+{
+    Credential = GoogleCredential.FromFile(@"D:/khatabook/VehicleKhatabook/private-key.json")
+});
+
 
 var app = builder.Build();
 
