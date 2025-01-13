@@ -27,6 +27,7 @@ namespace VehicleKhatabook.EndPoints.User
         {
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IFirebaseService, FirebaseService>();
             services.Configure<FirebaseSettings>(configuration.GetSection("Firebase"));
         }
 
@@ -53,13 +54,13 @@ namespace VehicleKhatabook.EndPoints.User
             }
 
             var pushNotificationResults = new List<string>();
-            foreach (var notification in notifications)
-            {
-                var isSent = await notificationService.SendPushNotificationToDevice(notification.firebaseToken, notification.NotificationType, notification.Message);
-                pushNotificationResults.Add(isSent ? "Sent" : "Failed");
-            }
+            //foreach (var notification in notifications)
+            //{
+            //    var isSent = await notificationService.SendPushNotificationToDevice(notification.firebaseToken, notification.NotificationType, notification.Message);
+            //    pushNotificationResults.Add(isSent ? "Sent" : "Failed");
+            //}
 
-            return Results.Ok(ApiResponse<object>.SuccessResponse(new { notifications, pushNotificationResults }, "Notifications"));
+            return Results.Ok(ApiResponse<object>.SuccessResponse(new { notifications}, "Notifications"));
         }
         private async Task<IResult> MarkNotificationAsRead(Guid id, INotificationService notificationService)
         {

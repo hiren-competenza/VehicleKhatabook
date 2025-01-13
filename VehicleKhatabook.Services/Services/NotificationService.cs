@@ -11,24 +11,24 @@ namespace VehicleKhatabook.Services.Services
 {
     public class NotificationService : INotificationService
     {
+        private readonly IFirebaseService _firebaseService;
         private readonly INotificationRepository _notificationRepository;
         private readonly IUserRepository _userRepository;
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IMapper _mapper;
-        private readonly FirebaseSettings _firebaseSettings;
 
         public NotificationService(
             INotificationRepository notificationRepository,
             IUserRepository userRepository,
             IVehicleRepository vehicleRepository,
             IMapper mapper,
-            IOptions<FirebaseSettings> firebaseSettings)
+            IFirebaseService firebaseService)
         {
             _notificationRepository = notificationRepository;
             _userRepository = userRepository;
             _vehicleRepository = vehicleRepository;
             _mapper = mapper;
-            _firebaseSettings = firebaseSettings.Value;
+            _firebaseService = firebaseService;
         }
 
 
@@ -57,39 +57,7 @@ namespace VehicleKhatabook.Services.Services
 
             return result;
         }
-
-        public async Task<bool> SendPushNotificationToDevice(string deviceToken, string notificationType, string message)
-        {
-            try
-            {
-                using var client = new HttpClient();
-                const string firebaseUrl = "https://fcm.googleapis.com/fcm/send";
-
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "key=" + _firebaseSettings.ServerKey);
-
-                var data = new
-                {
-                    to = deviceToken,
-                    notification = new
-                    {
-                        title = notificationType,
-                        body = message
-                    },
-                    priority = "high"
-                };
-
-                var jsonData = JsonConvert.SerializeObject(data);
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-                var response = await client.PostAsync(firebaseUrl, content);
-                return response.IsSuccessStatusCode;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-        public async Task<NotificationDTO> MarkNotificationAsReadAsync(Guid notificationId)
+  public async Task<NotificationDTO> MarkNotificationAsReadAsync(Guid notificationId)
         {
             var notification = await _notificationRepository.MarkNotificationAsReadAsync(notificationId);
             return _mapper.Map<NotificationDTO>(notification);
@@ -129,7 +97,7 @@ namespace VehicleKhatabook.Services.Services
                             IsRead = false
                         });
 
-                        await SendPushNotificationToDevice(user.firebaseToken, "Subscription Expiry", $"Your subscription will expire on {user.PremiumExpiryDate:dd-MM-yyyy}.");
+                        await _firebaseService.SendPushNotificationToDevice(user.firebaseToken, "Subscription Expiry", $"Your subscription will expire on {user.PremiumExpiryDate:dd-MM-yyyy}.");
                     }
                     else if (user.PremiumExpiryDate < today)
                     {
@@ -143,7 +111,7 @@ namespace VehicleKhatabook.Services.Services
                             IsRead = false
                         });
 
-                        await SendPushNotificationToDevice(user.firebaseToken, "Subscription Expired", $"Your subscription expired on {user.PremiumExpiryDate:dd-MM-yyyy}.");
+                        await _firebaseService.SendPushNotificationToDevice(user.firebaseToken, "Subscription Expired", $"Your subscription expired on {user.PremiumExpiryDate:dd-MM-yyyy}.");
                     }
                 }
 
@@ -162,7 +130,7 @@ namespace VehicleKhatabook.Services.Services
 
                         foreach (var notification in notifications)
                         {
-                            await SendPushNotificationToDevice(user.firebaseToken, notification.NotificationType, notification.Message);
+                            await _firebaseService.SendPushNotificationToDevice(user.firebaseToken, notification.NotificationType, notification.Message);
                         }
                     }
                 }

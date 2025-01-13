@@ -12,6 +12,6 @@ namespace VehicleKhatabook.Services.Interfaces
         Task CheckForExpirationsAndNotifyAsync();
         Task DeleteAllNotificationsAsync();
         Task DeleteAllNotificationsForUserAsync(Guid userId);
-        Task<bool> SendPushNotificationToDevice(string firebaseToken, string? notificationType, string? message);
+        //Task<bool> SendPushNotificationToDevice(string firebaseToken, string? notificationType, string? message);
     }
 }
