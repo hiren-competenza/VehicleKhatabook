@@ -127,7 +127,7 @@ XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 builder.Services.AddSingleton(LogManager.GetLogger(typeof(Program)));
 FirebaseApp.Create(new AppOptions
 {
-    Credential = GoogleCredential.FromFile(@"D:/khatabook/VehicleKhatabook/private-key.json")
+    Credential = GoogleCredential.FromFile($"{baseDir}//private-key.json")
 });
 
 
