@@ -32,9 +32,9 @@ namespace VehicleKhatabook.EndPoints.Admin
             var result = await masterDataService.AddPaymentRecord(paymentHistory);
             if (result.status == 200)
             {
-                return Results.Ok(result);
+                return Results.Ok(ApiResponse<object>.SuccessResponse(result));
             }
-            return Results.BadRequest(result.Message);
+            return Results.Ok(ApiResponse<object>.FailureResponse("Payment not successfull. Contact to Helpline."));
         }
 
         //public async Task<IResult> UpdateLanguageType(int id, LanguageTypeDTO languageTypeDTO, ILanguageTypeService languageTypeService)
