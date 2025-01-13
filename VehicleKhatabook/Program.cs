@@ -125,10 +125,10 @@ builder.Logging.AddDebug();
 var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
 XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 builder.Services.AddSingleton(LogManager.GetLogger(typeof(Program)));
-FirebaseApp.Create(new AppOptions
-{
-    Credential = GoogleCredential.FromFile(@"D:/khatabook/VehicleKhatabook/private-key.json")
-});
+//FirebaseApp.Create(new AppOptions
+//{
+//    Credential = GoogleCredential.FromFile($"{baseDir}//private-key.json")
+//});
 
 
 var app = builder.Build();
