@@ -35,6 +35,12 @@ namespace VehicleKhatabook.Entities.Models
         [Display(Name = "SMS Text")]
         public string? SmsText { get; set; }
 
+        [Display(Name = "Credit Transaction SMS Text")]
+        public string? CreditTransactionSmsText { get; set; }
+
+        [Display(Name = "Debit Transaction SMS Text")]
+        public string? DebitTransactionSmsText { get; set; }
+
         // Contact Information
         [Display(Name = "Support Email")]
         public string? SupportEmail { get; set; }

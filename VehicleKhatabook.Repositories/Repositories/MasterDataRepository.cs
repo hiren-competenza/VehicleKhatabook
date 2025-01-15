@@ -357,6 +357,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 SmsPriority = configurationDTO.SmsPriority,
                 SmsStype = configurationDTO.SmsStype,
                 SmsText = configurationDTO.SmsText,
+                CreditTransactionSmsText = configurationDTO.CreditTransactionSmsText,
+                DebitTransactionSmsText = configurationDTO.DebitTransactionSmsText,
                 SupportEmail = configurationDTO.SupportEmail,
                 SupportWhatsAppNumber = configurationDTO.SupportWhatsAppNumber,
                 PaymentGatewayApiKey = configurationDTO.PaymentGatewayApiKey,
@@ -411,6 +413,8 @@ namespace VehicleKhatabook.Repositories.Repositories
                 existingConfig.SmsPriority = configurationDTO.SmsPriority;
                 existingConfig.SmsStype = configurationDTO.SmsStype;
                 existingConfig.SmsText = configurationDTO.SmsText;
+                existingConfig.CreditTransactionSmsText = configurationDTO.CreditTransactionSmsText;
+                existingConfig.DebitTransactionSmsText = configurationDTO.DebitTransactionSmsText;
                 existingConfig.SupportEmail = configurationDTO.SupportEmail;
                 existingConfig.SupportWhatsAppNumber = configurationDTO.SupportWhatsAppNumber;
                 existingConfig.PaymentGatewayApiKey = configurationDTO.PaymentGatewayApiKey;
