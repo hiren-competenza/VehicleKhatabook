@@ -37,7 +37,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             _context.OtpRequests.Update(otpRequest);
             await _context.SaveChangesAsync();
         }
-        public async Task SendOtpAsync(string mobileNumber, string otp, string SmsPurpose)
+        public async Task SendOtpAsync(string mobileNumber, string otp, string SmsPurpose, string app_signature)
         {
             // Retrieve SMS settings from the database
             var smsConfig = await _context.ApplicationConfigurations.FirstOrDefaultAsync();
@@ -47,6 +47,7 @@ namespace VehicleKhatabook.Repositories.Repositories
             }
             smsConfig.SmsText = smsConfig.SmsText.Replace("{otp}", otp);
             smsConfig.SmsText = String.IsNullOrEmpty(SmsPurpose) ? smsConfig.SmsText = smsConfig.SmsText : smsConfig.SmsText.Replace("Login", SmsPurpose);
+            smsConfig.SmsText = String.IsNullOrEmpty(app_signature) ? smsConfig.SmsText = smsConfig.SmsText : smsConfig.SmsText.Replace("{app_signature}", app_signature);
             // Base URL
             var queryParams = new List<string>
              {

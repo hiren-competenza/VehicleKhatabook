@@ -9,8 +9,8 @@ namespace VehicleKhatabook.Services.Interfaces
     {
         Task<UserDetailsDTO> AuthenticateUser(UserLoginDTO userLoginDTO);
         Task<UserDetailsDTO> AuthenticateUserusingOTP(string mobileNumber);
-        Task<(bool Success, OtpRequest Otp)> SendOTPforRegisteredUser(string mobileNumber, string SmsPurpose);
-        Task<(bool Success, OtpRequest Otp)> SendOTPforAnonymousUser(string mobileNumber, string SmsPurpose);
+        Task<(bool Success, OtpRequest Otp)> SendOTPforRegisteredUser(string mobileNumber, string SmsPurpose, string app_signature);
+        Task<(bool Success, OtpRequest Otp)> SendOTPforAnonymousUser(string mobileNumber, string SmsPurpose, string app_signature);
         Task<bool> ResetMpinAsync(ResetMpinDTO resetMpinDTO, string userId);
         Task<bool> ForgetMpinAsync(string mobileNumber, string newMpin);
         Task<bool> VerifyMpinAsync(Guid userId, string mPin);
