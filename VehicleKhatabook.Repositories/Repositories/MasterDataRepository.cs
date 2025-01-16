@@ -635,6 +635,25 @@ namespace VehicleKhatabook.Repositories.Repositories
         {
             return await _context.subscriptionMaster.ToListAsync();
         }
+        public async Task<ApiResponse<SubscriptionMaster>> AddSubscriptionMasterAsync(SubscriptionMasterDTO subscriptionMasterDTO)
+        {
+            var subscription = new SubscriptionMaster
+            {
+                SubscriptionAmount = subscriptionMasterDTO.SubscriptionAmount,
+                SubscriptionDurationDays = subscriptionMasterDTO.SubscriptionDurationDays,
+                SubscriptionIsRenewable = subscriptionMasterDTO.SubscriptionIsRenewable,
+                SubscriptionRenewalReminderDaysBefore = subscriptionMasterDTO.SubscriptionRenewalReminderDaysBefore,
+                SubscriptionName = subscriptionMasterDTO.SubscriptionName,
+                SubscriptionTrialPeriodDays = subscriptionMasterDTO.SubscriptionTrialPeriodDays,
+            };
+            _context.subscriptionMaster.Add(subscription);
+            await _context.SaveChangesAsync();
+            return ApiResponse<SubscriptionMaster>.SuccessResponse(subscription, "Subscription type added successfully ");
+        }
+        public async Task<List<PaymentHistory>> GetAllRecordsAsync()
+        {
+            return await _context.PaymentHistory.ToListAsync();
+        }
         public async Task<ApiResponse<PaymentHistory>> AddRecordsAsync(string? transactionId, string? status, decimal? amount, int? packageId, int? validity, Guid? userId)
         {
             var paymentRecord = new PaymentHistory

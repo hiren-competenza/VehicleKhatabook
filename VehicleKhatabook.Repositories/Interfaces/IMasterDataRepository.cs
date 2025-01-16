@@ -35,6 +35,8 @@ namespace VehicleKhatabook.Repositories.Interfaces
         Task<List<SubscriptionMaster>> GetSubscriptionMasterAsync();
         Task<List<PaymentHistory>> GetAllPaymentRecordByUserId(string userId);
         Task<ApiResponse<PaymentHistory>> AddRecordsAsync(string? transactionId, string? status, decimal? amount, int? packageId, int? validity, Guid? userId);
+        Task<ApiResponse<SubscriptionMaster>> AddSubscriptionMasterAsync(SubscriptionMasterDTO subscriptionMasterDTO);
+        Task<List<PaymentHistory>> GetAllRecordsAsync();
         //Task<ApiResponse<bool>> DeletePaymentRecordById(string id);
 
 
