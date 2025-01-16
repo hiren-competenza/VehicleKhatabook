@@ -16,6 +16,7 @@ namespace VehicleKhatabook.EndPoints.User
             var subscriptionRoute = app.MapGroup("/api/payment").WithTags("Payment Records Endpoint").RequireAuthorization("OwnerOrDriverPolicy");
 
             subscriptionRoute.MapPost("/AddRecords", AddRecordsAsync);
+            subscriptionRoute.MapGet("/GetAllRecords", GetAllRecordsAsync);
         }
 
         public void DefineServices(IServiceCollection services, IConfiguration configuration)
@@ -35,5 +36,17 @@ namespace VehicleKhatabook.EndPoints.User
 
             return Results.Ok(ApiResponse<object>.SuccessResponse(records, "Successfully add the records"));
         }
+        internal async Task<IResult> GetAllRecordsAsync(IMasterDataService masterDataService)
+        {
+            var records = await masterDataService.GetAllRecordsAsync();
+
+            if (!records.Any())
+            {
+                return Results.Ok(ApiResponse<object>.FailureResponse("Not Found Any Payment Record"));
+            }
+
+            return Results.Ok(ApiResponse<object>.SuccessResponse(records));
+        }
+
     }
 }

@@ -132,14 +132,22 @@ namespace VehicleKhatabook.Services.Services
         public async Task<ApiResponse<PaymentHistory>> AddRecordsAsync(string? transactionId,string? status, decimal? amount, int? packageId, int? validity, Guid? userId)
         {
             return await _masterDataRepository.AddRecordsAsync(transactionId, status, amount, packageId, validity, userId);
-    }
-    public async Task<List<PaymentHistory>> GetAllPaymentRecord()
+        }
+        public async Task<List<PaymentHistory>> GetAllRecordsAsync()
+        {
+            return await _masterDataRepository.GetAllRecordsAsync();
+        }
+        public async Task<List<PaymentHistory>> GetAllPaymentRecord()
         {
             return await _masterDataRepository.GetAllPaymentRecord();
         }
         public async Task<List<SubscriptionMaster>> GetSubscriptionMasterAsync()
         {
             return await _masterDataRepository.GetSubscriptionMasterAsync();
+        }    
+        public async Task<ApiResponse<SubscriptionMaster>> AddSubscriptionMasterAsync(SubscriptionMasterDTO subscriptionMasterDTO)
+        {
+            return await _masterDataRepository.AddSubscriptionMasterAsync(subscriptionMasterDTO);
         }
         public async Task<List<PaymentHistory>> GetAllPaymentRecordByUserId(string UserId)
         {
