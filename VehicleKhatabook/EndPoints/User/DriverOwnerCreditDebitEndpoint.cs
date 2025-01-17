@@ -17,7 +17,7 @@ namespace VehicleKhatabook.EndPoints.User
     {
         public void DefineEndpoints(WebApplication app)
         {
-            var expenseRoute = app.MapGroup("/api/driverOwnerIncomeExpense").WithTags("Owner IncomeExpense Management");
+            var expenseRoute = app.MapGroup("/api/driverOwnerIncomeExpense").WithTags("Owner IncomeExpense Management").RequireAuthorization("OwnerOrDriverPolicy");
             expenseRoute.MapPost("/add", AddIncomeExpenseAsync);
             expenseRoute.MapGet("/get", GetIncomeExpenseAsyncByUserId);
             expenseRoute.MapPut("/update", UpdateIncomeExpenseAsync);
