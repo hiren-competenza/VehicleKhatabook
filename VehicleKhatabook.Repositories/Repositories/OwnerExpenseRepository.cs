@@ -10,16 +10,25 @@ using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
+using VehicleKhatabook.Services.Interfaces;
+using VehicleKhatabook.Services.Services;
 
 namespace VehicleKhatabook.Repositories.Repositories
 {
     public class OwnerExpenseRepository : IOwnerExpenseRepository
     {
         private readonly VehicleKhatabookDbContext _context;
+        private readonly IOwnerIncomeRepository _ownerIncomeRepository; 
+        private readonly ISendTransactionMessageRepository _sendTransactionMessageRepository;
 
-        public OwnerExpenseRepository(VehicleKhatabookDbContext context)
+        public OwnerExpenseRepository(
+            VehicleKhatabookDbContext context,
+            IOwnerIncomeRepository ownerIncomeRepository, 
+            ISendTransactionMessageRepository sendTransactionMessageRepository)
         {
             _context = context;
+            _ownerIncomeRepository = ownerIncomeRepository;
+            _sendTransactionMessageRepository = sendTransactionMessageRepository;
         }
         public async Task<OwnerKhataDebit> AddOwnerExpenseAsync(OwnerIncomeExpenseDTO expenseDTO)
         {
@@ -43,6 +52,18 @@ namespace VehicleKhatabook.Repositories.Repositories
             if (expense.DriverOwnerUser != null)
             {
                 await _context.Entry(expense.DriverOwnerUser).Reference(v => v.user).LoadAsync();
+            }
+            try
+            {
+                _sendTransactionMessageRepository.SendTransactionMessage(
+                    expenseDTO.TransactionType,
+                    expenseDTO.Id.ToString(),
+                    expense.DriverOwnerId.ToString(),
+                    expense.Amount);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending transaction message: {ex.Message}");
             }
             return expense;
         }

@@ -29,12 +29,13 @@ namespace VehicleKhatabook.EndPoints.User
         {
             services.AddScoped<IOwnerIncomeRepository, OwnerIncomeRepository>();
             services.AddScoped<IOwnerExpenseRepository, OwnerExpenseRepository>();
+            services.AddScoped<ISendTransactionMessageRepository, SendTransactionMessageRepository>();
             services.AddScoped<IOwnerIncomeService, OwnerIncomeService>();
             services.AddScoped<IOwnerExpenseService, OwnerExpenseService>();
         }
         internal async Task<IResult> AddIncomeExpenseAsync(HttpContext httpContext, string TransactionType, OwnerIncomeExpenseDTO ownerIncomeExpenseDTO, IOwnerIncomeService ownerIncomeService, IOwnerExpenseService ownerExpenseService)
         {
-            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;            
             if (string.IsNullOrEmpty(userId))
             {
                 return Results.Ok(ApiResponse<object>.FailureResponse("User not found."));
@@ -42,12 +43,13 @@ namespace VehicleKhatabook.EndPoints.User
             var ownerDTO = new OwnerIncomeExpenseDTO
             {
                 //Name = ownerIncomeExpenseDTO.Name,
-                //UserId = Guid.Parse(userId),
+                Id= Guid.Parse(userId),
                 //Mobile = ownerIncomeExpenseDTO.Mobile,
                 Date = ownerIncomeExpenseDTO.Date,
                 Amount = ownerIncomeExpenseDTO.Amount,
                 Note = ownerIncomeExpenseDTO.Note,
                 DriverOwnerUserId = ownerIncomeExpenseDTO.DriverOwnerUserId,
+                TransactionType = TransactionType,
             };
             if (TransactionType.ToLower() == TransactionTypeEnum.Credit.ToLower())
             {
