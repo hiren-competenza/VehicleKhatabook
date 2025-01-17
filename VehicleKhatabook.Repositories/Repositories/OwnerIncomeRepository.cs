@@ -4,21 +4,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using VehicleKhatabook.Entities;
 using VehicleKhatabook.Entities.Models;
 using VehicleKhatabook.Models.Common;
 using VehicleKhatabook.Models.DTOs;
 using VehicleKhatabook.Repositories.Interfaces;
+using VehicleKhatabook.Services.Interfaces;
+using VehicleKhatabook.Services.Services;
+using static System.Net.WebRequestMethods;
 
 namespace VehicleKhatabook.Repositories.Repositories
 {
     public class OwnerIncomeRepository : IOwnerIncomeRepository
     {
         private readonly VehicleKhatabookDbContext _context;
+        private readonly ISendTransactionMessageRepository _sendTransactionMessageRepository;
 
-        public OwnerIncomeRepository(VehicleKhatabookDbContext context)
+        public OwnerIncomeRepository(
+            VehicleKhatabookDbContext context,
+            ISendTransactionMessageRepository sendTransactionMessageRepository)
         {
             _context = context;
+            _sendTransactionMessageRepository = sendTransactionMessageRepository;
         }
         public async Task<OwnerKhataCredit> AddOwnerIncomeAsync(OwnerIncomeExpenseDTO incomeDTO)
         {
@@ -32,7 +40,7 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Note = incomeDTO.Note,
                 DriverOwnerId = incomeDTO.DriverOwnerUserId,
                 CreatedBy = 1,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow                
             };
             _context.OwnerKhataCredits.Add(income);
             await _context.SaveChangesAsync();
@@ -42,6 +50,18 @@ namespace VehicleKhatabook.Repositories.Repositories
             if (income.DriverOwnerUser != null)
             {
                 await _context.Entry(income.DriverOwnerUser).Reference(v => v.user).LoadAsync();
+            }
+            try
+            {
+                _sendTransactionMessageRepository.SendTransactionMessage(
+                    incomeDTO.TransactionType,
+                    incomeDTO.Id.ToString(),
+                    income.DriverOwnerId.ToString(),
+                    income.Amount);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending transaction message: {ex.Message}");
             }
             return income;
         }
@@ -150,7 +170,7 @@ namespace VehicleKhatabook.Repositories.Repositories
 
             return true;
         }
-         private OwnerIncomeExpenseDTO MapToDTO(OwnerKhataCredit ownerKhataCredit)
+        private OwnerIncomeExpenseDTO MapToDTO(OwnerKhataCredit ownerKhataCredit)
         {
             return new OwnerIncomeExpenseDTO
             {
@@ -158,11 +178,111 @@ namespace VehicleKhatabook.Repositories.Repositories
                 Amount = ownerKhataCredit.Amount,
                 Date = ownerKhataCredit.Date,
                 Note = ownerKhataCredit.Note,
-                DriverOwnerUserId   = ownerKhataCredit.DriverOwnerId,
+                DriverOwnerUserId = ownerKhataCredit.DriverOwnerId,
                 TransactionType = "credit",
                 TransactionDate = ownerKhataCredit.Date
             };
         }
+    //    public void SendTransactionMessage(string TransactionType, string userId, string DriverOwnerUserId, decimal? Amount)
+    //    {
+    //        var smsConfig = _context.ApplicationConfigurations.FirstOrDefault();
+    //        if (smsConfig == null)
+    //        {
+    //            throw new InvalidOperationException("SMS configuration is not available.");
+    //        }
+
+    //        var user = _context.Users
+    //            .Where(u => u.UserID.ToString() == userId)
+    //            .FirstOrDefault();
+
+    //        if (user == null)
+    //        {
+    //            throw new InvalidOperationException("User not found.");
+    //        }
+
+    //        var creditTotal = _context.OwnerKhataCredits
+    //            .Where(c => c.DriverOwnerId.ToString() == DriverOwnerUserId)
+    //            .Sum(c => c.Amount);
+
+    //        var debitTotal = _context.OwnerKhataDebits
+    //            .Where(d => d.DriverOwnerId.ToString() == DriverOwnerUserId)
+    //            .Sum(d => d.Amount);
+
+    //        var balance = creditTotal - debitTotal;
+
+    //        var mobileNumber = _context.DriverOwnerUsers
+    //            .Where(d => d.DriverOwnerUserId.ToString() == DriverOwnerUserId)
+    //            .Select(d => d.MobileNumber)
+    //            .FirstOrDefault();
+
+    //        if (mobileNumber == null)
+    //        {
+    //            throw new InvalidOperationException("Mobile number not found for the specified DriverOwnerId.");
+    //        }
+
+    //        if (TransactionType == "Credit")
+    //        {
+    //            smsConfig.CreditTransactionSmsText = smsConfig.CreditTransactionSmsText.Replace("{amount}", Amount.ToString());
+
+    //            smsConfig.CreditTransactionSmsText = smsConfig.CreditTransactionSmsText.Replace("{user}", $"{user.FirstName} {user.LastName}");
+
+    //            smsConfig.CreditTransactionSmsText = smsConfig.CreditTransactionSmsText.Replace("{balance}", balance.ToString());
+    //        }
+    //        else if (TransactionType == "Debit")
+    //        {
+    //            smsConfig.DebitTransactionSmsText = smsConfig.CreditTransactionSmsText
+    //                .Replace("{amount}", Amount.ToString())
+    //                .Replace("{userName}", $"{user.FirstName} {user.LastName}")
+    //                .Replace("{balance}", balance.ToString());
+    //        }
+    //        else
+    //        {
+    //            throw new InvalidOperationException("Invalid transaction type.");
+    //        }
+
+    //        var smsText = TransactionType == "credit" ? smsConfig.CreditTransactionSmsText : smsConfig.DebitTransactionSmsText;
+
+    //        // Base URL
+    //        var queryParams = new List<string>
+    //{
+    //    $"phone={mobileNumber}",
+    //    $"text={smsText}"
+    //};
+
+    //        // Add parameters only if they have values
+    //        if (!string.IsNullOrEmpty(smsConfig.SmsApiUrl))
+    //        {
+    //            queryParams.Add($"user={smsConfig.SmsUser}");
+    //            queryParams.Add($"pass={smsConfig.SmsPassword}");
+    //            queryParams.Add($"sender={smsConfig.SmsSender}");
+    //            queryParams.Add($"priority={smsConfig.SmsPriority}");
+    //            queryParams.Add($"stype={smsConfig.SmsStype}");
+    //        }
+
+    //        // Construct the full URL
+    //        string apiUrlWithParams = $"{smsConfig.SmsApiUrl}?{string.Join("&", queryParams)}";
+
+    //        using (HttpClient httpClient = new HttpClient())
+    //        {
+    //            try
+    //            {
+    //                // Send the HTTP GET request to the SMS API
+    //                var response = httpClient.GetAsync(apiUrlWithParams).Result;
+
+    //                if (!response.IsSuccessStatusCode)
+    //                {
+    //                    string responseContent = response.Content.ReadAsStringAsync().Result;
+    //                    throw new InvalidOperationException($"Failed to send transaction message via SMS. Response: {responseContent}");
+    //                }
+    //            }
+    //            catch (Exception ex)
+    //            {
+    //                Console.WriteLine($"An error occurred while sending OTP: {ex.Message}");
+    //                throw;
+    //            }
+    //        }
+    //    }
+
 
     }
 }
