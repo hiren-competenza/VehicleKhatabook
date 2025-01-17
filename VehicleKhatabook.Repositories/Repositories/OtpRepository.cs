@@ -47,7 +47,8 @@ namespace VehicleKhatabook.Repositories.Repositories
             }
             smsConfig.SmsText = smsConfig.SmsText.Replace("{otp}", otp);
             smsConfig.SmsText = String.IsNullOrEmpty(SmsPurpose) ? smsConfig.SmsText = smsConfig.SmsText : smsConfig.SmsText.Replace("Login", SmsPurpose);
-            smsConfig.SmsText = String.IsNullOrEmpty(app_signature) ? smsConfig.SmsText = smsConfig.SmsText : smsConfig.SmsText.Replace("{app_signature}", app_signature);
+            smsConfig.SmsText = String.IsNullOrEmpty(app_signature) ? smsConfig.SmsText.Replace("{app_signature}", "") : smsConfig.SmsText.Replace("{app_signature}", app_signature);
+
             // Base URL
             var queryParams = new List<string>
              {
